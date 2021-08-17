@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WebOdontologista.Services;
+using WebOdontologista.Data;
 
 namespace WebOdontologista
 {
@@ -40,6 +42,10 @@ namespace WebOdontologista
                     options.UseMySql(Configuration.GetConnectionString("WebOdontologistaContext"), 
                         builder => builder.MigrationsAssembly("WebOdontologista")));
             */
+            services.AddScoped<AppointmentService>();
+
+            services.AddDbContext<WebOdontologistaContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("WebOdontologistaContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
