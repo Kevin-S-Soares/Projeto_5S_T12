@@ -4,11 +4,11 @@ using WebOdontologista.Models.Exceptions;
 
 namespace WebOdontologista.Models
 {
-    public class UniqueDate
+    public class AppointmentList
     {
         public DateTime Date { get; set; }
-        public Dictionary<TimeSpan, string> Availability { get; private set; } = new Dictionary<TimeSpan, string>();
-        public UniqueDate()
+        public Dictionary<TimeSpan, Appointment> Availability { get; private set; } = new Dictionary<TimeSpan, Appointment>();
+        public AppointmentList()
         {
             for (int i = 0; i < 40; i++)
             {
@@ -16,12 +16,12 @@ namespace WebOdontologista.Models
                 Availability.Add(workTime, null);
             }
         }
-        public UniqueDate(DateTime date, int duration, string appointment) : base()
+        public AppointmentList(DateTime date, int duration, Appointment appointment) : base()
         {
             Date = date;
             MakeAppointment(date.TimeOfDay, duration, appointment);
         }
-        public void MakeAppointment(TimeSpan time, int duration, string appointment)
+        public void MakeAppointment(TimeSpan time, int duration, Appointment appointment)
         {
             if(!Available(time, duration))
             {

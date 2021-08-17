@@ -5,26 +5,27 @@ namespace WebOdontologista.Models
 {
     public class AppointmentBook
     {
-        public LinkedList<UniqueDate> ScheduledAppointments { get; private set; } = new LinkedList<UniqueDate>();
+        public Dictionary<Dentist, LinkedList<AppointmentList>> Book { get; private set; } = new Dictionary<Dentist, LinkedList<AppointmentList>>();
         public AppointmentBook() { }
-        public void Verify(DateTime date, int duration, string appointment)
+        public void Verify(KeyValuePair<Dentist, LinkedList<AppointmentList>> kv, DateTime date, int durationInMinutes, Appointment appointment)
         {
-            LinkedListNode<UniqueDate> node;
+            LinkedList<AppointmentList> ScheduledAppointments = kv.Value;
+            LinkedListNode<AppointmentList> node;
             for (node = ScheduledAppointments.First; node.Next != null; node = node.Next)
             {
                 if(node.Value.SameDay(date))
                 {
-                    node.Value.MakeAppointment(date.TimeOfDay, duration, appointment);
+                    node.Value.MakeAppointment(date.TimeOfDay, durationInMinutes, appointment);
                     return;
                 }
                 else if(node.Value.DayBefore(date))
                 {
-                        LinkedListNode<UniqueDate> newNode = new LinkedListNode<UniqueDate>(new UniqueDate(date, duration, appointment));
+                        LinkedListNode<AppointmentList> newNode = new LinkedListNode<AppointmentList>(new AppointmentList(date, durationInMinutes, appointment));
                         ScheduledAppointments.AddBefore(node, newNode);
                         return;
                 }
             }
-            node = new LinkedListNode<UniqueDate>(new UniqueDate(date, duration, appointment));
+            node = new LinkedListNode<AppointmentList>(new AppointmentList(date, durationInMinutes, appointment));
             ScheduledAppointments.AddLast(node);
         }
 
