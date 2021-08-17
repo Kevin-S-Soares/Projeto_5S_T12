@@ -6,6 +6,7 @@ namespace WebOdontologista.Models
     {
         public int Id { get; set; }
         public int DurationInMinutes { get; set; }
+        public string Patient { get; set; }
         public string AppointmentType { get; set; }
         public DateTime Date { get; set; }
         public Dentist Dentist { get; set; }
