@@ -7,7 +7,7 @@ namespace WebOdontologista.Models
     [DisplayColumn("Name")]
     public class Dentist
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Display(Name = "Nome")]
         public string Name { get; set; }
