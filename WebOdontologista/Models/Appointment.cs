@@ -12,11 +12,16 @@ namespace WebOdontologista.Models
         [Display(Name = "Duração")]
         public int DurationInMinutes { get; set; }
         [Display(Name = "Paciente")]
+        [Required]
         public string Patient { get; set; }
         [Display(Name = "Tipo de consulta")]
-        public string AppointmentType { get; set; }
+        [Required]
+        public string AppointmentType { get; set; } // Provavelmente mudará, provavelmente será um enum
         [Display(Name = "Data")]
+        [DataType(DataType.Date)]
         public DateTime Date { get; set; }
+        [Display(Name = "Odontologista")]
+        public int DentistId { get; set; }
         public Dentist Dentist { get; set; }
         public Appointment() { }
         public Appointment(int durationInMinutes, string appointmentType, DateTime date, Dentist dentist)
