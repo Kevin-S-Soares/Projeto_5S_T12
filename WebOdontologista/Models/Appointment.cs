@@ -7,7 +7,7 @@ namespace WebOdontologista.Models
 {
     public class Appointment
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity]
         public int Id { get; set; }
         [Range(15,60)]
         public int DurationInMinutes { get; set; }
