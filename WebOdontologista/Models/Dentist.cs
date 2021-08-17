@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebOdontologista.Models
 {
-    [DisplayColumn("Name")]
     public class Dentist
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
