@@ -42,7 +42,8 @@ namespace WebOdontologista
                         builder => builder.MigrationsAssembly("WebOdontologista")));
             
             services.AddScoped<AppointmentService>();
-            
+            services.AddScoped<DentistService>();
+
             /*
             services.AddDbContext<WebOdontologistaContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("WebOdontologistaContext")));
