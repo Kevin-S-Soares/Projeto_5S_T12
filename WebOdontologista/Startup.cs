@@ -36,16 +36,17 @@ namespace WebOdontologista
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            /*
-
+            
             services.AddDbContext<WebOdontologistaContext>(options =>
                     options.UseMySql(Configuration.GetConnectionString("WebOdontologistaContext"), 
                         builder => builder.MigrationsAssembly("WebOdontologista")));
-            */
+            
             services.AddScoped<AppointmentService>();
-
+            
+            /*
             services.AddDbContext<WebOdontologistaContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("WebOdontologistaContext")));
+            */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

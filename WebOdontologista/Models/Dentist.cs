@@ -8,7 +8,7 @@ namespace WebOdontologista.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Display(Name = "Nome")]
+        [Display(Name = "Odontologista")]
         public string Name { get; set; }
         public ICollection<Appointment> Appointments { get; set; } = new LinkedList<Appointment>();
         public Dentist() { }
