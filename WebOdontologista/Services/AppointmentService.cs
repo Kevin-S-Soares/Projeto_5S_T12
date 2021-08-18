@@ -24,9 +24,10 @@ namespace WebOdontologista.Services
             }
             return listOfAppointments;
         }
-        public void Insert(Appointment obj)
+        public void Insert(Appointment appointment)
         {
-            _context.Add(obj);
+            appointment.DentistId = 1;
+            _context.Add(appointment);
             _context.SaveChanges();
         }
     }
