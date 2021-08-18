@@ -16,7 +16,11 @@ namespace WebOdontologista.Services
         }
         public List<Dentist> FindAll()
         {
-            return _context.Dentist.ToList();
+            return _context.Dentist.OrderBy(x => x.Name).ToList();
+        }
+        public Dictionary<int, Dentist> PrimaryKey()
+        {
+            return _context.Dentist.ToDictionary<Dentist, int>(x => x.Id);
         }
     }
 }

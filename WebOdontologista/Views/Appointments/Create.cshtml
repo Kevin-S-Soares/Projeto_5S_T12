@@ -1,4 +1,4 @@
-﻿@model WebOdontologista.Models.Appointment
+﻿@model WebOdontologista.Models.ViewModels.AppointmentFormViewModel
 @{
     ViewData["Title"] = "Nova Consulta";
 }
@@ -10,16 +10,20 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div class="form-group">
-                <label asp-for="Patient" class="control-label"> </label>
-                <input asp-for="Patient" class="form-control" />
+                <label asp-for="Appointment.Patient" class="control-label"> </label>
+                <input asp-for="Appointment.Patient" class="form-control" />
             </div>
             <div class="form-group">
-                <label asp-for="AppointmentType" class="control-label"> </label>
-                <input asp-for="AppointmentType" class="form-control" />
+                <label asp-for="Appointment.DentistId" class="control-label"> </label>
+                <select asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control"> </select>
             </div>
             <div class="form-group">
-                <label asp-for="DurationInMinutes" class="control-label"> </label>
-                <select asp-for="DurationInMinutes" class="form-control">
+                <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
+                <input asp-for="Appointment.AppointmentType" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.DurationInMinutes" class="control-label"> </label>
+                <select asp-for="Appointment.DurationInMinutes" class="form-control">
                     <option value="15">15</option>
                     <option value="30">30</option>
                     <option value="45">45</option>
@@ -27,10 +31,11 @@
                 </select>
             </div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label"> </label>
-                <input type="datetime" asp-for="Date" class="form-control" />
+                <label asp-for="Appointment.Date" class="control-label"> </label>
+                <input asp-for="Appointment.Date" class="form-control" />
             </div>
             <div class="form-group">
+                <br>
                 <input type="submit" value="Adicionar Nova Consulta" class="btn btn-default" />
             </div>
         </form>

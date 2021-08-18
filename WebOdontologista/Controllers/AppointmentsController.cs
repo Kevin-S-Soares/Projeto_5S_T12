@@ -18,12 +18,12 @@ namespace WebOdontologista.Controllers
         }
         public IActionResult Index()
         {
-            var listOfAppointments = _appointmentService.FindAll();
+            List<Appointment> listOfAppointments = _appointmentService.FindAll();
             return View(listOfAppointments);
         }
         public IActionResult Create()
         {
-            return View();
+            return View(_appointmentService.ViewModel());
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
