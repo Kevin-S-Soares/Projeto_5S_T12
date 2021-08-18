@@ -11,17 +11,26 @@ namespace WebOdontologista.Controllers
     public class AppointmentsController : Controller
     {
         private readonly AppointmentService _appointmentService;
-        private readonly DentistService _dentistService;
 
-        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService)
+        public AppointmentsController(AppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
-            _dentistService = dentistService;
         }
         public IActionResult Index()
         {
             var listOfAppointments = _appointmentService.FindAll();
             return View(listOfAppointments);
+        }
+        public IActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Appointment appointment)
+        {
+            _appointmentService.Insert(appointment);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

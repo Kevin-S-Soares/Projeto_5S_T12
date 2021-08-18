@@ -17,13 +17,17 @@ namespace WebOdontologista.Services
         public List<Appointment> FindAll()
         {
             List<Appointment> listOfAppointments = _context.Appointment.ToList(); //.FindAll(x => x.Date > DateTime.Now); Produto final
-            List<Dentist> listOfDentists = _context.Dentist.ToList();
-            Dictionary<int, Dentist> primaryKeyDentist = _context.Dentist.ToDictionary<Dentist, int>(x => x.Id) ;
+            Dictionary<int, Dentist> primaryKeyDentist = _context.Dentist.ToDictionary<Dentist, int>(x => x.Id);
             foreach (Appointment appointment in listOfAppointments)
             {
                 appointment.Dentist = primaryKeyDentist[appointment.DentistId];
             }
             return listOfAppointments;
+        }
+        public void Insert(Appointment obj)
+        {
+            _context.Add(obj);
+            _context.SaveChanges();
         }
     }
 }
