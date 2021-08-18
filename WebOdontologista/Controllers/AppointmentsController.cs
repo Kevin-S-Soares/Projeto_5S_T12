@@ -20,14 +20,21 @@ namespace WebOdontologista.Controllers
         }
         public IActionResult Index()
         {
-            var list = _appointmentService.FindAll();
+            var listOfAppointments = _appointmentService.FindAll();
             var listOfDentists = _dentistService.FindAll();
-
-            foreach(Appointment app in list)
+            Dictionary<int, Dentist> primaryKeyDentist = new Dictionary<int, Dentist>();
+            foreach(Dentist dentist in listOfDentists)
             {
-                app.Dentist = listOfDentists.Find(x => app.DentistId == x.Id);
+                if(!primaryKeyDentist.ContainsKey(dentist.Id))
+                {
+                    primaryKeyDentist.Add(dentist.Id, dentist);
+                }
             }
-            return View(list);
+            foreach(Appointment appointment in listOfAppointments)
+            {
+                appointment.Dentist = primaryKeyDentist[appointment.DentistId];
+            }
+            return View(listOfAppointments);
         }
     }
 }
