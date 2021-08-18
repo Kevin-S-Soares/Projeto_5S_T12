@@ -18,7 +18,7 @@ namespace WebOdontologista.Models
         [Required]
         public string AppointmentType { get; set; } // Provavelmente mudará, provavelmente será um enum
         [Display(Name = "Data")]
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }
         [Display(Name = "Odontologista")]
         public int DentistId { get; set; }
