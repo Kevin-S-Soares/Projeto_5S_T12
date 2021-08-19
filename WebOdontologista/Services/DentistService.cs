@@ -18,9 +18,5 @@ namespace WebOdontologista.Services
         {
             return _context.Dentist.OrderBy(x => x.Name).ToList();
         }
-        public Dictionary<int, Dentist> PrimaryKey()
-        {
-            return _context.Dentist.ToDictionary<Dentist, int>(x => x.Id);
-        }
     }
 }

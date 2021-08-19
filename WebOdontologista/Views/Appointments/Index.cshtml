@@ -54,10 +54,10 @@
                 @Html.DisplayFor(modelItem => item.AppointmentType)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Reagendar</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-default">Reagendar</a>
             </td>
             <td>
-                <a asp-action="Delete" asp-route-id="@item.Id">Cancelar</a>
+                <a asp-action="Delete" asp-route-id="@item.Id"  class="btn btn-default">Cancelar</a>
             </td>
         </tr>
         }

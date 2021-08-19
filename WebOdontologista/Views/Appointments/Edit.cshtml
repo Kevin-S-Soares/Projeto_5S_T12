@@ -1,0 +1,46 @@
+﻿@model WebOdontologista.Models.ViewModels.AppointmentFormViewModel
+@{
+    ViewData["Title"] = "Reagendar Consulta";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Appointment.Id"/>
+            <div class="form-group">
+                <label asp-for="Appointment.Patient" class="control-label"> </label>
+                <input asp-for="Appointment.Patient" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.DentistId" class="control-label"> </label>
+                <select asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control"> </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
+                <input asp-for="Appointment.AppointmentType" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.DurationInMinutes" class="control-label"> </label>
+                <select asp-for="Appointment.DurationInMinutes" class="form-control">
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    <option value="60">60</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.Date" class="control-label"> </label>
+                <input asp-for="Appointment.Date" class="form-control" />
+            </div>
+            <div class="form-group">
+                <br>
+                <input type="submit" value="Salvar Consulta" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+

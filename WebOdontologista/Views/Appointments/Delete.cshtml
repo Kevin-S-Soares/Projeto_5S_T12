@@ -1,0 +1,49 @@
+﻿@model WebOdontologista.Models.Appointment
+
+@{
+    ViewData["Title"] = "Cancelar Consulta";
+}
+
+<h2>@ViewData["Title"] </h2>
+<br>
+<h3>Tem certeza que deseja cancelar a consulta?</h3>
+<div>
+    <hr/>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Patient)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Patient)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Dentist.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Dentist.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AppointmentType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AppointmentType)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DurationInMinutes)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DurationInMinutes)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+    </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id"/>
+        <input type="submit" value="Cancelar" class="btn btn-danger"/>
+        <a asp-action="Index" class="btn btn-default">Voltar às Consultas</a>
+    </form>
+</div>
