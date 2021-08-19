@@ -20,8 +20,7 @@ namespace WebOdontologista.Controllers
         }
         public IActionResult Index()
         {
-            List<Appointment> listOfAppointments = _appointmentService.FindAll();
-            return View(listOfAppointments);
+            return View(_appointmentService.FindAll());
         }
         public IActionResult Create()
         {
@@ -40,12 +39,12 @@ namespace WebOdontologista.Controllers
             {
                 return NotFound();
             }
-            var obj = _appointmentService.FindById(id.Value);
-            if(obj == null)
+            Appointment appointment = _appointmentService.FindById(id.Value);
+            if(appointment == null)
             {
                 return NotFound();
             }
-            return View(obj);
+            return View(appointment);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

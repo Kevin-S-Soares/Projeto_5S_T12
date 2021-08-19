@@ -7,147 +7,88 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebOdontologista.Data;
 using WebOdontologista.Models;
+using WebOdontologista.Services;
+using WebOdontologista.Services.Exceptions;
 
 namespace WebOdontologista.Controllers
 {
     public class DentistsController : Controller
     {
-        private readonly WebOdontologistaContext _context;
+        private readonly DentistService _dentistService;
 
-        public DentistsController(WebOdontologistaContext context)
+        public DentistsController(DentistService dentistService)
         {
-            _context = context;
+            _dentistService = dentistService;
         }
-
-        // GET: Dentists
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Dentist.ToListAsync());
+            return View(_dentistService.FindAll());
         }
-
-        // GET: Dentists/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var dentist = await _context.Dentist
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (dentist == null)
-            {
-                return NotFound();
-            }
-
-            return View(dentist);
-        }
-
-        // GET: Dentists/Create
         public IActionResult Create()
         {
             return View();
         }
-
-        // POST: Dentists/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Dentist dentist)
+        public IActionResult Create(Dentist dentist)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(dentist);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(dentist);
+            _dentistService.Insert(dentist);
+            return RedirectToAction(nameof(Index));
         }
-
-        // GET: Dentists/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var dentist = await _context.Dentist.FindAsync(id);
+            Dentist dentist = _dentistService.FindById(id.Value);
             if (dentist == null)
             {
                 return NotFound();
             }
             return View(dentist);
         }
-
-        // POST: Dentists/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Dentist dentist)
+        public IActionResult Delete(int id)
+        {
+            _dentistService.Remove(id);
+            return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            Dentist dentist = _dentistService.FindById(id.Value);
+            if (dentist == null)
+            {
+                return NotFound();
+            }
+            return View(dentist);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, Dentist dentist)
         {
             if (id != dentist.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
-
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(dentist);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DentistExists(dentist.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _dentistService.Update(dentist);
             }
-            return View(dentist);
-        }
-
-        // GET: Dentists/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
+            catch (NotFoundException)
             {
                 return NotFound();
             }
-
-            var dentist = await _context.Dentist
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (dentist == null)
+            catch (DbConcurrencyException)
             {
-                return NotFound();
+                return BadRequest();
             }
-
-            return View(dentist);
-        }
-
-        // POST: Dentists/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var dentist = await _context.Dentist.FindAsync(id);
-            _context.Dentist.Remove(dentist);
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DentistExists(int id)
-        {
-            return _context.Dentist.Any(e => e.Id == id);
         }
     }
 }

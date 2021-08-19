@@ -21,7 +21,7 @@ namespace WebOdontologista.Services
         }
         public List<Appointment> FindAll()
         {
-            List<Appointment> listOfAppointments = _context.Appointment.Include(obj => obj.Dentist).OrderBy(x => x.Date).ToList(); //.FindAll(x => x.Date > DateTime.Now); Produto final
+            List<Appointment> listOfAppointments = _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).ToList(); //.FindAll(obj => obj.Date > DateTime.Now); Produto final
             return listOfAppointments;
         }
         public AppointmentFormViewModel ViewModel()
@@ -41,19 +41,19 @@ namespace WebOdontologista.Services
         }
         public void Remove(int id)
         {
-            Appointment obj = _context.Appointment.Find(id);
-            _context.Appointment.Remove(obj);
+            Appointment appointment = _context.Appointment.Find(id);
+            _context.Appointment.Remove(appointment);
             _context.SaveChanges();
         }
         public void Update(Appointment appointment)
         {
-            if(!_context.Appointment.Any(x => x.Id == appointment.Id))
+            if(!_context.Appointment.Any(obj => obj.Id == appointment.Id))
             {
                 throw new NotFoundException("Id não encontrado!");
             }
             try
             {
-                _context.Update(appointment);
+                _context.Appointment.Update(appointment);
                 _context.SaveChanges();
             } catch(DbUpdateConcurrencyException e)
             {
