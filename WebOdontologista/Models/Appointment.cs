@@ -17,7 +17,8 @@ namespace WebOdontologista.Models
         [Display(Name = "Telefone")]
         [Required]
         [DataType(DataType.PhoneNumber)]
-        public string TelephoneNumber { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:(##) #####-####}")]
+        public long TelephoneNumber { get; set; }
         [Display(Name = "Tipo de consulta")]
         [Required]
         public string AppointmentType { get; set; } // Provavelmente mudará, provavelmente será um enum
