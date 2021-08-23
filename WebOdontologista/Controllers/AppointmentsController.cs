@@ -31,6 +31,12 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Appointment appointment)
         {
+            if (!ModelState.IsValid)
+            {
+                AppointmentFormViewModel formViewModel = _appointmentService.ViewModel();
+                formViewModel.Appointment = appointment;
+                return View(formViewModel);
+            }
             _appointmentService.Insert(appointment);
             return RedirectToAction(nameof(Index));
         }
@@ -73,7 +79,13 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Appointment appointment)
         {
-            if(id != appointment.Id)
+            if (!ModelState.IsValid)
+            {
+                AppointmentFormViewModel formViewModel = _appointmentService.ViewModel();
+                formViewModel.Appointment = appointment;
+                return View(formViewModel);
+            }
+            if (id != appointment.Id)
             {
                 return RedirectToAction(nameof(Error), new { message = "Ids são diferentes" });
             }

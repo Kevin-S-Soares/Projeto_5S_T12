@@ -33,6 +33,10 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Dentist dentist)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(dentist);
+            }
             _dentistService.Insert(dentist);
             return RedirectToAction(nameof(Index));
         }
@@ -73,6 +77,10 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Dentist dentist)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(dentist);
+            }
             if (id != dentist.Id)
             {
                 return RedirectToAction(nameof(Error), new { message = "Ids são diferentes" }); ;

@@ -12,10 +12,12 @@
             <div class="form-group">
                 <label asp-for="Appointment.Patient" class="control-label"> </label>
                 <input asp-for="Appointment.Patient" class="form-control" />
+                <span asp-validation-for="Appointment.Patient" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.TelephoneNumber" class="control-label"> </label>
                 <input asp-for="Appointment.TelephoneNumber" class="form-control" />
+                <span asp-validation-for="Appointment.TelephoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.DentistId" class="control-label"> </label>
@@ -24,6 +26,7 @@
             <div class="form-group">
                 <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
                 <input asp-for="Appointment.AppointmentType" class="form-control" />
+                <span asp-validation-for="Appointment.AppointmentType" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.DurationInMinutes" class="control-label"> </label>
@@ -37,6 +40,7 @@
             <div class="form-group">
                 <label asp-for="Appointment.Date" class="control-label"> </label>
                 <input asp-for="Appointment.Date" class="form-control" />
+                <span asp-validation-for="Appointment.Date" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <br>
@@ -45,5 +49,10 @@
         </form>
     </div>
 </div>
-
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
 
