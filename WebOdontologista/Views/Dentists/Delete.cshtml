@@ -16,6 +16,18 @@
         <dd>
             @Html.DisplayFor(model => model.Name)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TelephoneNumber)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TelephoneNumber)
+        </dd>
     </dl>
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
