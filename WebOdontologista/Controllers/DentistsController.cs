@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -39,12 +40,12 @@ namespace WebOdontologista.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não provido" });
             }
             Dentist dentist = _dentistService.FindById(id.Value);
             if (dentist == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
             return View(dentist);
         }
@@ -59,12 +60,12 @@ namespace WebOdontologista.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não provido" });
             }
             Dentist dentist = _dentistService.FindById(id.Value);
             if (dentist == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
             return View(dentist);
         }
@@ -74,21 +75,26 @@ namespace WebOdontologista.Controllers
         {
             if (id != dentist.Id)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = "Ids são diferentes" }); ;
             }
             try
             {
                 _dentistService.Update(dentist);
+                return RedirectToAction(nameof(Index));
             }
-            catch (NotFoundException)
+            catch (ApplicationException e)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = e.Message});
             }
-            catch (DbConcurrencyException)
+        }
+        public IActionResult Error(string message)
+        {
+            ErrorViewModel error = new ErrorViewModel
             {
-                return BadRequest();
-            }
-            return RedirectToAction(nameof(Index));
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+            return View(error);
         }
     }
 }

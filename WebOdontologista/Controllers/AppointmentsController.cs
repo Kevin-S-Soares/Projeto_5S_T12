@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WebOdontologista.Models;
@@ -37,12 +38,12 @@ namespace WebOdontologista.Controllers
         {
             if(id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não provido"});
             }
             Appointment appointment = _appointmentService.FindById(id.Value);
             if(appointment == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
             return View(appointment);
         }
@@ -57,12 +58,12 @@ namespace WebOdontologista.Controllers
         {
             if(id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não provido" });
             }
             Appointment appointment = _appointmentService.FindById(id.Value);
             if(appointment == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
             AppointmentFormViewModel obj = _appointmentService.ViewModel();
             obj.Appointment = appointment;
@@ -74,21 +75,27 @@ namespace WebOdontologista.Controllers
         {
             if(id != appointment.Id)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = "Ids são diferentes" });
             }
             try
             {
                 _appointmentService.Update(appointment);
+                return RedirectToAction(nameof(Index));
             }
-            catch(NotFoundException)
+            catch(ApplicationException e)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+                
             }
-            catch(DbConcurrencyException)
+        }
+        public IActionResult Error(string message)
+        {
+            ErrorViewModel error = new ErrorViewModel
             {
-                return BadRequest();
-            }
-            return RedirectToAction(nameof(Index));
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+            return View(error);
         }
     }
 }
