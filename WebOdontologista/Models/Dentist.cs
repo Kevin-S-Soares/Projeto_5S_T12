@@ -12,8 +12,9 @@ namespace WebOdontologista.Models
         public string Name { get; set; }
         [Required]
         [Display(Name = "Telefone")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:(##)#####-####}")]
-        public string TelephoneNumber { get; set; }
+        [DataType(DataType.PhoneNumber)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:(##) #####-####}")]
+        public long TelephoneNumber { get; set; }
         [Required]
         [Display(Name = "Email")]
         [DataType(DataType.EmailAddress)]
