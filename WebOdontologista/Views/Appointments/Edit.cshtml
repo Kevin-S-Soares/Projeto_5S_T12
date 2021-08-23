@@ -9,10 +9,14 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
-            <input type="hidden" asp-for="Appointment.Id"/>
+            <input type="hidden" asp-for="Appointment.Id" />
             <div class="form-group">
                 <label asp-for="Appointment.Patient" class="control-label"> </label>
                 <input asp-for="Appointment.Patient" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Appointment.TelephoneNumber" class="control-label"> </label>
+                <input asp-for="Appointment.TelephoneNumber" class="form-control" />
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.DentistId" class="control-label"> </label>
