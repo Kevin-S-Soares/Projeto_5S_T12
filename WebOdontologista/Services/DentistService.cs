@@ -16,35 +16,36 @@ namespace WebOdontologista.Services
         {
             _context = context;
         }
-        public List<Dentist> FindAll()
+        public async Task<List<Dentist>> FindAllAsync()
         {
-            return _context.Dentist.OrderBy(obj => obj.Name).ToList();
+            return await _context.Dentist.OrderBy(obj => obj.Name).ToListAsync();
         }
-        public void Insert(Dentist dentist)
+        public async Task InsertAsync(Dentist dentist)
         {
             _context.Add(dentist);
-            _context.SaveChanges();
+           await _context.SaveChangesAsync();
         }
-        public Dentist FindById(int id)
+        public async Task<Dentist> FindByIdAsync(int id)
         {
-            return _context.Dentist.FirstOrDefault(obj => obj.Id == id);
+            return await _context.Dentist.FirstOrDefaultAsync(obj => obj.Id == id);
         }
-        public void Remove(int id)
+        public async Task RemoveAsync(int id)
         {
-            Dentist dentist = _context.Dentist.Find(id);
+            Dentist dentist = await _context.Dentist.FindAsync(id);
             _context.Dentist.Remove(dentist);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void Update(Dentist dentist)
+        public async Task UpdateAsync(Dentist dentist)
         {
-            if (!_context.Dentist.Any(obj => obj.Id == dentist.Id))
+            bool hasAny = await _context.Dentist.AnyAsync(obj => obj.Id == dentist.Id);
+            if (!hasAny)
             {
                 throw new NotFoundException("Id não encontrado!");
             }
             try
             {
                 _context.Dentist.Update(dentist);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException e)
             {

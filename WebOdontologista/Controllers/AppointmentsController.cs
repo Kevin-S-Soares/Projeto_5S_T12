@@ -19,34 +19,34 @@ namespace WebOdontologista.Controllers
         {
             _appointmentService = appointmentService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(_appointmentService.FindAll());
+            return View(await _appointmentService.FindAllAsync());
         }
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View(_appointmentService.ViewModel());
+            return View(await _appointmentService.ViewModel());
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Appointment appointment)
+        public async Task<IActionResult> Create(Appointment appointment)
         {
             if (!ModelState.IsValid)
             {
-                AppointmentFormViewModel formViewModel = _appointmentService.ViewModel();
+                AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 formViewModel.Appointment = appointment;
                 return View(formViewModel);
             }
-            _appointmentService.Insert(appointment);
+            await _appointmentService.InsertAsync(appointment);
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if(id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não provido"});
             }
-            Appointment appointment = _appointmentService.FindById(id.Value);
+            Appointment appointment = await _appointmentService.FindByIdAsync(id.Value);
             if(appointment == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
@@ -55,33 +55,33 @@ namespace WebOdontologista.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _appointmentService.Remove(id);
+            await _appointmentService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if(id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não provido" });
             }
-            Appointment appointment = _appointmentService.FindById(id.Value);
+            Appointment appointment = await _appointmentService.FindByIdAsync(id.Value);
             if(appointment == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
-            AppointmentFormViewModel obj = _appointmentService.ViewModel();
+            AppointmentFormViewModel obj = await _appointmentService.ViewModel();
             obj.Appointment = appointment;
             return View(obj);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Appointment appointment)
+        public async Task<IActionResult> Edit(int id, Appointment appointment)
         {
             if (!ModelState.IsValid)
             {
-                AppointmentFormViewModel formViewModel = _appointmentService.ViewModel();
+                AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 formViewModel.Appointment = appointment;
                 return View(formViewModel);
             }
@@ -91,7 +91,7 @@ namespace WebOdontologista.Controllers
             }
             try
             {
-                _appointmentService.Update(appointment);
+                await _appointmentService.Update(appointment);
                 return RedirectToAction(nameof(Index));
             }
             catch(ApplicationException e)

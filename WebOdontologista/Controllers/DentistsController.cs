@@ -21,9 +21,9 @@ namespace WebOdontologista.Controllers
         {
             _dentistService = dentistService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(_dentistService.FindAll());
+            return View(await _dentistService.FindAllAsync());
         }
         public IActionResult Create()
         {
@@ -31,22 +31,22 @@ namespace WebOdontologista.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Dentist dentist)
+        public async Task<IActionResult> Create(Dentist dentist)
         {
             if (!ModelState.IsValid)
             {
                 return View(dentist);
             }
-            _dentistService.Insert(dentist);
+            await _dentistService.InsertAsync(dentist);
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não provido" });
             }
-            Dentist dentist = _dentistService.FindById(id.Value);
+            Dentist dentist = await _dentistService.FindByIdAsync(id.Value);
             if (dentist == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
@@ -55,18 +55,18 @@ namespace WebOdontologista.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _dentistService.Remove(id);
+            await _dentistService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não provido" });
             }
-            Dentist dentist = _dentistService.FindById(id.Value);
+            Dentist dentist = await _dentistService.FindByIdAsync(id.Value);
             if (dentist == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
@@ -75,7 +75,7 @@ namespace WebOdontologista.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Dentist dentist)
+        public async Task<IActionResult> Edit(int id, Dentist dentist)
         {
             if (!ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace WebOdontologista.Controllers
             }
             try
             {
-                _dentistService.Update(dentist);
+                await _dentistService.UpdateAsync(dentist);
                 return RedirectToAction(nameof(Index));
             }
             catch (ApplicationException e)

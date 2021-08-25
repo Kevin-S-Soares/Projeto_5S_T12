@@ -19,42 +19,43 @@ namespace WebOdontologista.Services
             _context = context;
             _dentistService = dentistService;
         }
-        public List<Appointment> FindAll()
+        public async Task<List<Appointment>> FindAllAsync()
         {
-            List<Appointment> listOfAppointments = _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).ToList(); //.FindAll(obj => obj.Date > DateTime.Now); Produto final
+            List<Appointment> listOfAppointments = await _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).ToListAsync(); //.FindAll(obj => obj.Date > DateTime.Now); Produto final
             return listOfAppointments;
         }
-        public AppointmentFormViewModel ViewModel()
+        public async Task<AppointmentFormViewModel> ViewModel()
         {
-            List<Dentist> dentists = _dentistService.FindAll();
+            List<Dentist> dentists = await _dentistService.FindAllAsync();
             AppointmentFormViewModel viewModel = new AppointmentFormViewModel() { Dentists = dentists };
             return viewModel;
         }
-        public void Insert(Appointment appointment)
+        public async Task InsertAsync(Appointment appointment)
         {
             _context.Add(appointment);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public Appointment FindById(int id)
+        public async Task<Appointment> FindByIdAsync(int id)
         {
-            return _context.Appointment.Include(obj => obj.Dentist).FirstOrDefault(obj => obj.Id == id);
+            return await _context.Appointment.Include(obj => obj.Dentist).FirstOrDefaultAsync(obj => obj.Id == id);
         }
-        public void Remove(int id)
+        public async Task RemoveAsync(int id)
         {
-            Appointment appointment = _context.Appointment.Find(id);
+            Appointment appointment = await _context.Appointment.FindAsync(id);
             _context.Appointment.Remove(appointment);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-        public void Update(Appointment appointment)
+        public async Task Update(Appointment appointment)
         {
-            if(!_context.Appointment.Any(obj => obj.Id == appointment.Id))
+            bool hasAny = await _context.Appointment.AnyAsync(obj => obj.Id == appointment.Id);
+            if (!hasAny)
             {
                 throw new NotFoundException("Id não encontrado!");
             }
             try
             {
                 _context.Appointment.Update(appointment);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             } catch(DbUpdateConcurrencyException e)
             {
                 throw new DbConcurrencyException(e.Message);
