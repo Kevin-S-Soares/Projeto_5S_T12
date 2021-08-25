@@ -11,12 +11,12 @@
         <form asp-action="Create">
             <div class="form-group">
                 <label asp-for="Appointment.Patient" class="control-label"> </label>
-                <input asp-for="Appointment.Patient" class="form-control" />
+                <input asp-for="Appointment.Patient" class="form-control" autocomplete="off" />
                 <span asp-validation-for="Appointment.Patient" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.TelephoneNumber" class="control-label"> </label>
-                <input asp-for="Appointment.TelephoneNumber" class="form-control" />
+                <input asp-for="Appointment.TelephoneNumber" id="phone" onkeyup="mask()" class="form-control" autocomplete="off" />
                 <span asp-validation-for="Appointment.TelephoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -25,12 +25,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
-                <input asp-for="Appointment.AppointmentType" class="form-control" />
+                <input asp-for="Appointment.AppointmentType" class="form-control"/>
                 <span asp-validation-for="Appointment.AppointmentType" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.DurationInMinutes" class="control-label"> </label>
-                <select asp-for="Appointment.DurationInMinutes" class="form-control">
+                <select asp-for="Appointment.DurationInMinutes" class="form-control" >
                     <option value="15">15</option>
                     <option value="30">30</option>
                     <option value="45">45</option>
@@ -53,6 +53,7 @@
 {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_TelephoneMask");
     }
 }
 

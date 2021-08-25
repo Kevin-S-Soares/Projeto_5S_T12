@@ -10,7 +10,7 @@ namespace WebOdontologista.Models
         public int Id { get; set; }
         [DataType(DataType.Text)]
         [Required(ErrorMessage = "{0} requerido.")]
-        [StringLength(60, MinimumLength = 3, ErrorMessage = "O campo {0} deve ter entre {2} e {1}.")]
+        [StringLength(60, MinimumLength = 3, ErrorMessage = "O campo {0} deve ter entre {2} e {1} caracteres.")]
         [Display(Name = "Odontologista")]
         public string Name { get; set; }
         [DataType(DataType.PhoneNumber)]
