@@ -61,5 +61,31 @@ namespace WebOdontologista.Services
                 throw new DbConcurrencyException(e.Message);
             }
         }
+        public async Task<List<Appointment>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
+        {
+            var result = from obj in _context.Appointment select obj;
+            if(minDate.HasValue)
+            {
+                result = result.Where(obj => obj.Date >= minDate.Value);
+            }
+            if (maxDate.HasValue)
+            {
+                result = result.Where(obj => obj.Date <= maxDate.Value);
+            }
+            return await result.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).ToListAsync();
+        }
+        public async Task<List<IGrouping<Dentist, Appointment>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
+        {
+            var result = from obj in _context.Appointment select obj;
+            if (minDate.HasValue)
+            {
+                result = result.Where(obj => obj.Date >= minDate.Value);
+            }
+            if (maxDate.HasValue)
+            {
+                result = result.Where(obj => obj.Date <= maxDate.Value);
+            }
+            return await result.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).GroupBy(obj => obj.Dentist).ToListAsync();
+        }
     }
 }
