@@ -16,8 +16,8 @@ namespace WebOdontologista.Models
         [DataType(DataType.PhoneNumber)]
         [Required(ErrorMessage = "{0} requerido.")]
         [Display(Name = "Telefone")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:(##) #####-####}")]
-        public long TelephoneNumber { get; set; }
+        [StringLength(15, MinimumLength = 14, ErrorMessage = "O campo {0} deve ser {2} ou {1} caracteres.")]
+        public string TelephoneNumber { get; set; }
         [DataType(DataType.EmailAddress)]
         [Required(ErrorMessage = "{0} requerido.")]
         [EmailAddress(ErrorMessage = "Entre um email válido.")]

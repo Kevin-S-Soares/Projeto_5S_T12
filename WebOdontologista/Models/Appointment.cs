@@ -15,19 +15,19 @@ namespace WebOdontologista.Models
 
         [DataType(DataType.Text)]
         [Required(ErrorMessage = "{0} requirido.")]
-        [StringLength(60, MinimumLength = 3, ErrorMessage = "O campo {0} deve ter entre {2} e {1}.")]
+        [StringLength(60, MinimumLength = 3, ErrorMessage = "O campo {0} deve ter entre {2} e {1} caracteres.")]
         [Display(Name = "Paciente")]
         public string Patient { get; set; }
 
         [Display(Name = "Telefone")]
         [Required]
         [DataType(DataType.PhoneNumber)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:(##) #####-####}")]
-        public long TelephoneNumber { get; set; }
+        [StringLength(15, MinimumLength = 14, ErrorMessage = "O campo {0} deve ser {2} ou {1} caracteres.")]
+        public string TelephoneNumber { get; set; }
 
         [DataType(DataType.Text)]
         [Required(ErrorMessage = "{0} requirido.")]
-        [StringLength(60, MinimumLength = 3, ErrorMessage = "O campo {0} deve ter entre {2} e {1}.")]
+        [StringLength(60, MinimumLength = 3, ErrorMessage = "O campo {0} deve ter entre {2} e {1} caracteres.")]
         [Display(Name = "Tipo de consulta")]
         public string AppointmentType { get; set; } // Provavelmente mudará, provavelmente será um enum
 
