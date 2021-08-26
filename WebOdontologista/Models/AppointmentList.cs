@@ -19,11 +19,13 @@ namespace WebOdontologista.Models
         public ulong Availability = 61440UL; // bits 12, 13, 14, 15 = 1, i.e, horário de almoço.
         public AppointmentList(Appointment appointment)
         {
+            Date = appointment.Date;
             MakeAppointment(appointment);
             Debug.WriteLine(ToString());
         }
         public void MakeAppointment(Appointment appointment)
         {
+
             if(!Available(appointment))
             {
                 throw new DomainException("Não foi possivel adicionar a consulta!");
@@ -53,7 +55,7 @@ namespace WebOdontologista.Models
             int finalBit = initialBit + n;
             for (int i = initialBit; i < finalBit; i++)
             {
-                if((1UL << i & Availability) > 0)
+                if(((1UL << i) & Availability) > 0)
                 {
                     return false;
                 }

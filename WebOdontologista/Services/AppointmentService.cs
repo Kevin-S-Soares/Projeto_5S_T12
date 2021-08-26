@@ -14,7 +14,7 @@ namespace WebOdontologista.Services
     {
         private readonly WebOdontologistaContext _context;
         private readonly DentistService _dentistService;
-        private AppointmentBook _book = new AppointmentBook();
+        public AppointmentBook Book = new AppointmentBook();
         public AppointmentService(WebOdontologistaContext context, DentistService dentistService)
         {
             _context = context;
@@ -22,12 +22,12 @@ namespace WebOdontologista.Services
             List<Dentist> dentists = _dentistService.FindAll();
             foreach(Dentist obj in dentists)
             {
-                _book.AddDentist(obj.Id);
+               Book.AddDentist(obj.Id);
             }
             List<Appointment> appointments = FindAll();
             foreach(Appointment obj in appointments)
             {
-                _book.AddAppointment(obj);
+                Book.AddAppointment(obj);
             }
         }
         public List<Appointment> FindAll()

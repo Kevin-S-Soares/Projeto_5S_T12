@@ -19,8 +19,15 @@ namespace WebOdontologista.Models
             {
                 if (node.Value.SameDay(appointment.Date))
                 {
-                    node.Value.MakeAppointment(appointment);
-                    return;
+                    try
+                    {
+                        node.Value.MakeAppointment(appointment);
+                        return;
+                    }
+                    catch(DomainException e)
+                    {
+                        throw new DomainException(e.Message);
+                    }
                 }
                 else if (node.Value.DayBefore(appointment.Date))
                 {

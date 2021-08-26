@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WebOdontologista.Models;
+using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.ViewModels;
 using WebOdontologista.Services;
 using WebOdontologista.Services.Exceptions;
@@ -37,8 +38,21 @@ namespace WebOdontologista.Controllers
                 formViewModel.Appointment = appointment;
                 return View(formViewModel);
             }
+            if(appointment.Date.Ticks < DateTime.Now.Ticks)
+            {
+                return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
+            }
+            try
+            {
+                _appointmentService.Book.AddAppointment(appointment);
+            }
+            catch (DomainException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
             await _appointmentService.InsertAsync(appointment);
             return RedirectToAction(nameof(Index));
+
         }
         public async Task<IActionResult> Delete(int? id)
         {
