@@ -31,21 +31,30 @@ namespace WebOdontologista.Models
         [Display(Name = "Tipo de consulta")]
         public string AppointmentType { get; set; } // Provavelmente mudará, provavelmente será um enum
 
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         [Required(ErrorMessage = "{0} requirido.")]
         [Display(Name = "Data")]
         public DateTime Date { get; set; }
+        [DataType(DataType.Time)]
+        [Required(ErrorMessage = "{0} requirido.")]
+        [Display(Name = "Horário")]
+        public TimeSpan Time { get; set; }
 
         [Display(Name = "Odontologista")]
         public int DentistId { get; set; }
         public Dentist Dentist { get; set; }
         public Appointment() { }
-        public Appointment(int durationInMinutes, string appointmentType, DateTime date, Dentist dentist)
+        public Appointment(int durationInMinutes, string appointmentType, DateTime date, TimeSpan time, Dentist dentist)
         {
             DurationInMinutes = durationInMinutes;
             AppointmentType = appointmentType;
             Date = date;
+            Time = time;
             Dentist = dentist;
+        }
+        public DateTime DateAndTime()
+        {
+            return Date + Time;
         }
     }
 }

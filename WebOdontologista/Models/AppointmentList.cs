@@ -29,7 +29,7 @@ namespace WebOdontologista.Models
                 throw new DomainException("Não foi possivel adicionar a consulta!");
             }
             int n = appointment.DurationInMinutes / 15;
-            int initialBit = (appointment.Date.Hour - 9) * 4 + appointment.Date.Minute / 15;
+            int initialBit = (appointment.Time.Hours - 9) * 4 + appointment.Time.Minutes / 15;
             int finalBit = initialBit + n;
             for (int i = initialBit; i < finalBit; i++)
             {
@@ -39,7 +39,7 @@ namespace WebOdontologista.Models
         public void CancelAppointment(Appointment appointment)
         {
             int n = appointment.DurationInMinutes / 15;
-            int initialBit = (appointment.Date.Hour - 9) * 4 + appointment.Date.Minute / 15;
+            int initialBit = (appointment.Time.Hours - 9) * 4 + appointment.Time.Minutes / 15;
             int finalBit = initialBit + n;
             for (int i = initialBit; i < finalBit; i++)
             {
@@ -49,7 +49,7 @@ namespace WebOdontologista.Models
         public bool Available(Appointment appointment)
         {
             int n = appointment.DurationInMinutes / 15;
-            int initialBit = (appointment.Date.Hour - 9) * 4 + appointment.Date.Minute / 15;
+            int initialBit = (appointment.Time.Hours - 9) * 4 + appointment.Time.Minutes / 15;
             int finalBit = initialBit + n;
             for (int i = initialBit; i < finalBit; i++)
             {

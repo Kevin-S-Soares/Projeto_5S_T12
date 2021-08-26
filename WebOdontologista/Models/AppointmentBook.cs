@@ -33,32 +33,19 @@ namespace WebOdontologista.Models
             Book[appointment.DentistId].AddLast(node);
             return;
         }
-        /*
-        public Dictionary<TimeSpan, string> FindAvailableTime(int id, DateTime date)
+        public List<TimeSpan> FindAvailableTime(Appointment appointment)
         {
             LinkedListNode<AppointmentList> node;
-            for (node = Book[id].First; node != null; node = node.Next)
+            for (node = Book[appointment.DentistId].First; node != null; node = node.Next)
             {
-                if (node.Value.SameDay(date))
+                if (node.Value.SameDay(appointment.Date))
                 {
-                    return node.Value.AvailableTime();
+                    return node.Value.AvailableTime(appointment);
                 }
             }
-            Dictionary<TimeSpan, string> result = new Dictionary<TimeSpan, string>();
-            for (int i = 0; i < 12; i++)
-            {
-                TimeSpan workTime = new TimeSpan(9, 15 * i, 0);
-                result.Add(workTime, null);
-            }
-            for (int i = 16; i < 36; i++)
-            {
-                TimeSpan workTime = new TimeSpan(9, 15 * i, 0);
-                result.Add(workTime, null);
-            }
-            return result;
+            return AppointmentList.EmptyList(appointment);
 
         }
-        */
 
     }
 }
