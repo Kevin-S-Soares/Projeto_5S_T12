@@ -1,33 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebOdontologista.Models.Exceptions;
 
 namespace WebOdontologista.Models
 {
     public class AppointmentBook
     {
-        public Dictionary<Dentist, LinkedList<AppointmentList>> Book { get; private set; } = new Dictionary<Dentist, LinkedList<AppointmentList>>();
+        public Dictionary<int, LinkedList<AppointmentList>> Book { get; private set; } = new Dictionary<int, LinkedList<AppointmentList>>();
         public AppointmentBook() { }
-        public void Verify(KeyValuePair<Dentist, LinkedList<AppointmentList>> kv, DateTime date, int durationInMinutes, Appointment appointment)
+        public void AddDentist(int id)
         {
-            LinkedList<AppointmentList> ScheduledAppointments = kv.Value;
+            Book.Add(id, new LinkedList<AppointmentList>());
+        }
+        public void AddAppointment(Appointment appointment)
+        {
             LinkedListNode<AppointmentList> node;
-            for (node = ScheduledAppointments.First; node.Next != null; node = node.Next)
+            for (node = Book[appointment.DentistId].First; node != null; node = node.Next)
             {
-                if(node.Value.SameDay(date))
+                if (node.Value.SameDay(appointment.Date))
                 {
-                    node.Value.MakeAppointment(date.TimeOfDay, durationInMinutes, appointment);
+                    node.Value.MakeAppointment(appointment);
                     return;
                 }
-                else if(node.Value.DayBefore(date))
+                else if (node.Value.DayBefore(appointment.Date))
                 {
-                        LinkedListNode<AppointmentList> newNode = new LinkedListNode<AppointmentList>(new AppointmentList(date, durationInMinutes, appointment));
-                        ScheduledAppointments.AddBefore(node, newNode);
-                        return;
+                    LinkedListNode<AppointmentList> newNode = new LinkedListNode<AppointmentList>(new AppointmentList(appointment));
+                    Book[appointment.DentistId].AddBefore(node, newNode);
+                    return;
                 }
             }
-            node = new LinkedListNode<AppointmentList>(new AppointmentList(date, durationInMinutes, appointment));
-            ScheduledAppointments.AddLast(node);
+            node = new LinkedListNode<AppointmentList>(new AppointmentList(appointment));
+            Book[appointment.DentistId].AddLast(node);
+            return;
         }
+        /*
+        public Dictionary<TimeSpan, string> FindAvailableTime(int id, DateTime date)
+        {
+            LinkedListNode<AppointmentList> node;
+            for (node = Book[id].First; node != null; node = node.Next)
+            {
+                if (node.Value.SameDay(date))
+                {
+                    return node.Value.AvailableTime();
+                }
+            }
+            Dictionary<TimeSpan, string> result = new Dictionary<TimeSpan, string>();
+            for (int i = 0; i < 12; i++)
+            {
+                TimeSpan workTime = new TimeSpan(9, 15 * i, 0);
+                result.Add(workTime, null);
+            }
+            for (int i = 16; i < 36; i++)
+            {
+                TimeSpan workTime = new TimeSpan(9, 15 * i, 0);
+                result.Add(workTime, null);
+            }
+            return result;
+
+        }
+        */
 
     }
 }

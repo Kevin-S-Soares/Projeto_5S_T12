@@ -16,6 +16,10 @@ namespace WebOdontologista.Services
         {
             _context = context;
         }
+        public List<Dentist> FindAll()
+        {
+            return _context.Dentist.OrderBy(obj => obj.Name).ToList();
+        }
         public async Task<List<Dentist>> FindAllAsync()
         {
             return await _context.Dentist.OrderBy(obj => obj.Name).ToListAsync();

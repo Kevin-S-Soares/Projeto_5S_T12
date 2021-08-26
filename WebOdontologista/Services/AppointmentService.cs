@@ -14,10 +14,26 @@ namespace WebOdontologista.Services
     {
         private readonly WebOdontologistaContext _context;
         private readonly DentistService _dentistService;
+        private AppointmentBook _book = new AppointmentBook();
         public AppointmentService(WebOdontologistaContext context, DentistService dentistService)
         {
             _context = context;
             _dentistService = dentistService;
+            List<Dentist> dentists = _dentistService.FindAll();
+            foreach(Dentist obj in dentists)
+            {
+                _book.AddDentist(obj.Id);
+            }
+            List<Appointment> appointments = FindAll();
+            foreach(Appointment obj in appointments)
+            {
+                _book.AddAppointment(obj);
+            }
+        }
+        public List<Appointment> FindAll()
+        {
+            List<Appointment> listOfAppointments = _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).ToList(); //.FindAll(obj => obj.Date > DateTime.Now); Produto final
+            return listOfAppointments;
         }
         public async Task<List<Appointment>> FindAllAsync()
         {
