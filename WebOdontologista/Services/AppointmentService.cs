@@ -32,12 +32,12 @@ namespace WebOdontologista.Services
         }
         public List<Appointment> FindAll()
         {
-            List<Appointment> listOfAppointments = _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).ToList(); //.FindAll(obj => obj.Date > DateTime.Now); Produto final
+            List<Appointment> listOfAppointments = _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.DateAndTime()).ToList(); //.FindAll(obj => DateAndTime() > DateTime.Now); Produto final
             return listOfAppointments;
         }
         public async Task<List<Appointment>> FindAllAsync()
         {
-            List<Appointment> listOfAppointments = await _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).ToListAsync(); //.FindAll(obj => obj.Date > DateTime.Now); Produto final
+            List<Appointment> listOfAppointments = await _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.DateAndTime()).ToListAsync(); //.FindAll(obj => DateAndTime() > DateTime.Now); Produto final
             return listOfAppointments;
         }
         public async Task<AppointmentFormViewModel> ViewModel()

@@ -40,6 +40,19 @@ namespace WebOdontologista.Models
             Book[appointment.DentistId].AddLast(node);
             return;
         }
+        public void RemoveAppointment(Appointment appointment)
+        {
+            LinkedListNode<AppointmentList> node;
+            for (node = Book[appointment.DentistId].First; node != null; node = node.Next)
+            {
+                if (node.Value.SameDay(appointment.Date))
+                {
+                    node.Value.CancelAppointment(appointment);
+                    return;
+                }
+            }
+            throw new DomainException("Consulta não encontrada!");
+        }
         public List<TimeSpan> FindAvailableTime(Appointment appointment)
         {
             LinkedListNode<AppointmentList> node;

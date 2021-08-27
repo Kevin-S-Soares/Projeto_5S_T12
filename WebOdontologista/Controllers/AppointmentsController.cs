@@ -34,7 +34,7 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Appointment appointment, int? step, bool? toReturn)
         {
-            if (step.Value == 1)
+            if (step.HasValue && step.Value == 1)
             {
                 ViewData["step"] = 2;
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
@@ -43,21 +43,20 @@ namespace WebOdontologista.Controllers
                 formViewModel.AvailableTime =  _appointmentService.Book.FindAvailableTime(appointment);
                 return View(formViewModel);
             }
-            ViewData["step"] = 2;
             if (!ModelState.IsValid)
             {
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 formViewModel.Appointment = appointment;
                 return View(formViewModel);
             }
-            if(toReturn.Value)
+            if(toReturn.HasValue && toReturn.Value)
             {
                 ViewData["step"] = 1;
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 formViewModel.Appointment = appointment;
                 return View(formViewModel);
             }
-            if(appointment.Date.Ticks < DateTime.Now.Ticks)
+            if(appointment.DateAndTime().Ticks < DateTime.Now.Ticks)
             {
                 return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
             }
@@ -104,19 +103,42 @@ namespace WebOdontologista.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
+            ViewData["step"] = 1;
             AppointmentFormViewModel obj = await _appointmentService.ViewModel();
             obj.Appointment = appointment;
             return View(obj);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Appointment appointment)
+        public async Task<IActionResult> Edit(int id, Appointment appointment, int? step, bool? toReturn)
         {
+            if (step.HasValue && step.Value == 1)
+            {
+                ViewData["step"] = 2;
+                appointment = await _appointmentService.FindByIdAsync(id);
+                AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
+                formViewModel.Appointment = appointment;
+                formViewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(formViewModel.Appointment.DentistId);
+                _appointmentService.Book.RemoveAppointment(appointment);
+                formViewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
+                return View(formViewModel);
+            }
             if (!ModelState.IsValid)
             {
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 formViewModel.Appointment = appointment;
                 return View(formViewModel);
+            }
+            if (toReturn.HasValue && toReturn.Value)
+            {
+                ViewData["step"] = 1;
+                AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
+                formViewModel.Appointment = appointment;
+                return View(formViewModel);
+            }
+            if (appointment.DateAndTime().Ticks < DateTime.Now.Ticks)
+            {
+                return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
             }
             if (id != appointment.Id)
             {
@@ -124,13 +146,13 @@ namespace WebOdontologista.Controllers
             }
             try
             {
+                _appointmentService.Book.AddAppointment(appointment);
                 await _appointmentService.Update(appointment);
                 return RedirectToAction(nameof(Index));
             }
             catch(ApplicationException e)
             {
                 return RedirectToAction(nameof(Error), new { message = e.Message });
-                
             }
         }
         public IActionResult Search()

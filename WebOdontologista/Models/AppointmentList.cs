@@ -105,7 +105,7 @@ namespace WebOdontologista.Models
         }
         public bool DayBefore(DateTime date)
         {
-            if(Date.Year < date.Year || Date.Month < date.Month || Date.Day < date.Day)
+            if(Date.Ticks < date.Ticks)
             {
                 return true;
             }
