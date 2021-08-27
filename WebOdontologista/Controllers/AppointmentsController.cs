@@ -15,10 +15,11 @@ namespace WebOdontologista.Controllers
     public class AppointmentsController : Controller
     {
         private readonly AppointmentService _appointmentService;
-
-        public AppointmentsController(AppointmentService appointmentService)
+        private readonly DentistService _dentistService;
+        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService)
         {
             _appointmentService = appointmentService;
+            _dentistService = dentistService;
         }
         public async Task<IActionResult> Index()
         {
@@ -26,14 +27,32 @@ namespace WebOdontologista.Controllers
         }
         public async Task<IActionResult> Create()
         {
+            ViewData["step"] = 1;
             return View(await _appointmentService.ViewModel());
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Appointment appointment)
+        public async Task<IActionResult> Create(Appointment appointment, int? step, bool? toReturn)
         {
+            if (step.Value == 1)
+            {
+                ViewData["step"] = 2;
+                AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
+                formViewModel.Appointment = appointment;
+                formViewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(formViewModel.Appointment.DentistId);
+                formViewModel.AvailableTime =  _appointmentService.Book.FindAvailableTime(appointment);
+                return View(formViewModel);
+            }
+            ViewData["step"] = 2;
             if (!ModelState.IsValid)
             {
+                AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
+                formViewModel.Appointment = appointment;
+                return View(formViewModel);
+            }
+            if(toReturn.Value)
+            {
+                ViewData["step"] = 1;
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 formViewModel.Appointment = appointment;
                 return View(formViewModel);
