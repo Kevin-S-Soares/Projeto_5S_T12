@@ -112,13 +112,14 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Appointment appointment, int? step, bool? toReturn)
         {
+            int b = 0;
             if (step.HasValue && step.Value == 1)
             {
                 ViewData["step"] = 2;
-                appointment = await _appointmentService.FindByIdAsync(id);
+                ViewData["id"] = id;
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
+                appointment.Dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
                 formViewModel.Appointment = appointment;
-                formViewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(formViewModel.Appointment.DentistId);
                 _appointmentService.Book.RemoveAppointment(appointment);
                 formViewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
                 return View(formViewModel);
@@ -146,8 +147,9 @@ namespace WebOdontologista.Controllers
             }
             try
             {
-                _appointmentService.Book.AddAppointment(appointment);
-                await _appointmentService.Update(appointment);
+                // Update não é permitido neste caso, framework não deixa
+                await _appointmentService.RemoveAsync(id); 
+                await _appointmentService.InsertAsync(appointment);
                 return RedirectToAction(nameof(Index));
             }
             catch(ApplicationException e)

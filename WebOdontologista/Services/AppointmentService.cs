@@ -51,9 +51,14 @@ namespace WebOdontologista.Services
             _context.Add(appointment);
             await _context.SaveChangesAsync();
         }
+        public Appointment FindById(int id)
+        {
+            return _context.Appointment.AsNoTracking().Include(obj => obj.Dentist).FirstOrDefault(obj => obj.Id == id);
+        }
         public async Task<Appointment> FindByIdAsync(int id)
         {
-            return await _context.Appointment.Include(obj => obj.Dentist).FirstOrDefaultAsync(obj => obj.Id == id);
+            Appointment appointment = await _context.Appointment.AsNoTracking().Include(obj => obj.Dentist).FirstOrDefaultAsync(obj => obj.Id == id);
+            return appointment;
         }
         public async Task RemoveAsync(int id)
         {
@@ -61,7 +66,7 @@ namespace WebOdontologista.Services
             _context.Appointment.Remove(appointment);
             await _context.SaveChangesAsync();
         }
-        public async Task Update(Appointment appointment)
+        public async Task UpdateAsync(Appointment appointment)
         {
             bool hasAny = await _context.Appointment.AnyAsync(obj => obj.Id == appointment.Id);
             if (!hasAny)
