@@ -112,7 +112,6 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Appointment appointment, int? step, bool? toReturn)
         {
-            int b = 0;
             if (step.HasValue && step.Value == 1)
             {
                 ViewData["step"] = 2;
