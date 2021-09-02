@@ -42,7 +42,7 @@
         {
         <tr>
             <td>
-                @item.DateAndTime()
+                @item.DateAndTime().ToString("dd/MM/yy HH:mm")
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DurationInMinutes)

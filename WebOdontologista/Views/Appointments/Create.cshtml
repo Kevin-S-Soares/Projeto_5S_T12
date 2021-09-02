@@ -79,7 +79,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Appointment.Date" class="control-label"> </label>
-                    <input asp-for="Appointment.Date" value="@Model.Appointment.Date" class="form-control" disabled />
+                    <input type="text" value="@Model.Appointment.Date.ToString("dd/MM/yyyy")" class="form-control" disabled />
                     <span asp-validation-for="Appointment.Date" class="text-danger"></span>
                 </div>
                 <div class="form-group">

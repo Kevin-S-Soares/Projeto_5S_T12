@@ -22,7 +22,7 @@ namespace WebOdontologista.Models
                     try
                     {
                         node.Value.MakeAppointment(appointment);
-                        return;
+                        break;
                     }
                     catch(DomainException e)
                     {
@@ -33,12 +33,14 @@ namespace WebOdontologista.Models
                 {
                     LinkedListNode<AppointmentList> newNode = new LinkedListNode<AppointmentList>(new AppointmentList(appointment));
                     Book[appointment.DentistId].AddBefore(node, newNode);
-                    return;
+                    break;
                 }
             }
-            node = new LinkedListNode<AppointmentList>(new AppointmentList(appointment));
-            Book[appointment.DentistId].AddLast(node);
-            return;
+            if(node == null)
+            {
+                node = new LinkedListNode<AppointmentList>(new AppointmentList(appointment));
+                Book[appointment.DentistId].AddLast(node);
+            }
         }
         public void RemoveAppointment(Appointment appointment)
         {
@@ -55,15 +57,21 @@ namespace WebOdontologista.Models
         }
         public List<TimeSpan> FindAvailableTime(Appointment appointment)
         {
+            List<TimeSpan> result = null;
             LinkedListNode<AppointmentList> node;
             for (node = Book[appointment.DentistId].First; node != null; node = node.Next)
             {
                 if (node.Value.SameDay(appointment.Date))
                 {
-                    return node.Value.AvailableTime(appointment);
+                    result = node.Value.AvailableTime(appointment);
+                    break;
                 }
             }
-            return AppointmentList.EmptyList(appointment);
+            if(node == null)
+            {
+                result = AppointmentList.EmptyList(appointment);
+            }
+            return result;
 
         }
 
