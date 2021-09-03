@@ -12,5 +12,6 @@ namespace WebOdontologista.Data
         public WebOdontologistaContext (DbContextOptions<WebOdontologistaContext> options) : base(options)  { }
         public DbSet<Dentist> Dentist { get; set; }
         public DbSet<Appointment> Appointment { get; set; }
+
     }
 }
