@@ -60,32 +60,6 @@ namespace WebOdontologista.Models
             }
             return result;
         }
-        public bool SameDay(DateTime date)
-        {
-            bool result = false;
-            if (Date.Day == date.Day && Date.Month == date.Month && Date.Year == date.Year)
-            {
-                result = true;
-            }
-            else
-            {
-                result = false;
-            }
-            return result;
-        }
-        public bool DayBefore(DateTime date)
-        {
-            bool result = false;
-            if (Date.Ticks < date.Ticks)
-            {
-                result = true;
-            }
-            else
-            {
-                result = false;
-            }
-            return result;
-        }
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -93,11 +67,11 @@ namespace WebOdontologista.Models
             {
                 if ((1UL << i & _availability) == 0)
                 {
-                    sb.AppendLine(new TimeSpan(9, 15 * i, 0).ToString() + " - " + "Disponível");
+                    sb.AppendLine(new TimeSpan(9, 15 * i, 0).ToString("HH:mm") + " - " + "Disponível");
                 }
                 else
                 {
-                    sb.AppendLine(new TimeSpan(9, 15 * i, 0).ToString() + " - " + "Indisponível");
+                    sb.AppendLine(new TimeSpan(9, 15 * i, 0).ToString("HH:mm") + " - " + "Indisponível");
                 }
             }
             return sb.ToString();
