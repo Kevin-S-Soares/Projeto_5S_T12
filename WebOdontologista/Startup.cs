@@ -42,13 +42,14 @@ namespace WebOdontologista
                     options.UseMySql(Configuration.GetConnectionString("WebOdontologistaContext"), 
                         builder => builder.MigrationsAssembly("WebOdontologista")));
             */
-            
+            services.AddDbContext<WebOdontologistaContext>(options =>
+        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<AppointmentService>();
             services.AddScoped<DentistService>();
 
             
-            services.AddDbContext<WebOdontologistaContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             
         }
 

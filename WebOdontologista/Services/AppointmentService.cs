@@ -7,6 +7,7 @@ using WebOdontologista.Models;
 using WebOdontologista.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using WebOdontologista.Services.Exceptions;
+using System.Diagnostics;
 
 namespace WebOdontologista.Services
 {
@@ -75,7 +76,10 @@ namespace WebOdontologista.Services
             }
             try
             {
-                _context.Appointment.Update(appointment);
+                var entry = await _context.Appointment.FirstAsync(obj => obj.Id == appointment.Id);
+                Debug.WriteLine(entry);
+                Debug.WriteLine(appointment);
+                _context.Entry(entry).CurrentValues.SetValues(appointment);
                 await _context.SaveChangesAsync();
             } catch(DbUpdateConcurrencyException e)
             {

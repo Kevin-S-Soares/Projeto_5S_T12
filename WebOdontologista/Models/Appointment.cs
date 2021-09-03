@@ -7,7 +7,7 @@ namespace WebOdontologista.Models
 {
     public class Appointment
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public int Id { get; set; }
 
         [Display(Name = "Duração")]
@@ -52,9 +52,39 @@ namespace WebOdontologista.Models
             Time = time;
             Dentist = dentist;
         }
+        public Appointment(Appointment appointment)
+        {
+            Patient = appointment.Patient;
+            TelephoneNumber = appointment.TelephoneNumber;
+            DurationInMinutes = appointment.DurationInMinutes;
+            AppointmentType = appointment.AppointmentType;
+            Date = appointment.Date;
+            Time = appointment.Time;
+            DentistId = appointment.DentistId;
+        }
         public DateTime DateAndTime()
         {
             return Date + Time;
+        }
+        public override string ToString()
+        {
+            return "Id: " +
+                Id +
+                "\nPatient: " +
+                Patient +
+                "\nTelephoneNumber: " +
+                TelephoneNumber +
+                "\nDurationInMinutes: " +
+                DurationInMinutes +
+                "\nAppointmentType: " +
+                AppointmentType +
+                "\nDate: " +
+                Date +
+                "\nTime: " +
+                Time +
+                "\nDentistId: " +
+                DentistId;
+
         }
     }
 }

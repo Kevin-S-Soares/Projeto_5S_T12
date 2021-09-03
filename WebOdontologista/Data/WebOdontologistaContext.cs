@@ -9,7 +9,7 @@ namespace WebOdontologista.Data
 {
     public class WebOdontologistaContext : DbContext
     {
-        public WebOdontologistaContext (DbContextOptions<WebOdontologistaContext> options) : base(options) { }
+        public WebOdontologistaContext (DbContextOptions<WebOdontologistaContext> options) : base(options)  { }
         public DbSet<Dentist> Dentist { get; set; }
         public DbSet<Appointment> Appointment { get; set; }
     }
