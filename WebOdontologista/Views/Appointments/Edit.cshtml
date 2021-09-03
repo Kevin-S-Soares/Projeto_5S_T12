@@ -44,6 +44,7 @@
                 <input asp-for="Appointment.Date" class="form-control" />
                 <span asp-validation-for="Appointment.Date" class="text-danger"></span>
             </div>
+            <input type="hidden" name="Appointment.Id" value="@Model.Appointment.Id" />
             <input type="hidden" name="Appointment.Time" value="@Model.Appointment.Time" />
             <input type="hidden" name="step" value="@ViewData["step"]" class="form-control" />
             <div class="form-group">

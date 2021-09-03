@@ -18,7 +18,6 @@ namespace WebOdontologista.Controllers
         private readonly AppointmentService _appointmentService;
         private readonly DentistService _dentistService;
         private static Appointment _oldAppointment = null;
-        private static Appointment _toUpdateAppointment = null;
         public AppointmentsController(AppointmentService appointmentService, DentistService dentistService)
         {
             _appointmentService = appointmentService;
@@ -101,15 +100,16 @@ namespace WebOdontologista.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não provido" });
             }
-            _toUpdateAppointment = await _appointmentService.FindByIdAsync(id.Value);
-            if (_toUpdateAppointment == null)
+            Appointment appointment = await _appointmentService.FindByIdAsync(id.Value);
+            if (appointment == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
             }
             ViewData["step"] = 1;
             AppointmentFormViewModel obj = await _appointmentService.ViewModel();
-            obj.Appointment = _oldAppointment = new Appointment(_toUpdateAppointment);
-            ViewData["id"] = _toUpdateAppointment.Id;
+            obj.Appointment = new Appointment(appointment);
+            _oldAppointment = appointment;
+            ViewData["id"] = appointment.Id;
             return View(obj);
         }
         [HttpPost]
@@ -118,13 +118,10 @@ namespace WebOdontologista.Controllers
         {
             if (step.HasValue && step.Value == 1)
             {
+                Debug.WriteLine(id);
+                Debug.WriteLine(appointment.Id);
                 ViewData["step"] = 2;
                 ViewData["id"] = id;
-                _toUpdateAppointment.Patient = appointment.Patient;
-                _toUpdateAppointment.TelephoneNumber = appointment.TelephoneNumber;
-                _toUpdateAppointment.DentistId = appointment.DentistId;
-                _toUpdateAppointment.DurationInMinutes = appointment.DurationInMinutes;
-                _toUpdateAppointment.Date = appointment.Date;
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 appointment.Dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
                 formViewModel.Appointment = appointment;
@@ -149,15 +146,16 @@ namespace WebOdontologista.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
             }
-            if (id != _toUpdateAppointment.Id)
+            Debug.WriteLine(id);
+            Debug.WriteLine(appointment.Id);
+
+            if (id != appointment.Id)
             {
                 return RedirectToAction(nameof(Error), new { message = "Ids são diferentes" });
             }
-
-            _toUpdateAppointment.Time = appointment.Time;
             try
             {
-                await _appointmentService.UpdateAsync(_toUpdateAppointment);
+                await _appointmentService.UpdateAsync(appointment);
                 return RedirectToAction(nameof(Index));
             }
             catch(ApplicationException e)

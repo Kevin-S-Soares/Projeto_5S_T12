@@ -54,6 +54,7 @@ namespace WebOdontologista.Models
         }
         public Appointment(Appointment appointment)
         {
+            Id = appointment.Id;
             Patient = appointment.Patient;
             TelephoneNumber = appointment.TelephoneNumber;
             DurationInMinutes = appointment.DurationInMinutes;
@@ -84,7 +85,6 @@ namespace WebOdontologista.Models
                 Time +
                 "\nDentistId: " +
                 DentistId;
-
         }
     }
 }
