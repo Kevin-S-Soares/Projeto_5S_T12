@@ -6,73 +6,61 @@ namespace WebOdontologista.Models
 {
     public class AppointmentBook
     {
-        public Dictionary<int, LinkedList<AppointmentList>> Book { get; private set; } = new Dictionary<int, LinkedList<AppointmentList>>();
+        public Dictionary<int, Dictionary<DateTime, AppointmentList>> Book { get; private set; } = new Dictionary<int, Dictionary<DateTime, AppointmentList>>();
         public AppointmentBook() { }
         public void AddDentist(int id)
         {
-            Book.Add(id, new LinkedList<AppointmentList>());
+            Book.Add(id, new Dictionary<DateTime, AppointmentList>());
         }
         public void AddAppointment(Appointment appointment)
         {
-            LinkedListNode<AppointmentList> node;
-            for (node = Book[appointment.DentistId].First; node != null; node = node.Next)
+            if (Book[appointment.DentistId].ContainsKey(appointment.Date))
             {
-                if (node.Value.SameDay(appointment.Date))
+                try
                 {
-                    try
-                    {
-                        node.Value.MakeAppointment(appointment);
-                        break;
-                    }
-                    catch(DomainException e)
-                    {
-                        throw new DomainException(e.Message);
-                    }
+                    Book[appointment.DentistId][appointment.Date].MakeAppointment(appointment);
                 }
-                else if (node.Value.DayBefore(appointment.Date))
+                catch (ApplicationException e)
                 {
-                    LinkedListNode<AppointmentList> newNode = new LinkedListNode<AppointmentList>(new AppointmentList(appointment));
-                    Book[appointment.DentistId].AddBefore(node, newNode);
-                    break;
+                    Console.WriteLine("Erro: " + e.Message);
                 }
+
             }
-            if(node == null)
+            else
             {
-                node = new LinkedListNode<AppointmentList>(new AppointmentList(appointment));
-                Book[appointment.DentistId].AddLast(node);
+                Book[appointment.DentistId].Add(appointment.Date, new AppointmentList(appointment));
             }
         }
         public void RemoveAppointment(Appointment appointment)
         {
-            LinkedListNode<AppointmentList> node;
-            for (node = Book[appointment.DentistId].First; node != null; node = node.Next)
+            if (Book[appointment.DentistId].ContainsKey(appointment.Date))
             {
-                if (node.Value.SameDay(appointment.Date))
+                try
                 {
-                    node.Value.CancelAppointment(appointment);
-                    return;
+                    Book[appointment.DentistId][appointment.Date].CancelAppointment(appointment);
+                }
+                catch (ApplicationException e)
+                {
+                    Console.WriteLine("Erro: " + e.Message);
                 }
             }
-            throw new DomainException("Consulta não encontrada!");
+            else
+            {
+                throw new DomainException("Consulta não encontrada!");
+            }
         }
         public List<TimeSpan> FindAvailableTime(Appointment appointment)
         {
-            List<TimeSpan> result = null;
-            LinkedListNode<AppointmentList> node;
-            for (node = Book[appointment.DentistId].First; node != null; node = node.Next)
+            List<TimeSpan> result;
+            if (Book[appointment.DentistId].ContainsKey(appointment.Date))
             {
-                if (node.Value.SameDay(appointment.Date))
-                {
-                    result = node.Value.AvailableTime(appointment);
-                    break;
-                }
+                result = Book[appointment.DentistId][appointment.Date].AvailableTime(appointment);
             }
-            if(node == null)
+            else
             {
                 result = AppointmentList.EmptyList(appointment);
             }
             return result;
-
         }
 
     }
