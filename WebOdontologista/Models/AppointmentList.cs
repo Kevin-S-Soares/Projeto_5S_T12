@@ -11,11 +11,9 @@ namespace WebOdontologista.Models
          * 0 = Disponível.
          * 1 = Indisponível.
          */
-        public DateTime Date { get; set; }
         private ulong _availability = 61440UL; // bits 12, 13, 14, 15 = 1, i.e, horário de almoço.
         public AppointmentList(Appointment appointment)
         {
-            Date = appointment.Date;
             MakeAppointment(appointment);
         }
         public void MakeAppointment(Appointment appointment)

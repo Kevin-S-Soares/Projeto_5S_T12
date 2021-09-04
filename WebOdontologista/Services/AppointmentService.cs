@@ -20,25 +20,16 @@ namespace WebOdontologista.Services
         {
             _context = context;
             _dentistService = dentistService;
-            List<Dentist> dentists = _dentistService.FindAll();
-            foreach(Dentist obj in dentists)
-            {
-               Book.AddDentist(obj.Id);
-            }
-            List<Appointment> appointments = FindAll();
-            foreach(Appointment obj in appointments)
-            {
-                Book.AddAppointment(obj);
-            }
+            BookingService();
         }
         public List<Appointment> FindAll()
         {
-            List<Appointment> listOfAppointments = _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.DateAndTime()).ToList(); //.FindAll(obj => DateAndTime() > DateTime.Now); Produto final
+            List<Appointment> listOfAppointments = _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.DateAndTime()).ToList(); //.FindAll(obj => obj.DateAndTime() > DateTime.Now); Produto final
             return listOfAppointments;
         }
         public async Task<List<Appointment>> FindAllAsync()
         {
-            List<Appointment> listOfAppointments = await _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.DateAndTime()).ToListAsync(); //.FindAll(obj => DateAndTime() > DateTime.Now); Produto final
+            List<Appointment> listOfAppointments = await _context.Appointment.Include(obj => obj.Dentist).OrderBy(obj => obj.DateAndTime()).ToListAsync(); //.FindAll(obj => obj.DateAndTime() > DateTime.Now); Produto final
             return listOfAppointments;
         }
         public async Task<AppointmentFormViewModel> ViewModel()
@@ -109,6 +100,22 @@ namespace WebOdontologista.Services
                 result = result.Where(obj => obj.Date <= maxDate.Value);
             }
             return await result.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).GroupBy(obj => obj.Dentist).ToListAsync();
+        }
+        private void BookingService()
+        {
+            List<Appointment> appointments = FindAll();
+            foreach (Appointment obj in appointments)
+            {
+                if (Book.Dentists.ContainsKey(obj.DentistId))
+                {
+                    Book.AddAppointment(obj);
+                }
+                else
+                {
+                    Book.AddDentist(obj.DentistId);
+                    Book.AddAppointment(obj);
+                }
+            }
         }
     }
 }
