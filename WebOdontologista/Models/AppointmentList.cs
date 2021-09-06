@@ -18,9 +18,8 @@ namespace WebOdontologista.Models
         }
         public void MakeAppointment(Appointment appointment)
         {
-            byte[] durationInBinary = new byte[] { 0, 1, 3, 7, 15 };
             int numberOfBits = appointment.DurationInMinutes / 15;
-            ulong duration = durationInBinary[numberOfBits];
+            ulong duration = (1UL << numberOfBits) - 1UL;
             int initialBit = (appointment.Time.Hours - 9) * 4 + appointment.Time.Minutes / 15;
             duration <<= initialBit;
             if ((_availability & duration) > 0UL)
@@ -31,9 +30,8 @@ namespace WebOdontologista.Models
         }
         public void CancelAppointment(Appointment appointment)
         {
-            byte[] durationInBinary = new byte[] { 0, 1, 3, 7, 15 };
             int numberOfBits = appointment.DurationInMinutes / 15;
-            ulong duration = durationInBinary[numberOfBits];
+            ulong duration = (1UL << numberOfBits) - 1UL;
             int initialBit = (appointment.Time.Hours - 9) * 4 + appointment.Time.Minutes / 15;
             duration <<= initialBit;
             if ((_availability & duration) != duration)
@@ -45,9 +43,8 @@ namespace WebOdontologista.Models
         public List<TimeSpan> AvailableTime(Appointment appointment)
         {
             List<TimeSpan> result = new List<TimeSpan>();
-            byte[] durationInBinary = new byte[] { 0, 1, 3, 7, 15 };
             int numberOfBits = appointment.DurationInMinutes / 15;
-            ulong mask = durationInBinary[numberOfBits];
+            ulong mask = (1UL << numberOfBits) - 1UL;
             for (int i = 0; i < 36 - numberOfBits; i++)
             {
                 if ((mask & _availability) == 0)
@@ -77,10 +74,9 @@ namespace WebOdontologista.Models
         public static List<TimeSpan> EmptyList(Appointment appointment)
         {
             List<TimeSpan> result = new List<TimeSpan>();
-            byte[] binaryNumber = new byte[] { 0, 1, 3, 7, 15 };
             ulong availability = 61440UL;
             int numberOfBits = appointment.DurationInMinutes / 15;
-            ulong mask = binaryNumber[numberOfBits];
+            ulong mask = (1UL << numberOfBits) - 1UL;
             for (int i = 0; i < 36 - numberOfBits; i++)
             {
                 if ((mask & availability) == 0)
