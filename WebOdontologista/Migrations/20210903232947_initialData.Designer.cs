@@ -9,7 +9,7 @@ using WebOdontologista.Data;
 
 namespace WebOdontologista.Migrations
 {
-    [DbContext(typeof(WebOdontologistaContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20210903232947_initialData")]
     partial class initialData
     {

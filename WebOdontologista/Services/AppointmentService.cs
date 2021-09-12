@@ -13,10 +13,10 @@ namespace WebOdontologista.Services
 {
     public class AppointmentService
     {
-        private readonly WebOdontologistaContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly DentistService _dentistService;
         public AppointmentBook Book = new AppointmentBook();
-        public AppointmentService(WebOdontologistaContext context, DentistService dentistService)
+        public AppointmentService(ApplicationDbContext context, DentistService dentistService)
         {
             _context = context;
             _dentistService = dentistService;

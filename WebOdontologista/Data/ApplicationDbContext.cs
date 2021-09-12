@@ -7,9 +7,9 @@ using WebOdontologista.Models;
 
 namespace WebOdontologista.Data
 {
-    public class WebOdontologistaContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
-        public WebOdontologistaContext (DbContextOptions<WebOdontologistaContext> options) : base(options)  { }
+        public ApplicationDbContext (DbContextOptions<ApplicationDbContext> options) : base(options)  { }
         public DbSet<Dentist> Dentist { get; set; }
         public DbSet<Appointment> Appointment { get; set; }
 

@@ -11,8 +11,8 @@ namespace WebOdontologista.Services
 {
     public class DentistService
     {
-        private readonly WebOdontologistaContext _context;
-        public DentistService(WebOdontologistaContext context)
+        private readonly ApplicationDbContext _context;
+        public DentistService(ApplicationDbContext context)
         {
             _context = context;
         }
