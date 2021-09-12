@@ -14,7 +14,7 @@ namespace WebOdontologista.Models
         }
         public void AddAppointment(Appointment appointment)
         {
-            if(!Dentists.ContainsKey(appointment.DentistId))
+            if (!Dentists.ContainsKey(appointment.DentistId))
             {
                 AddDentist(appointment.DentistId);
             }
@@ -41,25 +41,7 @@ namespace WebOdontologista.Models
         public List<TimeSpan> FindAvailableTime(Appointment appointment)
         {
             List<TimeSpan> result;
-            if (Dentists.ContainsKey(appointment.DentistId))
-            {
-                if (Dentists[appointment.DentistId].ContainsKey(appointment.Date))
-                {
-                    result = Dentists[appointment.DentistId][appointment.Date].AvailableTime(appointment);
-                }
-                else
-                {
-                    result = AppointmentList.EmptyList(appointment);
-                }
-            }
-            else
-            {
-                result = AppointmentList.EmptyList(appointment);
-            }
-            return result;
-            /*
-            List<TimeSpan> result;
-            if (Dentists[appointment.DentistId].ContainsKey(appointment.Date))
+            if (Dentists.ContainsKey(appointment.DentistId) && Dentists[appointment.DentistId].ContainsKey(appointment.Date))
             {
                 result = Dentists[appointment.DentistId][appointment.Date].AvailableTime(appointment);
             }
@@ -68,7 +50,6 @@ namespace WebOdontologista.Models
                 result = AppointmentList.EmptyList(appointment);
             }
             return result;
-            */
         }
     }
 }
