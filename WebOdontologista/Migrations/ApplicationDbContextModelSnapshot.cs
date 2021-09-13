@@ -9,7 +9,7 @@ using WebOdontologista.Data;
 namespace WebOdontologista.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class WebOdontologistaContextModelSnapshot : ModelSnapshot
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

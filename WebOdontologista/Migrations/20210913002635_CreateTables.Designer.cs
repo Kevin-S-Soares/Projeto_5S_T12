@@ -10,8 +10,8 @@ using WebOdontologista.Data;
 namespace WebOdontologista.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210913000659_IdentityMigration")]
-    partial class IdentityMigration
+    [Migration("20210913002635_CreateTables")]
+    partial class CreateTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
