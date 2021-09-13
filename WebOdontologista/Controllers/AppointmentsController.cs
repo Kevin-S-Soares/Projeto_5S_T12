@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +14,7 @@ using WebOdontologista.Services.Exceptions;
 
 namespace WebOdontologista.Controllers
 {
+    [Authorize]
     public class AppointmentsController : Controller
     {
         private readonly AppointmentService _appointmentService;
