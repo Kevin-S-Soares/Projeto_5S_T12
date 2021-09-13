@@ -9,7 +9,6 @@ using WebOdontologista.Models;
 
 namespace WebOdontologista.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
 
