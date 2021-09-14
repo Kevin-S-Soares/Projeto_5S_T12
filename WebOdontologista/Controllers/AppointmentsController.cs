@@ -29,15 +29,21 @@ namespace WebOdontologista.Controllers
         {
             return View(await _appointmentService.FindAllAsync());
         }
-        public async Task<IActionResult> Create()
+        [HttpGet]
+        public async Task<IActionResult> Create(int? error)
         {
+            ViewData["error"] = 0;
             ViewData["step"] = 1;
+            if(error.HasValue)
+            {
+                ViewData["error"] = error.Value;
+            }
             AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
-            if(viewModel.Dentists.Count == 0)
+            if (viewModel.Dentists.Count == 0)
             {
                 return Redirect("/Dentists/Create?ReturnAppointment=true");
             }
-            return View(await _appointmentService.ViewModel());
+            return View(viewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -45,11 +51,17 @@ namespace WebOdontologista.Controllers
         {
             if (step.HasValue && step.Value == 1)
             {
+                ViewData["error"] = 0;
                 ViewData["step"] = 2;
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 formViewModel.Appointment = appointment;
                 formViewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(formViewModel.Appointment.DentistId);
                 formViewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
+                if (formViewModel.AvailableTime.Count == 0)
+                {
+                    //return Redirect("/Appointments/Create?error=1");
+                    return RedirectToAction(nameof(Create), new {error = 1 });
+                }
                 return View(formViewModel);
             }
             if (!ModelState.IsValid)
@@ -60,6 +72,7 @@ namespace WebOdontologista.Controllers
             }
             if (toReturn.HasValue && toReturn.Value)
             {
+                ViewData["error"] = 0;
                 ViewData["step"] = 1;
                 AppointmentFormViewModel formViewModel = await _appointmentService.ViewModel();
                 formViewModel.Appointment = appointment;
@@ -67,7 +80,7 @@ namespace WebOdontologista.Controllers
             }
             if (appointment.DateAndTime().Ticks < DateTime.Now.Ticks)
             {
-                return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
+                return Redirect("/Appointments/Create?error=2");
             }
             try
             {
@@ -165,7 +178,7 @@ namespace WebOdontologista.Controllers
                 await _appointmentService.UpdateAsync(appointment);
                 return RedirectToAction(nameof(Index));
             }
-            catch(ApplicationException e)
+            catch (ApplicationException e)
             {
                 return RedirectToAction(nameof(Error), new { message = e.Message });
             }

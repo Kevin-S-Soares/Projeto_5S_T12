@@ -4,7 +4,14 @@
 }
 
 <h2>@ViewData["Title"]</h2>
-
+@if ((int)ViewData["error"] == 1)
+{
+    <h4>Não há horário disponível neste dia!</h4>
+}
+@if ((int)ViewData["error"] == 2)
+{
+    <h4>Data inválida!</h4>
+}
 <hr />
 <div class="row">
     <div class="col-md-4">
