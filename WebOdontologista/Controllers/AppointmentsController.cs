@@ -32,6 +32,11 @@ namespace WebOdontologista.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["step"] = 1;
+            AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+            if(viewModel.Dentists.Count == 0)
+            {
+                return Redirect("/Dentists/Create?ReturnAppointment=true");
+            }
             return View(await _appointmentService.ViewModel());
         }
         [HttpPost]

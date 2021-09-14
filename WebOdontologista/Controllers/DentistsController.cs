@@ -27,19 +27,28 @@ namespace WebOdontologista.Controllers
         {
             return View(await _dentistService.FindAllAsync());
         }
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult Create(bool? ReturnAppointment)
         {
+            if(ReturnAppointment.HasValue)
+            {
+                ViewData["ReturnAppointment"] = "true";
+            }
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Dentist dentist)
+        public async Task<IActionResult> Create(Dentist dentist, string ReturnAppointment)
         {
             if (!ModelState.IsValid)
             {
                 return View(dentist);
             }
             await _dentistService.InsertAsync(dentist);
+            if(ReturnAppointment != null)
+            {
+                return Redirect("/Appointments/Create/");
+            }
             return RedirectToAction(nameof(Index));
         }
         public async Task<IActionResult> Delete(int? id)
