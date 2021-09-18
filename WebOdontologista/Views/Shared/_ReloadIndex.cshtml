@@ -1,6 +1,6 @@
 ﻿<script>
     function reload() {
         var select = document.getElementById("show");
-        window.location.href = window.location.href + "?show=" + select.value;
+        window.location.href = window.location.href.split("?")[0] + "?show=" + select.value;
     }
 </script>
