@@ -11,6 +11,8 @@ using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.ViewModels;
 using WebOdontologista.Services;
 using WebOdontologista.Services.Exceptions;
+using System.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace WebOdontologista.Controllers
 {
@@ -20,21 +22,52 @@ namespace WebOdontologista.Controllers
         private readonly AppointmentService _appointmentService;
         private readonly DentistService _dentistService;
         private static Appointment _oldAppointment = null;
+        private readonly CookieOptions _cookieOptions;
         public AppointmentsController(AppointmentService appointmentService, DentistService dentistService)
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;
+            _cookieOptions = new CookieOptions()
+            {
+                Secure = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.Now.AddDays(30)
+            };
         }
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(int? show)
         {
-            return View(await _appointmentService.FindAllAsync());
+            IndexAppointmentFormViewModel viewModel = new IndexAppointmentFormViewModel();
+            if (show.HasValue)
+            {
+                viewModel.Appointments = await ShowType(show.Value);
+                viewModel.Show = show.Value;
+                Response.Cookies.Append("Show", show.Value.ToString(), _cookieOptions);
+            }
+            else
+            {
+                if(Request.Cookies.ContainsKey("Show"))
+                {
+                    int value = int.Parse(Request.Cookies["Show"]);
+                    viewModel.Appointments = await ShowType(value);
+                    viewModel.Show = value;
+                }
+                else
+                {
+                    viewModel.Appointments = await _appointmentService.FindAllAsync();
+                    viewModel.Show = 4;
+                }
+
+            }
+            return View(viewModel);
         }
         [HttpGet]
         public async Task<IActionResult> Create(int? error)
         {
             ViewData["error"] = 0;
             ViewData["step"] = 1;
-            if(error.HasValue)
+            if (error.HasValue)
             {
                 ViewData["error"] = error.Value;
             }
@@ -60,7 +93,7 @@ namespace WebOdontologista.Controllers
                 if (formViewModel.AvailableTime.Count == 0)
                 {
                     //return Redirect("/Appointments/Create?error=1");
-                    return RedirectToAction(nameof(Create), new {error = 1 });
+                    return RedirectToAction(nameof(Create), new { error = 1 });
                 }
                 return View(formViewModel);
             }
@@ -244,6 +277,29 @@ namespace WebOdontologista.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             };
             return View(error);
+        }
+        private async Task<List<Appointment>> ShowType(int type)
+        {
+            List<Appointment> result;
+            switch(type)
+            {
+                case 1:
+                    result = await _appointmentService.FindDailyAsync();
+                    break;
+                case 2:
+                    result = await _appointmentService.FindWeeklyAsync();
+                    break;
+                case 3:
+                    result = await _appointmentService.FindMonthlyAsync();
+                    break;
+                case 4:
+                    result = await _appointmentService.FindAllAsync();
+                    break;
+                default:
+                    result = await _appointmentService.FindAllAsync();
+                    break;
+            }
+            return result;
         }
     }
 }
