@@ -42,8 +42,15 @@ namespace WebOdontologista.Controllers
             if (show.HasValue)
             {
                 viewModel.Appointments = await ShowType(show.Value);
-                viewModel.Show = show.Value;
-                Response.Cookies.Append("Show", show.Value.ToString(), _cookieOptions);
+                if(show.Value > 0 && show.Value < 5)
+                {
+                    viewModel.Show = show.Value;
+                    Response.Cookies.Append("Show", show.Value.ToString(), _cookieOptions);
+                }
+                else
+                {
+                    return Redirect("?show=4");
+                }
             }
             else
             {
