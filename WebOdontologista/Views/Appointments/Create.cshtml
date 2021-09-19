@@ -1,6 +1,7 @@
 ﻿@model WebOdontologista.Models.ViewModels.AppointmentFormViewModel
 @{
     ViewData["Title"] = "Nova Consulta";
+    ViewData["disabled"] = "disabled";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -20,17 +21,17 @@
             <form method="get" asp-action="Create">
                 <div class="form-group">
                     <label asp-for="Appointment.Patient" class="control-label"> </label>
-                    <input asp-for="Appointment.Patient" class="form-control" autocomplete="off" />
+                    <input id="Patient" asp-for="Appointment.Patient" class="form-control" autocomplete="off" />
                     <span asp-validation-for="Appointment.Patient" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Appointment.TelephoneNumber" class="control-label"> </label>
-                    <input asp-for="Appointment.TelephoneNumber" id="phone" onkeyup="mask()" class="form-control" autocomplete="off" />
+                    <input id="TelephoneNumber" asp-for="Appointment.TelephoneNumber" onkeyup="mask()" class="form-control" autocomplete="off" />
                     <span asp-validation-for="Appointment.TelephoneNumber" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Appointment.DentistId" class="control-label"> </label>
-                    <select asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control"> </select>
+                    <select id="Patient" asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control"> </select>
                 </div>
                 <div class="form-group">
                     <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
@@ -51,7 +52,6 @@
                     <input asp-for="Appointment.Date" class="form-control" />
                     <span asp-validation-for="Appointment.Date" class="text-danger"></span>
                 </div>
-                <input type="hidden" name="step" value="@ViewData["step"]" class="form-control" />
                 <div class="form-group">
                     <br>
                     <input type="submit" value="Próximo" class="btn btn-default" />
@@ -60,7 +60,7 @@
         }
         else if ((int)ViewData["step"] == 2)
         {
-            <form asp-action="Create">
+            <form method="post" asp-action="Create">
                 <div class="form-group">
                     <label asp-for="Appointment.Patient" class="control-label"> </label>
                     <input asp-for="Appointment.Patient" value="@Model.Appointment.Patient" class="form-control" autocomplete="off" disabled />
@@ -99,7 +99,6 @@
                 <input type="hidden" name="Appointment.AppointmentType" value="@Model.Appointment.AppointmentType" />
                 <input type="hidden" name="Appointment.DurationInMinutes" value="@Model.Appointment.DurationInMinutes" />
                 <input type="hidden" name="Appointment.Date" value="@Model.Appointment.Date" />
-                <input type="hidden" name="step" value="@ViewData["step"]" />
                 <div class="form-group">
                     <br>
                     <input type="submit" value="Adicionar Nova Consulta" class="btn btn-danger" />
