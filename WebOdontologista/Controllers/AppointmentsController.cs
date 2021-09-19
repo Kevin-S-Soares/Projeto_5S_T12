@@ -82,6 +82,7 @@ namespace WebOdontologista.Controllers
                 ViewData["step"] = 1;
                 AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
                 viewModel.Appointment = appointment;
+                viewModel.Appointment.Date = DateTime.Now;
                 if (viewModel.Dentists.Count == 0)
                 {
                     result = Redirect("/Dentists/Create?ReturnAppointment=true");
