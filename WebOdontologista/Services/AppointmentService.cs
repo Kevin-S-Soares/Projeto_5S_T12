@@ -35,22 +35,22 @@ namespace WebOdontologista.Services
         public async Task<List<Appointment>> FindDailyAsync()
         {
             DateTime now = DateTime.Now;
-            DateTime SameDay = new DateTime(now.Year, now.Month, now.Day);
-            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date == SameDay).OrderBy(obj => obj.DateAndTime()).ToListAsync();
+            DateTime sameDay = new DateTime(now.Year, now.Month, now.Day);
+            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date == sameDay).OrderBy(obj => obj.DateAndTime()).ToListAsync();
             return result;
         }
         public async Task<List<Appointment>> FindWeeklyAsync()
         {
             DateTime now = DateTime.Now;
-            DateTime SameWeek = new DateTime(now.Year, now.Month, now.Day).AddDays(7);
-            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date <= SameWeek).OrderBy(obj => obj.DateAndTime()).ToListAsync();
+            DateTime sameWeek = new DateTime(now.Year, now.Month, now.Day).AddDays(7);
+            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date <= sameWeek).OrderBy(obj => obj.DateAndTime()).ToListAsync();
             return result;
         }
         public async Task<List<Appointment>> FindMonthlyAsync()
         {
             DateTime now = DateTime.Now;
-            DateTime SameMonth = new DateTime(now.Year, now.Month, now.Day).AddDays(30);
-            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date <= SameMonth).OrderBy(obj => obj.DateAndTime()).ToListAsync();
+            DateTime sameMonth = new DateTime(now.Year, now.Month, now.Day).AddDays(30);
+            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date <= sameMonth).OrderBy(obj => obj.DateAndTime()).ToListAsync();
             return result;
         }
         public async Task<AppointmentFormViewModel> ViewModel()

@@ -93,13 +93,20 @@ namespace WebOdontologista.Controllers
             }
             else
             {
-                if (prefill.HasValue && prefill.Value == 1)
+                if (prefill.HasValue)
                 {
-                    ViewData["error"] = 0;
-                    ViewData["step"] = 1;
-                    AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
-                    viewModel.Appointment = appointment;
-                    result = View(viewModel);
+                    if(prefill.Value == 1)
+                    {
+                        ViewData["error"] = 0;
+                        ViewData["step"] = 1;
+                        AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+                        viewModel.Appointment = appointment;
+                        result = View(viewModel);
+                    }
+                    else
+                    {
+                        result = Redirect(ReturnUrl(appointment));
+                    }
                 }
                 else
                 {
@@ -108,8 +115,12 @@ namespace WebOdontologista.Controllers
                     viewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(viewModel.Appointment.DentistId);
                     viewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
                     DateTime now = DateTime.Now;
-                    DateTime SameDay = new DateTime(now.Year, now.Month, now.Day);
-                    if (viewModel.AvailableTime.Count == 0 || appointment.Date < SameDay)
+                    DateTime today = new DateTime(now.Year, now.Month, now.Day);
+                    if(appointment.Date == today)
+                    {
+                        RemovePastTime(viewModel.AvailableTime);
+                    }
+                    if (viewModel.AvailableTime.Count == 0 || appointment.Date < today)
                     {
                         ViewData["step"] = 1;
                         if (viewModel.AvailableTime.Count == 0)
@@ -351,6 +362,19 @@ namespace WebOdontologista.Controllers
             sb.Append("&prefill=1");
 
             return sb.ToString();
+        }
+        private static void RemovePastTime(ICollection<TimeSpan> list)
+        {
+            TimeSpan now = DateTime.Now.TimeOfDay;
+            for(int i = 0; i < list.Count; i++)
+            {
+                if(list.ElementAt(i) < now)
+                {
+                    list.Remove(list.ElementAt(0));
+                    i--;
+                }
+            }
+            
         }
     }
 }

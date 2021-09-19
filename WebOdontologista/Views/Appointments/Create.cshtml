@@ -21,7 +21,7 @@
             <form method="get" asp-action="Create">
                 <div class="form-group">
                     <label asp-for="Appointment.Patient" class="control-label"> </label>
-                    <input id="Patient" asp-for="Appointment.Patient" class="form-control" autocomplete="off" />
+                    <input asp-for="Appointment.Patient" class="form-control" autocomplete="off" />
                     <span asp-validation-for="Appointment.Patient" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -31,7 +31,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Appointment.DentistId" class="control-label"> </label>
-                    <select id="Patient" asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control"> </select>
+                    <select asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control"> </select>
                 </div>
                 <div class="form-group">
                     <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
