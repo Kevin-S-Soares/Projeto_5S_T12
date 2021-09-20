@@ -24,7 +24,9 @@ namespace WebOdontologista.Services
         }
         public List<Appointment> FindAll()
         {
-            List<Appointment> result = _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now).OrderBy(obj => obj.DateAndTime()).ToList(); //.FindAll(obj => obj.DateAndTime() > DateTime.Now); Produto final
+            DateTime now = DateTime.Now;
+            DateTime sameDay = new DateTime(now.Year, now.Month, now.Day);
+            List<Appointment> result = _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= sameDay).OrderBy(obj => obj.DateAndTime()).ToList(); //.FindAll(obj => obj.DateAndTime() > DateTime.Now); Produto final
             return result;
         }
         public async Task<List<Appointment>> FindAllAsync()

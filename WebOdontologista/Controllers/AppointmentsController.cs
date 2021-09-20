@@ -21,12 +21,10 @@ namespace WebOdontologista.Controllers
     public class AppointmentsController : Controller
     {
         private readonly AppointmentService _appointmentService;
-        private readonly DentistService _dentistService;
         private readonly CookieOptions _cookieOptions;
-        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService)
+        public AppointmentsController(AppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
-            _dentistService = dentistService;
             _cookieOptions = new CookieOptions()
             {
                 Secure = true,
@@ -80,6 +78,7 @@ namespace WebOdontologista.Controllers
                 ViewData["error"] = 0;
                 ViewData["step"] = 1;
                 AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+                TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
                 viewModel.Appointment = appointment;
                 viewModel.Appointment.Date = DateTime.Now;
                 if (viewModel.Dentists.Count == 0)
@@ -101,6 +100,7 @@ namespace WebOdontologista.Controllers
                         ViewData["step"] = 1;
                         AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
                         viewModel.Appointment = appointment;
+                        TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
                         result = View(viewModel);
                     }
                     else
@@ -112,7 +112,9 @@ namespace WebOdontologista.Controllers
                 {
                     AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
                     viewModel.Appointment = appointment;
-                    viewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(viewModel.Appointment.DentistId);
+                    // viewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(viewModel.Appointment.DentistId);
+                    viewModel.Appointment.Dentist = Dentist.DeserializeAndGetById(TempData["dentists"] as string, appointment.DentistId);
+                    TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
                     viewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
                     DateTime now = DateTime.Now;
                     DateTime today = new DateTime(now.Year, now.Month, now.Day);
@@ -126,20 +128,18 @@ namespace WebOdontologista.Controllers
                         if (viewModel.AvailableTime.Count == 0)
                         {
                             ViewData["error"] = 1;
-                            result = View(viewModel);
                         }
                         else
                         {
                             ViewData["error"] = 2;
-                            result = View(viewModel);
                         }
                     }
                     else
                     {
                         ViewData["error"] = 0;
                         ViewData["step"] = 2;
-                        result = View(viewModel);
                     }
+                    result = View(viewModel);
                 }
             }
             return result;
@@ -216,7 +216,9 @@ namespace WebOdontologista.Controllers
                     {
                         ViewData["step"] = 1;
                         ViewData["error"] = 0;
+                        TempData["appointment"] = appointment.Serialize();
                         AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+                        TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
                         viewModel.Appointment = new Appointment(appointment);
                         ViewData["id"] = appointment.Id;
                         result = View(viewModel);
@@ -227,8 +229,12 @@ namespace WebOdontologista.Controllers
             {
                 AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
                 viewModel.Appointment = appointment;
-                viewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(viewModel.Appointment.DentistId);
-                Appointment oldAppointment = await _appointmentService.FindByIdAsync(appointment.Id);
+                Appointment oldAppointment = Appointment.Deserialize(TempData["appointment"] as string);
+                TempData["appointment"] = oldAppointment.Serialize();
+                TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
+                viewModel.Appointment.Dentist = Dentist.DeserializeAndGetById(TempData["dentists"] as string, appointment.DentistId);
+                //viewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
+                //Appointment oldAppointment = await _appointmentService.FindByIdAsync(appointment.Id);
                 try
                 {
                     _appointmentService.Book.RemoveAppointment(oldAppointment);
@@ -247,23 +253,22 @@ namespace WebOdontologista.Controllers
                 if (viewModel.AvailableTime.Count == 0 || appointment.Date < today)
                 {
                     ViewData["step"] = 1;
+                    //result = RedirectToAction(nameof(Edit), new { Id = appointment.Id});
                     if (viewModel.AvailableTime.Count == 0)
                     {
                         ViewData["error"] = 1;
-                        result = View(viewModel);
                     }
                     else
                     {
                         ViewData["error"] = 2;
-                        result = View(viewModel);
                     }
                 }
                 else
                 {
                     ViewData["error"] = 0;
-                    ViewData["step"] = 2;
-                    result = View(viewModel);
+                    ViewData["step"] = 2;                   
                 }
+                result = View(viewModel);
             }
             return result;
         }
@@ -286,7 +291,8 @@ namespace WebOdontologista.Controllers
                 {
                     try
                     {
-                        Appointment oldAppointment = await _appointmentService.FindByIdAsync(appointment.Id);
+                        // Appointment oldAppointment = await _appointmentService.FindByIdAsync(appointment.Id);
+                        Appointment oldAppointment = Appointment.Deserialize(TempData["appointment"] as string);
                         _appointmentService.Book.RemoveAppointment(oldAppointment);
                         _appointmentService.Book.AddAppointment(appointment);
                     }

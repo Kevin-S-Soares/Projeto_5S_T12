@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Linq;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,6 +29,14 @@ namespace WebOdontologista.Models
         public Dentist(string name)
         {
             Name = name;
+        }
+        public static string Serialize(ICollection<Dentist> dentists)
+        {
+            return JsonConvert.SerializeObject(dentists);
+        }
+        public static Dentist DeserializeAndGetById(string value, int id)
+        {
+            return JsonConvert.DeserializeObject<ICollection<Dentist>>(value).First(obj => obj.Id == id);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -66,6 +67,15 @@ namespace WebOdontologista.Models
         public DateTime DateAndTime()
         {
             return Date + Time;
+        }
+        public string Serialize()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+        public static Appointment Deserialize(string value)
+        {
+
+            return JsonConvert.DeserializeObject<Appointment>(value);
         }
         public override string ToString()
         {
