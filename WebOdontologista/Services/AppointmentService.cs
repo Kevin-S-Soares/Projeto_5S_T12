@@ -66,13 +66,9 @@ namespace WebOdontologista.Services
             _context.Add(appointment);
             await _context.SaveChangesAsync();
         }
-        public Appointment FindById(int id)
-        {
-            return _context.Appointment.AsNoTracking().Include(obj => obj.Dentist).FirstOrDefault(obj => obj.Id == id);
-        }
         public async Task<Appointment> FindByIdAsync(int id)
         {
-            Appointment appointment = await _context.Appointment.AsNoTracking().Include(obj => obj.Dentist).FirstOrDefaultAsync(obj => obj.Id == id);
+            Appointment appointment = await _context.Appointment.Include(obj => obj.Dentist).FirstOrDefaultAsync(obj => obj.Id == id);
             return appointment;
         }
         public async Task RemoveAsync(int id)
@@ -83,6 +79,7 @@ namespace WebOdontologista.Services
         }
         public async Task UpdateAsync(Appointment appointment)
         {
+            
             bool hasAny = await _context.Appointment.AnyAsync(obj => obj.Id == appointment.Id);
             if (!hasAny)
             {
@@ -90,13 +87,30 @@ namespace WebOdontologista.Services
             }
             try
             {
-                var entry = await _context.Appointment.FirstAsync(obj => obj.Id == appointment.Id);
+                Appointment entry = await _context.Appointment.FirstAsync(obj => obj.Id == appointment.Id);
                 _context.Entry(entry).CurrentValues.SetValues(appointment);
                 await _context.SaveChangesAsync();
             } catch(DbUpdateConcurrencyException e)
             {
                 throw new DbConcurrencyException(e.Message);
             }
+            // Este pedaço de código não funciona pois o ef bloqueia quando 2 objetos possuem o mesmo id
+            /*
+            bool result = await _context.Appointment.AnyAsync(obj => obj.Id == appointment.Id);
+            if (!result)
+            {
+                throw new NotFoundException("Id não encontrado!");
+            }
+            try
+            {
+               _context.Update(appointment);
+               await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbConcurrencyException(e.Message);
+            }
+            */
         }
         public async Task<List<Appointment>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
         {

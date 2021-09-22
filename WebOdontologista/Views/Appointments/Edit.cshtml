@@ -4,20 +4,12 @@
 }
 
 <h2>@ViewData["Title"]</h2>
-@if ((int)ViewData["error"] == 1)
-{
-    <h4>Não há horário disponível neste dia!</h4>
-}
-@if ((int)ViewData["error"] == 2)
-{
-    <h4>Data inválida!</h4>
-}
+<h4 id="error"></h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        @if ((int)ViewData["step"] == 1)
-        {
-        <form method="get" asp-action="Edit">
+        <form method="post" asp-action="Edit">
+            <input type="hidden" asp-for="Appointment.Id" />
             <div class="form-group">
                 <label asp-for="Appointment.Patient" class="control-label"> </label>
                 <input asp-for="Appointment.Patient" class="form-control" autocomplete="off" />
@@ -25,12 +17,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.TelephoneNumber" class="control-label"> </label>
-                <input asp-for="Appointment.TelephoneNumber" id="phone" onkeyup="mask()" class="form-control" autocomplete="off" />
+                <input asp-for="Appointment.TelephoneNumber" onkeyup="mask()" class="form-control" autocomplete="off" />
                 <span asp-validation-for="Appointment.TelephoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.DentistId" class="control-label"> </label>
-                <select asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control"> </select>
+                <select asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control" onchange="getTimes()"> </select>
+                <span asp-validation-for="Appointment.DentistId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
@@ -39,83 +32,39 @@
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.DurationInMinutes" class="control-label"> </label>
-                <select asp-for="Appointment.DurationInMinutes" class="form-control">
+                <select asp-for="Appointment.DurationInMinutes" class="form-control" onchange="getTimes()">
                     <option value="15">15</option>
                     <option value="30">30</option>
                     <option value="45">45</option>
                     <option value="60">60</option>
                 </select>
+                <span asp-validation-for="Appointment.DurationInMinutes" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Appointment.Date" class="control-label"> </label>
-                <input asp-for="Appointment.Date" class="form-control" />
+                <input asp-for="Appointment.Date" class="form-control" onchange="getTimes()" />
                 <span asp-validation-for="Appointment.Date" class="text-danger"></span>
             </div>
-            <input type="hidden" name="Appointment.Id" value="@Model.Appointment.Id" />
-            <input type="hidden" name="Appointment.Time" value="@Model.Appointment.Time" />
+            <div class="form-group">
+                <label asp-for="Appointment.Time" class="control-label"> </label>
+                <select asp-for="Appointment.Time" asp-items="@(new SelectList(Model.AvailableTime))" class="form-control"></select>
+                <span asp-validation-for="Appointment.Time" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <br>
-                <input type="submit" value="Proximo" class="btn btn-default" />
+                <input type="submit" id="Appointment_Confirm" value="Reagendar Consulta" class="btn btn-default" />
             </div>
         </form>
-        }
-        else if ((int)ViewData["step"] == 2)
-        {
-    <form method="post" asp-action="Edit">
-        <div class="form-group">
-            <label asp-for="Appointment.Patient" class="control-label"> </label>
-            <input asp-for="Appointment.Patient" value="@Model.Appointment.Patient" class="form-control" autocomplete="off" disabled />
-            <span asp-validation-for="Appointment.Patient" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Appointment.TelephoneNumber" class="control-label"> </label>
-            <input asp-for="Appointment.TelephoneNumber" value="@Model.Appointment.TelephoneNumber" id="phone" onkeyup="mask()" class="form-control" autocomplete="off" disabled />
-            <span asp-validation-for="Appointment.TelephoneNumber" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Appointment.DentistId" class="control-label"> </label>
-            <input type="text" value="@Model.Appointment.Dentist.Name" class="form-control" disabled />
-        </div>
-        <div class="form-group">
-            <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
-            <input asp-for="Appointment.AppointmentType" value="@Model.Appointment.AppointmentType" class="form-control" disabled />
-            <span asp-validation-for="Appointment.AppointmentType" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Appointment.DurationInMinutes" class="control-label"> </label>
-            <input asp-for="Appointment.DurationInMinutes" value="@Model.Appointment.DurationInMinutes" class="form-control" disabled />
-        </div>
-        <div class="form-group">
-            <label asp-for="Appointment.Date" class="control-label"> </label>
-            <input type="text" value="@Model.Appointment.Date.ToString("dd/MM/yyyy")" class="form-control" disabled />
-            <span asp-validation-for="Appointment.Date" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Appointment.Time" class="control-label"> </label>
-            <select asp-for="Appointment.Time" asp-items="@(new SelectList(Model.AvailableTime))" class="form-control"> </select>
-        </div>
-        <input type="hidden" name="Appointment.Id" value="@Model.Appointment.Id" />
-        <input type="hidden" name="Appointment.Patient" value="@Model.Appointment.Patient" />
-        <input type="hidden" name="Appointment.TelephoneNumber" value="@Model.Appointment.TelephoneNumber" />
-        <input type="hidden" name="Appointment.DentistId" value="@Model.Appointment.DentistId" />
-        <input type="hidden" name="Appointment.AppointmentType" value="@Model.Appointment.AppointmentType" />
-        <input type="hidden" name="Appointment.DurationInMinutes" value="@Model.Appointment.DurationInMinutes" />
-        <input type="hidden" name="Appointment.Date" value="@Model.Appointment.Date" />
-        <div class="form-group">
-            <br>
-            <input type="submit" value="Reagendar Consulta" class="btn btn-danger" />
-            <button type="submit" name="toReturn" value="true" class="btn btn-default">Voltar</button>
-        </div>
-    </form>
-        }
-
     </div>
 </div>
+<environment include="Development">
+    <script src="~/js/mask.js" asp-append-version="true"></script>
+    <script src="~/js/getTimes.js" asp-append-version="true"></script>
+</environment>
 @section Scripts
 {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        await Html.RenderPartialAsync("_TelephoneMask");
     }
 }
 

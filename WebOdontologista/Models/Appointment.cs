@@ -21,7 +21,7 @@ namespace WebOdontologista.Models
         public string Patient { get; set; }
 
         [Display(Name = "Telefone")]
-        [Required]
+        [Required(ErrorMessage = "{0} requirido.")]
         [DataType(DataType.PhoneNumber)]
         [StringLength(15, MinimumLength = 14, ErrorMessage = "O campo {0} deve ser {2} ou {1} caracteres.")]
         public string TelephoneNumber { get; set; }
@@ -52,17 +52,6 @@ namespace WebOdontologista.Models
             Date = date;
             Time = time;
             Dentist = dentist;
-        }
-        public Appointment(Appointment appointment)
-        {
-            Id = appointment.Id;
-            Patient = appointment.Patient;
-            TelephoneNumber = appointment.TelephoneNumber;
-            DurationInMinutes = appointment.DurationInMinutes;
-            AppointmentType = appointment.AppointmentType;
-            Date = appointment.Date;
-            Time = appointment.Time;
-            DentistId = appointment.DentistId;
         }
         public DateTime DateAndTime()
         {

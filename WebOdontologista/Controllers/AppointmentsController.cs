@@ -14,6 +14,8 @@ using WebOdontologista.Services.Exceptions;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using Newtonsoft.Json;
+
 
 namespace WebOdontologista.Controllers
 {
@@ -70,110 +72,37 @@ namespace WebOdontologista.Controllers
             return result;
         }
         [HttpGet]
-        public async Task<IActionResult> Create(Appointment appointment, int? prefill)
+        public async Task<IActionResult> Create()
         {
-            IActionResult result;
-            if (!ModelState.IsValid)
-            {
-                ViewData["error"] = 0;
-                ViewData["step"] = 1;
-                AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
-                TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
-                viewModel.Appointment = appointment;
-                viewModel.Appointment.Date = DateTime.Now;
-                if (viewModel.Dentists.Count == 0)
-                {
-                    result = Redirect("/Dentists/Create?ReturnAppointment=true");
-                }
-                else
-                {
-                    result = View(viewModel);
-                }
-            }
-            else
-            {
-                if (prefill.HasValue)
-                {
-                    if (prefill.Value == 1)
-                    {
-                        ViewData["error"] = 0;
-                        ViewData["step"] = 1;
-                        AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
-                        viewModel.Appointment = appointment;
-                        TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
-                        result = View(viewModel);
-                    }
-                    else
-                    {
-                        result = Redirect(ReturnUrl(appointment));
-                    }
-                }
-                else
-                {
-                    AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
-                    viewModel.Appointment = appointment;
-                    // viewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(viewModel.Appointment.DentistId);
-                    viewModel.Appointment.Dentist = Dentist.DeserializeAndGetById(TempData["dentists"] as string, appointment.DentistId);
-                    TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
-                    viewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
-                    DateTime now = DateTime.Now;
-                    DateTime today = new DateTime(now.Year, now.Month, now.Day);
-                    if (appointment.Date == today)
-                    {
-                        RemovePastTime(viewModel.AvailableTime);
-                    }
-                    if (viewModel.AvailableTime.Count == 0 || appointment.Date < today)
-                    {
-                        ViewData["step"] = 1;
-                        if (viewModel.AvailableTime.Count == 0)
-                        {
-                            ViewData["error"] = 1;
-                        }
-                        else
-                        {
-                            ViewData["error"] = 2;
-                        }
-                    }
-                    else
-                    {
-                        ViewData["error"] = 0;
-                        ViewData["step"] = 2;
-                    }
-                    result = View(viewModel);
-                }
-            }
-            return result;
+            return View(await _appointmentService.ViewModel());
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Appointment appointment, bool? toReturn)
+        public async Task<IActionResult> Create(Appointment appointment)
         {
-            IActionResult result;
-            if (toReturn.HasValue && toReturn.Value)
+            if (!ModelState.IsValid)
             {
-                result = Redirect(ReturnUrl(appointment));
+                AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+                viewModel.Appointment = appointment;
+                return View(viewModel);
             }
             else
             {
-                if (!ModelState.IsValid)
+                if (appointment.DateAndTime() < DateTime.Now)
                 {
-                    result = Redirect(ReturnUrl(appointment));
+                    return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
                 }
-                else
+                try
                 {
-                    try
-                    {
-                        _appointmentService.Book.AddAppointment(appointment);
-                    }
-                    catch (DomainException e)
-                    {
-                        return RedirectToAction(nameof(Error), new { message = e.Message });
-                    }
-                    await _appointmentService.InsertAsync(appointment);
-                    result = RedirectToAction(nameof(Index));
+                    _appointmentService.Book.AddAppointment(appointment);
                 }
+                catch (DomainException e)
+                {
+                    return RedirectToAction(nameof(Error), new { message = e.Message });
+                }
+                await _appointmentService.InsertAsync(appointment);
+                return RedirectToAction(nameof(Index));
             }
-            return result;
         }
         public async Task<IActionResult> Delete(int? id)
         {
@@ -196,115 +125,51 @@ namespace WebOdontologista.Controllers
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]
-        public async Task<IActionResult> Edit(int? id, Appointment appointment)
+        public async Task<IActionResult> Edit(int? id)
         {
-            IActionResult result;
-            if(!ModelState.IsValid)
+            if (!id.HasValue)
             {
-                if (!id.HasValue)
-                {
-                    result = RedirectToAction(nameof(Error), new { message = "Id não provido" });
-                }
-                else
-                {
-                    appointment = await _appointmentService.FindByIdAsync(id.Value);
-                    if (appointment == null)
-                    {
-                        result = RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
-                    }
-                    else
-                    {
-                        ViewData["step"] = 1;
-                        ViewData["error"] = 0;
-                        TempData["appointment"] = appointment.Serialize();
-                        AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
-                        TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
-                        viewModel.Appointment = new Appointment(appointment);
-                        ViewData["id"] = appointment.Id;
-                        result = View(viewModel);
-                    }
-                }
+                return RedirectToAction(nameof(Error), new { Message = "Id não provido!" });
             }
-            else
+            Appointment appointment = await _appointmentService.FindByIdAsync(id.Value);
+            if (appointment == null)
             {
-                AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
-                viewModel.Appointment = appointment;
-                Appointment oldAppointment = Appointment.Deserialize(TempData["appointment"] as string);
-                TempData["appointment"] = oldAppointment.Serialize();
-                TempData["dentists"] = Dentist.Serialize(viewModel.Dentists);
-                viewModel.Appointment.Dentist = Dentist.DeserializeAndGetById(TempData["dentists"] as string, appointment.DentistId);
-                //viewModel.Appointment.Dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
-                //Appointment oldAppointment = await _appointmentService.FindByIdAsync(appointment.Id);
-                try
-                {
-                    _appointmentService.Book.RemoveAppointment(oldAppointment);
-                }
-                catch (DomainException e)
-                {
-                    return RedirectToAction(nameof(Error), new { message = e.Message });
-                }
-                viewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
-                DateTime now = DateTime.Now;
-                DateTime today = new DateTime(now.Year, now.Month, now.Day);
-                if (appointment.Date == today)
-                {
-                    RemovePastTime(viewModel.AvailableTime);
-                }
-                if (viewModel.AvailableTime.Count == 0 || appointment.Date < today)
-                {
-                    ViewData["step"] = 1;
-                    //result = RedirectToAction(nameof(Edit), new { Id = appointment.Id});
-                    if (viewModel.AvailableTime.Count == 0)
-                    {
-                        ViewData["error"] = 1;
-                    }
-                    else
-                    {
-                        ViewData["error"] = 2;
-                    }
-                }
-                else
-                {
-                    ViewData["error"] = 0;
-                    ViewData["step"] = 2;                   
-                }
-                result = View(viewModel);
+                return RedirectToAction(nameof(Error), new { Message = "Consulta inexistente!" });
             }
-            return result;
+            AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+            viewModel.Appointment = appointment;
+            try
+            {
+                _appointmentService.Book.RemoveAppointment(appointment);
+            }
+            catch (DomainException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
+            TempData["appointment"] = appointment.Serialize();
+            viewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
+            return View(viewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Appointment appointment, bool? toReturn)
+        public async Task<IActionResult> Edit(int id, Appointment appointment)
         {
-            IActionResult result;
-            if (toReturn.HasValue && toReturn.Value)
+            if (id != appointment.Id)
             {
-                result = Redirect("/Appointments/Edit/" + appointment.Id.ToString());
+                return RedirectToAction(nameof(Error), new { message = "Ids são distintos!" });
             }
-            else
+            try
             {
-                if (!ModelState.IsValid)
-                {
-                    result = Redirect("/Appointments/Edit/" + appointment.Id.ToString());
-                }
-                else
-                {
-                    try
-                    {
-                        // Appointment oldAppointment = await _appointmentService.FindByIdAsync(appointment.Id);
-                        Appointment oldAppointment = Appointment.Deserialize(TempData["appointment"] as string);
-                        _appointmentService.Book.RemoveAppointment(oldAppointment);
-                        _appointmentService.Book.AddAppointment(appointment);
-                    }
-                    catch (DomainException e)
-                    {
-                        return RedirectToAction(nameof(Error), new { message = e.Message });
-                    }
-                    await _appointmentService.UpdateAsync(appointment);
-                    result = RedirectToAction(nameof(Index));
-                }
+                Appointment oldAppointment = Appointment.Deserialize(TempData["appointment"] as string);
+                _appointmentService.Book.RemoveAppointment(oldAppointment);
+                _appointmentService.Book.AddAppointment(appointment);
+                await _appointmentService.UpdateAsync(appointment);
             }
-            return result;
+            catch (DomainException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
+            return RedirectToAction(nameof(Index));
         }
         public IActionResult Search()
         {
@@ -348,6 +213,46 @@ namespace WebOdontologista.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             };
             return View(error);
+        }
+        [HttpGet]
+        public string GetTimes(int? dentistId, DateTime? date, int? durationInMinutes)
+        {
+            string result;
+            if (dentistId.HasValue && date.HasValue && durationInMinutes.HasValue)
+            {
+                Appointment appointment = new Appointment()
+                {
+                    DentistId = dentistId.Value,
+                    Date = date.Value,
+                    DurationInMinutes = durationInMinutes.Value
+                };
+                if (TempData.ContainsKey("appointment"))
+                {
+                    Appointment oldAppointment = Appointment.Deserialize(TempData["appointment"] as string);
+                    TempData["appointment"] = oldAppointment.Serialize();
+                    try
+                    {
+                        _appointmentService.Book.RemoveAppointment(oldAppointment);
+                    }
+                    catch (DomainException)
+                    {
+                        return "[]";
+                    }
+                }
+                List<TimeSpan> list = _appointmentService.Book.FindAvailableTime(appointment);
+                DateTime now = DateTime.Now;
+                DateTime today = new DateTime(now.Year, now.Month, now.Day);
+                if (appointment.Date == today)
+                {
+                    RemovePastTime(list);
+                }
+                result = JsonConvert.SerializeObject(list);
+            }
+            else
+            {
+                result = "[]";
+            }
+            return result;
         }
         private async Task<List<Appointment>> ShowType(int type)
         {
@@ -400,4 +305,5 @@ namespace WebOdontologista.Controllers
 
         }
     }
+
 }
