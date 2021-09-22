@@ -1,6 +1,6 @@
 ﻿async function getTimes() {
     var error = document.getElementById("error");
-    error.innerText = "";
+    error.innerHTML = "";
     var appointment_time = document.getElementById("Appointment_Time");
     if (appointment_time.length > 0) {
         for (var i = appointment_time.length - 1; i > -1; i--) {
@@ -20,7 +20,7 @@
     var reference = new Date();
     var now = new Date(reference.getFullYear(), reference.getMonth(), reference.getDate());
     if (date < now) {
-        error.innerText = "Data inválida!";
+        error.innerHTML = "Data inválida!";
         return;
     }
     var url = window.location.origin + "/Appointments/GetTimes";
@@ -32,11 +32,11 @@
     var list;
     await $.get(url, data, obj => list = JSON.parse(obj));
     if (list == null) {
-        error.innerText = "Houve um problema de solicitação!";
+        error.innerHTML = "Houve um problema de solicitação!";
         return;
     }
     if (list.length == 0) {
-        error.innerText = "Não há horários disponíveis neste dia!";
+        error.innerHTML = "Não há horários disponíveis neste dia!";
         return;
     }
     for (var i = 0; i < list.length; i++) {
