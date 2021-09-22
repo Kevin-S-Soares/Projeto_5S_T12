@@ -3,19 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using WebOdontologista.Models;
 using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.ViewModels;
 using WebOdontologista.Services;
-using WebOdontologista.Services.Exceptions;
-using System.Web;
 using Microsoft.AspNetCore.Http;
-using System.Text;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Hosting;
 
 namespace WebOdontologista.Controllers
 {
@@ -24,7 +19,14 @@ namespace WebOdontologista.Controllers
     {
         private readonly AppointmentService _appointmentService;
         private readonly CookieOptions _cookieOptions;
-
+        private readonly TimeZoneInfo _timeZoneInfo;
+        private DateTime _now
+        {
+            get
+            {
+                return _appointmentService.Now;
+            }
+        }
         public AppointmentsController(AppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
@@ -33,8 +35,9 @@ namespace WebOdontologista.Controllers
                 Secure = true,
                 HttpOnly = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.Now.AddDays(30)
+                Expires = _now.AddDays(30)
             };
+            _timeZoneInfo = _appointmentService.TimeZone;
         }
         public async Task<IActionResult> Index(int? show)
         {
@@ -91,9 +94,7 @@ namespace WebOdontologista.Controllers
             }
             else
             {
-                TimeZoneInfo BrazilianTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
-                DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), BrazilianTimeZone);
-                if (appointment.DateAndTime() < now)
+                if (appointment.DateAndTime() < _now)
                 {
                     return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
                 }
@@ -162,9 +163,7 @@ namespace WebOdontologista.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Ids são distintos!" });
             }
-            TimeZoneInfo BrazilianTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
-            DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), BrazilianTimeZone);
-            if (appointment.DateAndTime() < now)
+            if (appointment.DateAndTime() < _now)
             {
                 return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
             }
@@ -189,11 +188,11 @@ namespace WebOdontologista.Controllers
         {
             if (!minDate.HasValue)
             {
-                minDate = new DateTime(DateTime.Now.Year, 1, 1);
+                minDate = new DateTime(_now.Year, 1, 1);
             }
             if (!maxDate.HasValue)
             {
-                maxDate = new DateTime(DateTime.Now.Year, 12, 31);
+                maxDate = new DateTime(_now.Year, 12, 31);
             }
             ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
             ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
@@ -204,11 +203,11 @@ namespace WebOdontologista.Controllers
         {
             if (!minDate.HasValue)
             {
-                minDate = new DateTime(DateTime.Now.Year, 1, 1);
+                minDate = new DateTime(_now.Year, 1, 1);
             }
             if (!maxDate.HasValue)
             {
-                maxDate = new DateTime(DateTime.Now.Year, 12, 31);
+                maxDate = new DateTime(_now.Year, 12, 31);
             }
             ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
             ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
@@ -282,14 +281,12 @@ namespace WebOdontologista.Controllers
             }
             return result;
         }
-        private static ICollection<TimeSpan> RemovePastTime(ICollection<TimeSpan> list, Appointment appointment)
+        private ICollection<TimeSpan> RemovePastTime(ICollection<TimeSpan> list, Appointment appointment)
         {
-            TimeZoneInfo BrazilianTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
-            DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), BrazilianTimeZone);
-            DateTime today = new DateTime(now.Year, now.Month, now.Day);
+            DateTime today = new DateTime(_now.Year, _now.Month, _now.Day);
             if (appointment.Date == today)
             {
-                TimeSpan timeNow = now.TimeOfDay;
+                TimeSpan timeNow = _now.TimeOfDay;
                 for (int i = 0; i < list.Count; i++)
                 {
                     if (list.ElementAt(i) < timeNow)
@@ -302,13 +299,8 @@ namespace WebOdontologista.Controllers
                         break;
                     }
                 }
-
             }
             return list;
-
-
-
-
         }
     }
 
