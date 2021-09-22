@@ -24,6 +24,7 @@ namespace WebOdontologista.Controllers
     {
         private readonly AppointmentService _appointmentService;
         private readonly CookieOptions _cookieOptions;
+
         public AppointmentsController(AppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
@@ -72,7 +73,7 @@ namespace WebOdontologista.Controllers
         }
         public async Task<IActionResult> Create()
         {
-            if(TempData.ContainsKey("appointment"))
+            if (TempData.ContainsKey("appointment"))
             {
                 TempData.Remove("appointment");
             }
@@ -148,7 +149,7 @@ namespace WebOdontologista.Controllers
                 return RedirectToAction(nameof(Error), new { message = e.Message });
             }
             TempData["appointment"] = appointment.Serialize();
-            viewModel.AvailableTime = _appointmentService.Book.FindAvailableTime(appointment);
+            viewModel.AvailableTime = RemovePastTime(_appointmentService.Book.FindAvailableTime(appointment), appointment);
             return View(viewModel);
         }
         [HttpPost]
@@ -240,13 +241,8 @@ namespace WebOdontologista.Controllers
                         return "[]";
                     }
                 }
-                List<TimeSpan> list = _appointmentService.Book.FindAvailableTime(appointment);
-                DateTime now = DateTime.Now;
-                DateTime today = new DateTime(now.Year, now.Month, now.Day);
-                if (appointment.Date == today)
-                {
-                    RemovePastTime(list);
-                }
+                ICollection<TimeSpan> list = RemovePastTime(_appointmentService.Book.FindAvailableTime(appointment), appointment);
+
                 result = JsonConvert.SerializeObject(list);
             }
             else
@@ -278,21 +274,33 @@ namespace WebOdontologista.Controllers
             }
             return result;
         }
-        private static void RemovePastTime(ICollection<TimeSpan> list)
+        private static ICollection<TimeSpan> RemovePastTime(ICollection<TimeSpan> list, Appointment appointment)
         {
-            TimeSpan now = DateTime.Now.TimeOfDay;
-            if(false)
+            TimeZoneInfo BrazilianTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
+
+            DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), BrazilianTimeZone);
+            DateTime today = new DateTime(now.Year, now.Month, now.Day);
+            if (appointment.Date == today)
             {
-                now = DateTime.Now.AddHours(-3.0).TimeOfDay;
-            }
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list.ElementAt(i) < now)
+                TimeSpan timeNow = now.TimeOfDay;
+                for (int i = 0; i < list.Count; i++)
                 {
-                    list.Remove(list.ElementAt(0));
-                    i--;
+                    if (list.ElementAt(i) < timeNow)
+                    {
+                        list.Remove(list.ElementAt(0));
+                        i--;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
+
             }
+            return list;
+
+
+
 
         }
     }
