@@ -74,6 +74,10 @@ namespace WebOdontologista.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            if(TempData.ContainsKey("appointment"))
+            {
+                TempData.Remove("appointment");
+            }
             return View(await _appointmentService.ViewModel());
         }
         [HttpPost]

@@ -54,7 +54,10 @@
     else {
         appointment_time.disabled = true;
         document.getElementById("Appointment_Confirm").disabled = true;
-        error.innerText = "Data inválida!";
+        if (!document.getElementById("Appointment_Date").value == "") {
+            error.innerText = "Data inválida!";
+        }
+
     }
 
 }
