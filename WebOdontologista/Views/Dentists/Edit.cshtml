@@ -11,17 +11,17 @@
         <form asp-action="Edit">
             <div class="form-group">
                 <label asp-for="Name" class="control-label"> </label>
-                <input asp-for="Name" class="form-control" autocomplete="off"/>
+                <input asp-for="Name" class="form-control" autocomplete="off" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"> </label>
-                <input asp-for="Email" class="form-control" autocomplete="off"/>
+                <input asp-for="Email" class="form-control" autocomplete="off" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TelephoneNumber" class="control-label"> </label>
-                <input asp-for="TelephoneNumber" class="form-control" autocomplete="off" id="phone" onkeyup="mask()"/>
+                <input asp-for="TelephoneNumber" class="form-control" autocomplete="off" onkeyup="mask(phone)" />
                 <span asp-validation-for="TelephoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -31,10 +31,15 @@
         </form>
     </div>
 </div>
+<environment include="Development">
+    <script src="~/js/mask.js" asp-append-version="true"></script>
+    <script>
+        var phone = document.getElementById("TelephoneNumber");
+    </script>
+</environment>
 @section Scripts
 {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        await Html.RenderPartialAsync("_TelephoneMask");
     }
 }

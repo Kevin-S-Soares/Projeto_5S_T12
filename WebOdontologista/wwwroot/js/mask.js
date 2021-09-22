@@ -1,5 +1,5 @@
-﻿function mask() {
-    var text = document.getElementById("Appointment_TelephoneNumber");
+﻿function mask(text) {
+    //var text = document.getElementById("TelephoneNumber");
     if (text.value.length == 10) {
         if (text.value[4] != " ") {
             var initialDigits = "(" + text.value.substring(0, 2) + ") ";
@@ -29,5 +29,4 @@
             text.value = initialDigits + text.value[10] + "-" + finalDigits;
         }
     }
-    return text;
 }

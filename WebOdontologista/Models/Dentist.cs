@@ -30,13 +30,5 @@ namespace WebOdontologista.Models
         {
             Name = name;
         }
-        public static string Serialize(ICollection<Dentist> dentists)
-        {
-            return JsonConvert.SerializeObject(dentists);
-        }
-        public static Dentist DeserializeAndGetById(string value, int id)
-        {
-            return JsonConvert.DeserializeObject<ICollection<Dentist>>(value).First(obj => obj.Id == id);
-        }
     }
 }

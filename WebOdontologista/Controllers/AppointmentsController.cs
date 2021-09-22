@@ -35,7 +35,6 @@ namespace WebOdontologista.Controllers
                 Expires = DateTime.Now.AddDays(30)
             };
         }
-        [HttpGet]
         public async Task<IActionResult> Index(int? show)
         {
             IActionResult result;
@@ -71,7 +70,6 @@ namespace WebOdontologista.Controllers
             }
             return result;
         }
-        [HttpGet]
         public async Task<IActionResult> Create()
         {
             if(TempData.ContainsKey("appointment"))
@@ -128,7 +126,6 @@ namespace WebOdontologista.Controllers
             await _appointmentService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
         }
-        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (!id.HasValue)
@@ -280,20 +277,6 @@ namespace WebOdontologista.Controllers
                     break;
             }
             return result;
-        }
-        private static string ReturnUrl(Appointment appointment)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("Create?");
-            sb.Append("Patient=" + HttpUtility.UrlEncode(appointment.Patient));
-            sb.Append("&TelephoneNumber=" + HttpUtility.UrlEncode(appointment.TelephoneNumber));
-            sb.Append("&DentistId=" + HttpUtility.UrlEncode(appointment.DentistId.ToString()));
-            sb.Append("&AppointmentType=" + HttpUtility.UrlEncode(appointment.AppointmentType));
-            sb.Append("&DurationInMinutes=" + HttpUtility.UrlEncode(appointment.DurationInMinutes.ToString()));
-            sb.Append("&Date=" + HttpUtility.UrlEncode(appointment.Date.ToString("yyyy-MM-dd")));
-            sb.Append("&prefill=1");
-
-            return sb.ToString();
         }
         private static void RemovePastTime(ICollection<TimeSpan> list)
         {

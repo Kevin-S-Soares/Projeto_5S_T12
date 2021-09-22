@@ -7,58 +7,44 @@
             appointment_time.remove(i);
         }
     }
-    var date;
+    appointment_time.disabled = true;
+    document.getElementById("Appointment_Confirm").disabled = true;
     if (document.getElementById("Appointment_Date").value == "") {
-        date = new Date(0);
+        return;
     }
-    else {
-        var values = document.getElementById("Appointment_Date").value.split("-")
-        for (var i = 0; i < values.length; i++) {
-            values[i] = parseInt(values[i]);
-        }
-        date = new Date(values[0], values[1] - 1, values[2]);
+    var values = document.getElementById("Appointment_Date").value.split("-")
+    for (var i = 0; i < values.length; i++) {
+        values[i] = parseInt(values[i]);
     }
+    var date = new Date(values[0], values[1] - 1, values[2]);
     var reference = new Date();
     var now = new Date(reference.getFullYear(), reference.getMonth(), reference.getDate());
-    if (date >= now) {
-        var url = window.location.origin + "/Appointments/GetTimes";
-        var data = {
-            dentistId: document.getElementById("Appointment_DentistId").value,
-            date: document.getElementById("Appointment_Date").value,
-            durationInMinutes: document.getElementById("Appointment_DurationInMinutes").value
-        };
-        var list;
-        await $.get(url, data, obj => list = JSON.parse(obj));
-
-        if (list == null || list.length == 0) {
-            appointment_time.disabled = true;
-            document.getElementById("Appointment_Confirm").disabled = true;
-            if (list == null) {
-                error.innerText = "Houve um problema de solicitação!";
-            }
-            else {
-                error.innerText = "Não há horários disponíveis neste dia!";
-            }
-        }
-        else {
-            for (var i = 0; i < list.length; i++) {
-                var option = await document.createElement("option");
-                option.value = list[i];
-                option.text = list[i];
-                appointment_time.appendChild(option);
-            }
-            appointment_time.disabled = false;
-            document.getElementById("Appointment_Confirm").disabled = false;
-        }
+    if (date < now) {
+        error.innerText = "Data inválida!";
+        return;
     }
-    else {
-        appointment_time.disabled = true;
-        document.getElementById("Appointment_Confirm").disabled = true;
-        if (!document.getElementById("Appointment_Date").value == "") {
-            error.innerText = "Data inválida!";
-        }
-
+    var url = window.location.origin + "/Appointments/GetTimes";
+    var data = {
+        dentistId: document.getElementById("Appointment_DentistId").value,
+        date: document.getElementById("Appointment_Date").value,
+        durationInMinutes: document.getElementById("Appointment_DurationInMinutes").value
+    };
+    var list;
+    await $.get(url, data, obj => list = JSON.parse(obj));
+    if (list == null) {
+        error.innerText = "Houve um problema de solicitação!";
+        return;
     }
-
+    if (list.length == 0) {
+        error.innerText = "Não há horários disponíveis neste dia!";
+        return;
+    }
+    for (var i = 0; i < list.length; i++) {
+        var option = await document.createElement("option");
+        option.value = list[i];
+        option.text = list[i];
+        appointment_time.appendChild(option);
+    }
+    appointment_time.disabled = false;
+    document.getElementById("Appointment_Confirm").disabled = false;
 }
-
