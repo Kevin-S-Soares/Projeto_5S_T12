@@ -1,5 +1,4 @@
 ﻿function mask(text) {
-    //var text = document.getElementById("TelephoneNumber");
     if (text.value.length == 10) {
         if (text.value[4] != " ") {
             var initialDigits = "(" + text.value.substring(0, 2) + ") ";
