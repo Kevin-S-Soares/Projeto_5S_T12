@@ -15,6 +15,7 @@ namespace WebOdontologista.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly DentistService _dentistService;
+        private readonly TimeZoneInfo _brazilianTimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
         public AppointmentBook Book = new AppointmentBook();
         public AppointmentService(ApplicationDbContext context, DentistService dentistService)
         {
@@ -31,28 +32,29 @@ namespace WebOdontologista.Services
         }
         public async Task<List<Appointment>> FindAllAsync()
         {
-            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now).OrderBy(obj => obj.DateAndTime()).ToListAsync(); //.FindAll(obj => obj.DateAndTime() > DateTime.Now); Produto final
+            DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), _brazilianTimeZone);
+            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= now).OrderBy(obj => obj.DateAndTime()).ToListAsync(); //.FindAll(obj => obj.DateAndTime() > DateTime.Now); Produto final
             return result;
         }
         public async Task<List<Appointment>> FindDailyAsync()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), _brazilianTimeZone);
             DateTime sameDay = new DateTime(now.Year, now.Month, now.Day);
-            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date == sameDay).OrderBy(obj => obj.DateAndTime()).ToListAsync();
+            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= now && obj.Date == sameDay).OrderBy(obj => obj.DateAndTime()).ToListAsync();
             return result;
         }
         public async Task<List<Appointment>> FindWeeklyAsync()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), _brazilianTimeZone);
             DateTime sameWeek = new DateTime(now.Year, now.Month, now.Day).AddDays(7);
-            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date <= sameWeek).OrderBy(obj => obj.DateAndTime()).ToListAsync();
+            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= now && obj.Date <= sameWeek).OrderBy(obj => obj.DateAndTime()).ToListAsync();
             return result;
         }
         public async Task<List<Appointment>> FindMonthlyAsync()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), _brazilianTimeZone);
             DateTime sameMonth = new DateTime(now.Year, now.Month, now.Day).AddDays(30);
-            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= DateTime.Now && obj.Date <= sameMonth).OrderBy(obj => obj.DateAndTime()).ToListAsync();
+            List<Appointment> result = await _context.Appointment.Include(obj => obj.Dentist).Where(obj => obj.DateAndTime() >= now && obj.Date <= sameMonth).OrderBy(obj => obj.DateAndTime()).ToListAsync();
             return result;
         }
         public async Task<AppointmentFormViewModel> ViewModel()
