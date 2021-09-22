@@ -15,7 +15,7 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 using Newtonsoft.Json;
-
+using Microsoft.AspNetCore.Hosting;
 
 namespace WebOdontologista.Controllers
 {
@@ -281,6 +281,10 @@ namespace WebOdontologista.Controllers
         private static void RemovePastTime(ICollection<TimeSpan> list)
         {
             TimeSpan now = DateTime.Now.TimeOfDay;
+            if(false)
+            {
+                now = DateTime.Now.AddHours(-3.0).TimeOfDay;
+            }
             for (int i = 0; i < list.Count; i++)
             {
                 if (list.ElementAt(i) < now)

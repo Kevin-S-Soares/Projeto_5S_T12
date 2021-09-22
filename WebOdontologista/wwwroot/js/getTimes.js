@@ -20,7 +20,7 @@
     var reference = new Date();
     var now = new Date(reference.getFullYear(), reference.getMonth(), reference.getDate());
     if (date < now) {
-        error.innerHTML = "Data inválida!";
+        error.innerHTML = "Data inv&#225lida!";
         return;
     }
     var url = window.location.origin + "/Appointments/GetTimes";
@@ -32,11 +32,11 @@
     var list;
     await $.get(url, data, obj => list = JSON.parse(obj));
     if (list == null) {
-        error.innerHTML = "Houve um problema de solicitação!";
+        error.innerHTML = "Houve um problema de solicita&#231&#227o!";
         return;
     }
     if (list.length == 0) {
-        error.innerHTML = "Não há horários disponíveis neste dia!";
+        error.innerHTML = "N&#227o h&#225 hor&#225rios dispon&#237veis neste dia!";
         return;
     }
     for (var i = 0; i < list.length; i++) {
