@@ -26,6 +26,7 @@ namespace WebOdontologista.Controllers
             {
                 return _appointmentService.Now;
             }
+            set { }
         }
         public AppointmentsController(AppointmentService appointmentService)
         {
@@ -196,7 +197,7 @@ namespace WebOdontologista.Controllers
             }
             ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
             ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
-            var result = await _appointmentService.FindByDateAsync(minDate, maxDate);
+            List<Appointment> result = await _appointmentService.FindByDateAsync(minDate, maxDate);
             return View(result);
         }
         public async Task<IActionResult> GroupingSearch(DateTime? minDate, DateTime? maxDate)
@@ -211,7 +212,7 @@ namespace WebOdontologista.Controllers
             }
             ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
             ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
-            var result = await _appointmentService.FindByDateGroupingAsync(minDate, maxDate);
+            List<IGrouping<Dentist, Appointment>> result = await _appointmentService.FindByDateGroupingAsync(minDate, maxDate);
             return View(result);
         }
         public IActionResult Error(string message)
@@ -249,7 +250,6 @@ namespace WebOdontologista.Controllers
                     }
                 }
                 ICollection<TimeSpan> list = RemovePastTime(_appointmentService.Book.FindAvailableTime(appointment), appointment);
-
                 result = JsonConvert.SerializeObject(list);
             }
             else

@@ -8,6 +8,7 @@ using WebOdontologista.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using WebOdontologista.Services.Exceptions;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace WebOdontologista.Services
 {
@@ -24,7 +25,7 @@ namespace WebOdontologista.Services
             private set { }
         }
         private readonly ApplicationDbContext _context;
-        private readonly DentistService _dentistService;    
+        private readonly DentistService _dentistService;
         public AppointmentService(ApplicationDbContext context, DentistService dentistService)
         {
             _context = context;
@@ -34,7 +35,7 @@ namespace WebOdontologista.Services
         public List<Appointment> FindAll()
         {
             DateTime sameDay = new DateTime(Now.Year, Now.Month, Now.Day);
-            List<Appointment> result = 
+            List<Appointment> result =
                 _context.Appointment.Include(obj => obj.Dentist)
                 .Where(obj => obj.DateAndTime() >= sameDay)
                 .OrderBy(obj => obj.DateAndTime())
@@ -43,42 +44,22 @@ namespace WebOdontologista.Services
         }
         public async Task<List<Appointment>> FindAllAsync()
         {
-            List<Appointment> result = await 
-                _context.Appointment.Include(obj => obj.Dentist)
-                .Where(obj => obj.DateAndTime() >= Now)
-                .OrderBy(obj => obj.DateAndTime())
-                .ToListAsync();
-            return result;
+            return await FindGenericAsync(obj => obj.DateAndTime() >= Now);
         }
         public async Task<List<Appointment>> FindDailyAsync()
         {
             DateTime sameDay = new DateTime(Now.Year, Now.Month, Now.Day);
-            List<Appointment> result = await 
-                _context.Appointment.Include(obj => obj.Dentist)
-                .Where(obj => obj.DateAndTime() >= Now && obj.Date == sameDay)
-                .OrderBy(obj => obj.DateAndTime())
-                .ToListAsync();
-            return result;
+            return await FindGenericAsync(obj => obj.DateAndTime() >= Now && obj.Date == sameDay);
         }
         public async Task<List<Appointment>> FindWeeklyAsync()
         {
             DateTime sameWeek = new DateTime(Now.Year, Now.Month, Now.Day).AddDays(7);
-            List<Appointment> result = await 
-                _context.Appointment.Include(obj => obj.Dentist)
-                .Where(obj => obj.DateAndTime() >= Now && obj.Date <= sameWeek)
-                .OrderBy(obj => obj.DateAndTime())
-                .ToListAsync();
-            return result;
+            return await FindGenericAsync(obj => obj.DateAndTime() >= Now && obj.Date <= sameWeek);
         }
         public async Task<List<Appointment>> FindMonthlyAsync()
         {
             DateTime sameMonth = new DateTime(Now.Year, Now.Month, Now.Day).AddDays(30);
-            List<Appointment> result = await 
-                _context.Appointment.Include(obj => obj.Dentist)
-                .Where(obj => obj.DateAndTime() >= Now && obj.Date <= sameMonth)
-                .OrderBy(obj => obj.DateAndTime())
-                .ToListAsync();
-            return result;
+            return await FindGenericAsync(obj => obj.DateAndTime() >= Now && obj.Date <= sameMonth);
         }
         public async Task<AppointmentFormViewModel> ViewModel()
         {
@@ -93,7 +74,7 @@ namespace WebOdontologista.Services
         }
         public async Task<Appointment> FindByIdAsync(int id)
         {
-            Appointment appointment = await 
+            Appointment appointment = await
                 _context.Appointment.Include(obj => obj.Dentist)
                 .FirstOrDefaultAsync(obj => obj.Id == id);
             return appointment;
@@ -106,7 +87,7 @@ namespace WebOdontologista.Services
         }
         public async Task UpdateAsync(Appointment appointment)
         {
-            
+
             bool hasAny = await _context.Appointment.AnyAsync(obj => obj.Id == appointment.Id);
             if (!hasAny)
             {
@@ -117,32 +98,16 @@ namespace WebOdontologista.Services
                 Appointment entry = await _context.Appointment.FirstAsync(obj => obj.Id == appointment.Id);
                 _context.Entry(entry).CurrentValues.SetValues(appointment);
                 await _context.SaveChangesAsync();
-            } catch(DbUpdateConcurrencyException e)
-            {
-                throw new DbConcurrencyException(e.Message);
-            }
-            // Este pedaço de código não funciona pois o ef bloqueia quando 2 objetos possuem o mesmo id
-            /*
-            bool result = await _context.Appointment.AnyAsync(obj => obj.Id == appointment.Id);
-            if (!result)
-            {
-                throw new NotFoundException("Id não encontrado!");
-            }
-            try
-            {
-               _context.Update(appointment);
-               await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException e)
             {
                 throw new DbConcurrencyException(e.Message);
             }
-            */
         }
         public async Task<List<Appointment>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
         {
             var result = from obj in _context.Appointment select obj;
-            if(minDate.HasValue)
+            if (minDate.HasValue)
             {
                 result = result.Where(obj => obj.Date >= minDate.Value);
             }
@@ -180,6 +145,15 @@ namespace WebOdontologista.Services
                     Book.AddAppointment(obj);
                 }
             }
+        }
+        private async Task<List<Appointment>> FindGenericAsync(Expression<Func<Appointment, bool>> predicate)
+        {
+            List<Appointment> result = await
+             _context.Appointment.Include(obj => obj.Dentist)
+            .Where(predicate)
+            .OrderBy(obj => obj.DateAndTime())
+            .ToListAsync();
+            return result;
         }
     }
 }
