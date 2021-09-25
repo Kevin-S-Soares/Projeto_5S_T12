@@ -86,7 +86,7 @@ namespace WebOdontologista.Controllers
             {
                 return Redirect("/Dentists/Create?returnAppointment=1");
             }
-            return View(await _appointmentService.ViewModel());
+            return View(viewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
