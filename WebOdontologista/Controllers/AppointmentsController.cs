@@ -81,6 +81,11 @@ namespace WebOdontologista.Controllers
             {
                 TempData.Remove("appointment");
             }
+            AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+            if(viewModel.Dentists.Count == 0)
+            {
+                return Redirect("/Dentists/Create?returnAppointment=1");
+            }
             return View(await _appointmentService.ViewModel());
         }
         [HttpPost]
