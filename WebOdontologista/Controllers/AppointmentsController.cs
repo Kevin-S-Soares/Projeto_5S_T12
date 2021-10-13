@@ -11,6 +11,7 @@ using WebOdontologista.Models.ViewModels;
 using WebOdontologista.Services;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System.Linq.Expressions;
 
 namespace WebOdontologista.Controllers
 {
@@ -18,44 +19,47 @@ namespace WebOdontologista.Controllers
     public class AppointmentsController : Controller
     {
         private readonly AppointmentService _appointmentService;
-        private readonly CookieOptions _cookieOptions;
-        private readonly TimeZoneInfo _timeZoneInfo;
-        private DateTime _now
-        {
-            get
-            {
-                return _appointmentService.Now;
-            }
-            set { }
-        }
-        public AppointmentsController(AppointmentService appointmentService)
+        private readonly DentistService _dentistService;
+        private readonly AppointmentBook _book;
+        private DateTime _currentTime;
+        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService)
         {
             _appointmentService = appointmentService;
-            _cookieOptions = new CookieOptions()
-            {
-                Secure = true,
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Expires = _now.AddDays(30)
-            };
-            _timeZoneInfo = _appointmentService.TimeZone;
+            _dentistService = dentistService;
+            _currentTime = new CurrentTimeZoneService().CurrentTime(); // colocar nos services
+            _book = new AppointmentBook(_appointmentService, _dentistService, new CurrentTimeZoneService());
         }
         public async Task<IActionResult> Index(int? show)
         {
             IActionResult result;
+            CookieOptions cookieOptions = new CookieOptions()
+            {
+                Secure = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Expires = _currentTime.AddDays(30)
+            };
+            DateTime sameDay = new DateTime(_currentTime.Year, _currentTime.Month, _currentTime.Day);
+            Expression<Func<Appointment, bool>>[] predicate = new Expression<Func<Appointment, bool>>[4]
+            {
+                    obj => obj.DateAndTime() >= _currentTime && obj.Date == sameDay,
+                    obj => obj.DateAndTime() >= _currentTime && obj.Date <= sameDay.AddDays(7),
+                    obj => obj.DateAndTime() >= _currentTime && obj.Date <= sameDay.AddDays(30),
+                    obj => obj.DateAndTime() >= _currentTime
+            };
             IndexAppointmentFormViewModel viewModel = new IndexAppointmentFormViewModel();
             if (show.HasValue)
             {
-                viewModel.Appointments = await ShowType(show.Value);
-                if (show.Value > 0 && show.Value < 5)
+                viewModel.Appointments = await _appointmentService.FindAllAsync(predicate[show.Value]);
+                if (show.Value > -1 && show.Value < 4)
                 {
                     viewModel.Show = show.Value;
-                    Response.Cookies.Append("Show", show.Value.ToString(), _cookieOptions);
+                    Response.Cookies.Append("Show", show.Value.ToString(), cookieOptions);
                     result = View(viewModel);
                 }
                 else
                 {
-                    result = Redirect("?show=4");
+                    result = Redirect("?show=3");
                 }
             }
             else
@@ -63,13 +67,17 @@ namespace WebOdontologista.Controllers
                 if (Request.Cookies.ContainsKey("Show"))
                 {
                     int value = int.Parse(Request.Cookies["Show"]);
-                    viewModel.Appointments = await ShowType(value);
+                    if(value < 0 || value > 3)
+                    {
+                        value = 3;
+                    }
+                    viewModel.Appointments = await _appointmentService.FindAllAsync(predicate[value]);
                     viewModel.Show = value;
                 }
                 else
                 {
-                    viewModel.Appointments = await _appointmentService.FindAllAsync();
-                    viewModel.Show = 4;
+                    viewModel.Appointments = await _appointmentService.FindAllAsync(obj => obj.DateAndTime() > _currentTime);
+                    viewModel.Show = 3;
                 }
                 result = View(viewModel);
             }
@@ -82,7 +90,7 @@ namespace WebOdontologista.Controllers
                 TempData.Remove("appointment");
             }
             AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
-            if(viewModel.Dentists.Count == 0)
+            if (viewModel.Dentists.Count == 0)
             {
                 return Redirect("/Dentists/Create?returnAppointment=1");
             }
@@ -100,13 +108,9 @@ namespace WebOdontologista.Controllers
             }
             else
             {
-                if (appointment.DateAndTime() < _now)
-                {
-                    return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
-                }
                 try
                 {
-                    _appointmentService.Book.AddAppointment(appointment);
+                    await _book.AddAppointment(appointment);
                 }
                 catch (DomainException e)
                 {
@@ -133,6 +137,14 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
+            try
+            {
+                await _book.RemoveAppointment(id);
+            }
+            catch (DomainException e)
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
             await _appointmentService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
         }
@@ -151,33 +163,29 @@ namespace WebOdontologista.Controllers
             viewModel.Appointment = appointment;
             try
             {
-                _appointmentService.Book.RemoveAppointment(appointment);
+                await _book.EditingAppointment(appointment.Id);
             }
             catch (DomainException e)
             {
                 return RedirectToAction(nameof(Error), new { message = e.Message });
             }
             TempData["appointment"] = appointment.Serialize();
-            viewModel.AvailableTime = RemovePastTime(_appointmentService.Book.FindAvailableTime(appointment), appointment);
+            viewModel.AvailableTime = await _book.FindAvailableTime(appointment);
             return View(viewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Appointment appointment)
         {
+
             if (id != appointment.Id)
             {
                 return RedirectToAction(nameof(Error), new { message = "Ids são distintos!" });
             }
-            if (appointment.DateAndTime() < _now)
-            {
-                return RedirectToAction(nameof(Error), new { message = "Data inválida!" });
-            }
             try
             {
                 Appointment oldAppointment = Appointment.Deserialize(TempData["appointment"] as string);
-                _appointmentService.Book.RemoveAppointment(oldAppointment);
-                _appointmentService.Book.AddAppointment(appointment);
+                await _book.EditAppointment(oldAppointment, appointment);
                 await _appointmentService.UpdateAsync(appointment);
             }
             catch (DomainException e)
@@ -185,40 +193,6 @@ namespace WebOdontologista.Controllers
                 return RedirectToAction(nameof(Error), new { message = e.Message });
             }
             return RedirectToAction(nameof(Index));
-        }
-        public IActionResult Search()
-        {
-            return View();
-        }
-        public async Task<IActionResult> SimpleSearch(DateTime? minDate, DateTime? maxDate)
-        {
-            if (!minDate.HasValue)
-            {
-                minDate = new DateTime(_now.Year, 1, 1);
-            }
-            if (!maxDate.HasValue)
-            {
-                maxDate = new DateTime(_now.Year, 12, 31);
-            }
-            ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
-            ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
-            List<Appointment> result = await _appointmentService.FindByDateAsync(minDate, maxDate);
-            return View(result);
-        }
-        public async Task<IActionResult> GroupingSearch(DateTime? minDate, DateTime? maxDate)
-        {
-            if (!minDate.HasValue)
-            {
-                minDate = new DateTime(_now.Year, 1, 1);
-            }
-            if (!maxDate.HasValue)
-            {
-                maxDate = new DateTime(_now.Year, 12, 31);
-            }
-            ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
-            ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
-            List<IGrouping<Dentist, Appointment>> result = await _appointmentService.FindByDateGroupingAsync(minDate, maxDate);
-            return View(result);
         }
         public IActionResult Error(string message)
         {
@@ -230,7 +204,7 @@ namespace WebOdontologista.Controllers
             return View(error);
         }
         [HttpGet]
-        public string GetTimes(int? dentistId, DateTime? date, int? durationInMinutes)
+        public async Task<string> GetTimes(int? dentistId, DateTime? date, int? durationInMinutes)
         {
             string result;
             if (dentistId.HasValue && date.HasValue && durationInMinutes.HasValue)
@@ -247,14 +221,14 @@ namespace WebOdontologista.Controllers
                     TempData["appointment"] = oldAppointment.Serialize();
                     try
                     {
-                        _appointmentService.Book.RemoveAppointment(oldAppointment);
+                        await _book.EditingAppointment(oldAppointment);
                     }
                     catch (DomainException)
                     {
                         return "[]";
                     }
                 }
-                ICollection<TimeSpan> list = RemovePastTime(_appointmentService.Book.FindAvailableTime(appointment), appointment);
+                List<TimeSpan> list = await _book.FindAvailableTime(appointment);
                 result = JsonConvert.SerializeObject(list);
             }
             else
@@ -262,50 +236,6 @@ namespace WebOdontologista.Controllers
                 result = "[]";
             }
             return result;
-        }
-        private async Task<List<Appointment>> ShowType(int type)
-        {
-            List<Appointment> result;
-            switch (type)
-            {
-                case 1:
-                    result = await _appointmentService.FindDailyAsync();
-                    break;
-                case 2:
-                    result = await _appointmentService.FindWeeklyAsync();
-                    break;
-                case 3:
-                    result = await _appointmentService.FindMonthlyAsync();
-                    break;
-                case 4:
-                    result = await _appointmentService.FindAllAsync();
-                    break;
-                default:
-                    result = await _appointmentService.FindAllAsync();
-                    break;
-            }
-            return result;
-        }
-        private ICollection<TimeSpan> RemovePastTime(ICollection<TimeSpan> list, Appointment appointment)
-        {
-            DateTime today = new DateTime(_now.Year, _now.Month, _now.Day);
-            if (appointment.Date == today)
-            {
-                TimeSpan timeNow = _now.TimeOfDay;
-                for (int i = 0; i < list.Count; i++)
-                {
-                    if (list.ElementAt(i) < timeNow)
-                    {
-                        list.Remove(list.ElementAt(0));
-                        i--;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            return list;
         }
     }
 

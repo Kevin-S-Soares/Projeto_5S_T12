@@ -5,11 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebOdontologista.Data;
 using WebOdontologista.Models;
+using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Services.Exceptions;
 
 namespace WebOdontologista.Services
 {
-    public class DentistService
+    public class DentistService : IDentistService
     {
         private readonly ApplicationDbContext _context;
         public DentistService(ApplicationDbContext context)

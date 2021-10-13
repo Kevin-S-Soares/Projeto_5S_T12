@@ -9,51 +9,68 @@
 <div class="row">
     <div class="col-md-4">
         <form method="post" asp-action="Edit">
-            <input type="hidden" asp-for="Appointment.Id" />
-            <div class="form-group">
-                <label asp-for="Appointment.Patient" class="control-label"> </label>
-                <input asp-for="Appointment.Patient" class="form-control" autocomplete="off" />
-                <span asp-validation-for="Appointment.Patient" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.TelephoneNumber" class="control-label"> </label>
-                <input asp-for="Appointment.TelephoneNumber" class="form-control" autocomplete="off" onkeyup="mask(phone)" />
-                <span asp-validation-for="Appointment.TelephoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.DentistId" class="control-label"> </label>
-                <select asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control" onchange="getTimes()"> </select>
-                <span asp-validation-for="Appointment.DentistId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
-                <input asp-for="Appointment.AppointmentType" class="form-control" />
-                <span asp-validation-for="Appointment.AppointmentType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.DurationInMinutes" class="control-label"> </label>
-                <select asp-for="Appointment.DurationInMinutes" class="form-control" onchange="getTimes()">
-                    <option value="15">15</option>
-                    <option value="30">30</option>
-                    <option value="45">45</option>
-                    <option value="60">60</option>
-                </select>
-                <span asp-validation-for="Appointment.DurationInMinutes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.Date" class="control-label"> </label>
-                <input asp-for="Appointment.Date" class="form-control" onchange="getTimes()" />
-                <span asp-validation-for="Appointment.Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Appointment.Time" class="control-label"> </label>
-                <select asp-for="Appointment.Time" asp-items="@(new SelectList(Model.AvailableTime))" class="form-control"></select>
-                <span asp-validation-for="Appointment.Time" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <br>
-                <input type="submit" id="Appointment_Confirm" value="Reagendar Consulta" class="btn btn-default" />
-            </div>
+            <fieldset>
+                <input type="hidden" asp-for="Appointment.Id" />
+                <label>
+                    Dados pessoais do paciente <span class="glyphicon glyphicon-question-sign text-info" title="Aqui será editado os dados pessoais do paciente já cadastrado em uma dada consulta."></span>
+                </label>
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label asp-for="Appointment.Patient" class="control-label"> </label>
+                            <input asp-for="Appointment.Patient" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="Appointment.Patient" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Appointment.TelephoneNumber" class="control-label"> </label>
+                            <input asp-for="Appointment.TelephoneNumber" class="form-control" autocomplete="off" onkeyup="mask(phone)" />
+                            <span asp-validation-for="Appointment.TelephoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <label>
+                    Dados da consulta <span class="glyphicon glyphicon-question-sign text-info" title="Aqui será editado os dados da consulta já cadastrada.
+A partir do odontologista, a duração da consulta e o dia informado, o sistema buscará uma horário disponível no dia informado (se houver horário disponível)."></span>
+                </label>
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label asp-for="Appointment.DentistId" class="control-label"> </label>
+                            <select asp-for="Appointment.DentistId" asp-items="@(new SelectList(Model.Dentists, "Id", "Name"))" class="form-control" onchange="getTimes()"> </select>
+                            <span asp-validation-for="Appointment.DentistId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Appointment.AppointmentType" class="control-label"> </label>
+                            <input asp-for="Appointment.AppointmentType" class="form-control" />
+                            <span asp-validation-for="Appointment.AppointmentType" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Appointment.DurationInMinutes" class="control-label"> </label>
+                            <select asp-for="Appointment.DurationInMinutes" class="form-control" onchange="getTimes()">
+                                <option value="15">15</option>
+                                <option value="30">30</option>
+                                <option value="45">45</option>
+                                <option value="60">60</option>
+                            </select>
+                            <span asp-validation-for="Appointment.DurationInMinutes" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Appointment.Date" class="control-label"> </label>
+                            <input asp-for="Appointment.Date" class="form-control" onchange="getTimes()" />
+                            <span asp-validation-for="Appointment.Date" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Appointment.Time" class="control-label"> </label>
+                            <select asp-for="Appointment.Time" asp-items="@(new SelectList(Model.AvailableTime))" class="form-control"></select>
+                            <span asp-validation-for="Appointment.Time" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" id="Appointment_Confirm" value="Reagendar Consulta" class="btn btn-warning" />
+                </div>
+            </fieldset>
+
         </form>
     </div>
 </div>

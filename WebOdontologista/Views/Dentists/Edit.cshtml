@@ -9,24 +9,33 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
+            <fieldset>
+                <label>
+                    Dados pessoais <span class="glyphicon glyphicon-question-sign text-info" title="Aqui será editado os dados pessoais do odontologista já cadastrado."></span>
+                </label>
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"> </label>
+                            <input asp-for="Name" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label"> </label>
+                            <input asp-for="Email" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TelephoneNumber" class="control-label"> </label>
+                            <input asp-for="TelephoneNumber" class="form-control" autocomplete="off" onkeyup="mask(phone)" />
+                            <span asp-validation-for="TelephoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
             <div class="form-group">
-                <label asp-for="Name" class="control-label"> </label>
-                <input asp-for="Name" class="form-control" autocomplete="off" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"> </label>
-                <input asp-for="Email" class="form-control" autocomplete="off" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TelephoneNumber" class="control-label"> </label>
-                <input asp-for="TelephoneNumber" class="form-control" autocomplete="off" onkeyup="mask(phone)" />
-                <span asp-validation-for="TelephoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <br>
-                <input type="submit" value="Salvar Odontologista" class="btn btn-default" />
+                <input type="submit" value="Salvar Odontologista" class="btn btn-warning" />
             </div>
         </form>
     </div>

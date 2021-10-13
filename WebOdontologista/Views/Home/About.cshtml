@@ -1,14 +1,16 @@
 ﻿@{
     ViewData["Title"] = "Sobre";
 }
-<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Title"] o projeto</h3>
 <hr />
-
-<h4>Projeto gerenciamento de consultas odontológicas.</h4>
-<br>
+<h3>Projeto gerenciamento de consultas odontológicas.</h3>
 <p>Projeto feito com o intuito de ajudar o gerenciamento de consultas. É possível verificar, adicionar, reagendar e cancelar consultas.</p>
 <p>Também é possível adicionar, editar, verificar e remover odontologistas.</p>
 <p>O sistema não permite adicionar uma consulta em uma data anterior à data que a consulta está sendo agendada.</p>
 <p>Também não permite adicionar uma consulta em um horário já marcado.</p>
 <br>
-<p>Uma determinada consulta com cada horário que a consulta durará é adicionada ou removida do sistema em tempo constante.</p>
+<h3>Limitações</h3>
+<p>O projeto permite adicionar uma consulta entre 09h00 e 18h00 com uma pausa para o almoço às 12h00 durante uma hora.</p>
+<p>A consulta pode ser marcada em qualquer dia da semana.</p>
+<br>
+<a asp-controller="Home" asp-action="Privacy">Política de Privacidade</a>

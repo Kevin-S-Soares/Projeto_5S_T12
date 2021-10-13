@@ -9,27 +9,36 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"> </label>
-                <input asp-for="Name" class="form-control" autocomplete="off" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+            <fieldset>
+                <label>
+                    Dados pessoais <span class="glyphicon glyphicon-question-sign text-info" title="Aqui será inserido os dados pessoais do odontologista sendo cadastrado.
+Por exemplo: O odontologista João, com o email joao@gmail.com e o telefone (11) 1234-5678."></span>
+                </label>
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"> </label>
+                            <input asp-for="Name" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
 
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"> </label>
-                <input asp-for="Email" class="form-control" autocomplete="off" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TelephoneNumber" class="control-label"> </label>
-                <input asp-for="TelephoneNumber" class="form-control" autocomplete="off" onkeyup="mask(phone)" />
-                <span asp-validation-for="TelephoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="hidden" name="ReturnAppointment" value="@ViewData["ReturnAppointment"]" />
-                <br>
-                <input type="submit" value="Adicionar Novo Odontologista" class="btn btn-default" />
-            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label"> </label>
+                            <input asp-for="Email" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TelephoneNumber" class="control-label"> </label>
+                            <input asp-for="TelephoneNumber" class="form-control" autocomplete="off" onkeyup="mask(phone)" />
+                            <span asp-validation-for="TelephoneNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" name="ReturnAppointment" value="@ViewData["ReturnAppointment"]" />
+                    <input type="submit" value="Adicionar Novo Odontologista" class="btn btn-primary" />
+                </div>
+            </fieldset>
         </form>
     </div>
 </div>

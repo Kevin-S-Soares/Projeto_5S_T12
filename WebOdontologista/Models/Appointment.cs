@@ -30,29 +30,24 @@ namespace WebOdontologista.Models
         [Required(ErrorMessage = "{0} requirido.")]
         [StringLength(60, MinimumLength = 3, ErrorMessage = "O campo {0} deve ter entre {2} e {1} caracteres.")]
         [Display(Name = "Tipo de consulta")]
-        public string AppointmentType { get; set; } // Provavelmente mudará, provavelmente será um enum
+        public string AppointmentType { get; set; }
 
         [DataType(DataType.Date)]
         [Required(ErrorMessage = "{0} requirido.")]
         [Display(Name = "Data")]
+        [Column(TypeName = "date")]
         public DateTime Date { get; set; }
+
         [DataType(DataType.Time)]
         [Required(ErrorMessage = "{0} requirido.")]
         [Display(Name = "Horário")]
+        [Column(TypeName = "time(0)")]
         public TimeSpan Time { get; set; }
 
         [Display(Name = "Odontologista")]
         public int DentistId { get; set; }
         public Dentist Dentist { get; set; }
         public Appointment() { }
-        public Appointment(int durationInMinutes, string appointmentType, DateTime date, TimeSpan time, Dentist dentist)
-        {
-            DurationInMinutes = durationInMinutes;
-            AppointmentType = appointmentType;
-            Date = date;
-            Time = time;
-            Dentist = dentist;
-        }
         public DateTime DateAndTime()
         {
             return Date + Time;
@@ -84,6 +79,15 @@ namespace WebOdontologista.Models
                 Time +
                 "\nDentistId: " +
                 DentistId;
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is Appointment appointment &&
+                   Id == appointment.Id;
+        }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
         }
     }
 }

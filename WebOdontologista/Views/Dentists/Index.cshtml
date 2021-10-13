@@ -7,12 +7,12 @@
 <h2>@ViewData["Title"]</h2>
 
 <p>
-    <a asp-action="Create" class="btn btn-default">Novo Odontologista</a>
+    <a asp-action="Create" class="btn btn-primary">Novo Odontologista</a>
 </p>
 
 <table class="table table-striped table-hover">
     <thead>
-        <tr class="success">
+        <tr class="info">
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -42,10 +42,10 @@
                 @Html.DisplayFor(modelItem => item.TelephoneNumber)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-default">Editar</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar</a>
             </td>
             <td>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-default">Excluir</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Excluir</a>
             </td>
         </tr>
         }

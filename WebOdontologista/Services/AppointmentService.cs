@@ -7,59 +7,29 @@ using WebOdontologista.Models;
 using WebOdontologista.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using WebOdontologista.Services.Exceptions;
-using System.Diagnostics;
 using System.Linq.Expressions;
+using WebOdontologista.Models.Interfaces;
 
 namespace WebOdontologista.Services
 {
-    public class AppointmentService
+    public class AppointmentService : IAppointmentService
     {
-        public AppointmentBook Book = new AppointmentBook();
-        public readonly TimeZoneInfo TimeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
-        public DateTime Now
-        {
-            get
-            {
-                return TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), TimeZone);
-            }
-            private set { }
-        }
         private readonly ApplicationDbContext _context;
         private readonly DentistService _dentistService;
         public AppointmentService(ApplicationDbContext context, DentistService dentistService)
         {
             _context = context;
             _dentistService = dentistService;
-            BookingService();
         }
-        public List<Appointment> FindAll()
+        public async Task<List<Appointment>> FindAllAsync(Expression<Func<Appointment, bool>> expression)
         {
-            DateTime sameDay = new DateTime(Now.Year, Now.Month, Now.Day);
-            List<Appointment> result =
-                _context.Appointment.Include(obj => obj.Dentist)
-                .Where(obj => obj.DateAndTime() >= sameDay)
-                .OrderBy(obj => obj.DateAndTime())
-                .ToList();
+            List<Appointment> result = await
+            _context.Appointment
+            .Include(obj => obj.Dentist)
+            .Where(expression)
+            .OrderBy(obj => obj.DateAndTime())
+            .ToListAsync();
             return result;
-        }
-        public async Task<List<Appointment>> FindAllAsync()
-        {
-            return await FindGenericAsync(obj => obj.DateAndTime() >= Now);
-        }
-        public async Task<List<Appointment>> FindDailyAsync()
-        {
-            DateTime sameDay = new DateTime(Now.Year, Now.Month, Now.Day);
-            return await FindGenericAsync(obj => obj.DateAndTime() >= Now && obj.Date == sameDay);
-        }
-        public async Task<List<Appointment>> FindWeeklyAsync()
-        {
-            DateTime sameWeek = new DateTime(Now.Year, Now.Month, Now.Day).AddDays(7);
-            return await FindGenericAsync(obj => obj.DateAndTime() >= Now && obj.Date <= sameWeek);
-        }
-        public async Task<List<Appointment>> FindMonthlyAsync()
-        {
-            DateTime sameMonth = new DateTime(Now.Year, Now.Month, Now.Day).AddDays(30);
-            return await FindGenericAsync(obj => obj.DateAndTime() >= Now && obj.Date <= sameMonth);
         }
         public async Task<AppointmentFormViewModel> ViewModel()
         {
@@ -129,31 +99,6 @@ namespace WebOdontologista.Services
                 result = result.Where(obj => obj.Date <= maxDate.Value);
             }
             return await result.Include(obj => obj.Dentist).OrderBy(obj => obj.Date).GroupBy(obj => obj.Dentist).ToListAsync();
-        }
-        private void BookingService()
-        {
-            List<Appointment> appointments = FindAll();
-            foreach (Appointment obj in appointments)
-            {
-                if (Book.Dentists.ContainsKey(obj.DentistId))
-                {
-                    Book.AddAppointment(obj);
-                }
-                else
-                {
-                    Book.AddDentist(obj.DentistId);
-                    Book.AddAppointment(obj);
-                }
-            }
-        }
-        private async Task<List<Appointment>> FindGenericAsync(Expression<Func<Appointment, bool>> predicate)
-        {
-            List<Appointment> result = await
-             _context.Appointment.Include(obj => obj.Dentist)
-            .Where(predicate)
-            .OrderBy(obj => obj.DateAndTime())
-            .ToListAsync();
-            return result;
         }
     }
 }
