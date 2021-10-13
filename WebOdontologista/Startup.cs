@@ -48,6 +48,7 @@ namespace WebOdontologista
 
             services.AddScoped<AppointmentService>();
             services.AddScoped<DentistService>();
+            services.AddScoped<CurrentTimeZoneService>();
 
 
 

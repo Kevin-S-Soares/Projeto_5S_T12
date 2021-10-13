@@ -22,12 +22,12 @@ namespace WebOdontologista.Controllers
         private readonly DentistService _dentistService;
         private readonly AppointmentBook _book;
         private DateTime _currentTime;
-        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService)
+        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService, CurrentTimeZoneService currentTimeZoneService)
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;
-            _currentTime = new CurrentTimeZoneService().CurrentTime(); // colocar nos services
-            _book = new AppointmentBook(_appointmentService, _dentistService, new CurrentTimeZoneService());
+            _currentTime = currentTimeZoneService.CurrentTime(); // colocar nos services
+            _book = new AppointmentBook(_appointmentService, _dentistService, currentTimeZoneService);
         }
         public async Task<IActionResult> Index(int? show)
         {

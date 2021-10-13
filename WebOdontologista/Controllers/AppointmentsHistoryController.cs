@@ -15,10 +15,10 @@ namespace WebOdontologista.Controllers
     {
         private readonly AppointmentService _appointmentService;
         private DateTime _currentTime;
-        public AppointmentsHistoryController(AppointmentService appointmentService)
+        public AppointmentsHistoryController(AppointmentService appointmentService, CurrentTimeZoneService currentTimeZoneService)
         {
             _appointmentService = appointmentService;
-            _currentTime = new CurrentTimeZoneService().CurrentTime(); // colocar nos services
+            _currentTime = currentTimeZoneService.CurrentTime();
         }
 
         public IActionResult Index()
