@@ -228,8 +228,15 @@ namespace WebOdontologista.Controllers
                         return "[]";
                     }
                 }
-                List<TimeSpan> list = await _book.FindAvailableTime(appointment);
-                result = JsonConvert.SerializeObject(list);
+                try
+                {
+                    List<TimeSpan> list = await _book.FindAvailableTime(appointment);
+                    result = JsonConvert.SerializeObject(list);
+                }
+                catch(DomainException)
+                {
+                    result = "[]";
+                }
             }
             else
             {

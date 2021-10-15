@@ -135,20 +135,27 @@ namespace WebOdontologista.Models
         private async Task<Dentist> AddDentist(Appointment appointment)
         {
             Dentist dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
-            if (!_dentists.ContainsKey(dentist))
+            if(dentist != null)
             {
-                _dentists.Add(dentist, new Dictionary<DateTime, IAssociativeTimePrototype>());
-                IAssociativeTimePrototype prototype;
-                if (dentist.AppointmentsPerDay() <= 64)
+                if (!_dentists.ContainsKey(dentist))
                 {
-                    prototype = new BitMaskAssociativeTime();
+                    _dentists.Add(dentist, new Dictionary<DateTime, IAssociativeTimePrototype>());
+                    IAssociativeTimePrototype prototype;
+                    if (dentist.AppointmentsPerDay() <= 64)
+                    {
+                        prototype = new BitMaskAssociativeTime();
+                    }
+                    else
+                    {
+                        prototype = null;
+                    }
+                    prototype.Set(dentist);
+                    _prototypeDictionary.Add(dentist, prototype);
                 }
-                else
-                {
-                    prototype = null;
-                }
-                prototype.Set(dentist);
-                _prototypeDictionary.Add(dentist, prototype);
+            }
+            else
+            {
+                throw new DomainException("Odontologista não existe!");
             }
             return dentist;
         }
