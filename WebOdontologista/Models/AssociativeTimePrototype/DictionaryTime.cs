@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebOdontologista.Models.Interfaces;
+using WebOdontologista.Models.Exceptions;
 
-namespace WebOdontologista.Models.AssociativeTime
+namespace WebOdontologista.Models.Interfaces.Implementations.AssociativeTimePrototype
 {
     public class DictionaryTime : IAssociativeTimePrototype
     {
-        private Dictionary<TimeSpan, bool> _dictionary = 
-            new Dictionary<TimeSpan, bool>();
         public void Set(Dentist dentist)
         {
-
+            throw new NotImplementedException();
         }
         public IAssociativeTimePrototype Clone()
         {

@@ -5,7 +5,7 @@ using System.Text;
 using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.Exceptions;
 
-namespace WebOdontologista.Models.AssociativeTime
+namespace WebOdontologista.Models.AssociativeTimePrototype
 {
     public class BitMaskAssociativeTime : IAssociativeTimePrototype
     {
@@ -35,7 +35,7 @@ namespace WebOdontologista.Models.AssociativeTime
             _minuteOffSet = startingTime.Minutes;
             _appointmentsPerHour = 4;
             _hourDividedByAppointmentsPerHour = 60 / _appointmentsPerHour;
-            _totalBits = (int) (endingTime.Subtract(startingTime).Subtract(new TimeSpan(0, durationLunchInMinutes, 0)).TotalMinutes / _hourDividedByAppointmentsPerHour);
+            _totalBits = (int) (endingTime.Subtract(startingTime).TotalMinutes / _hourDividedByAppointmentsPerHour);
             Debug.WriteLine("_TotalBits = {0}", _totalBits);
             ulong mask = Mask(NumberOfBits(durationLunchInMinutes));
             mask <<= InitialBitPosition(lunchTime);

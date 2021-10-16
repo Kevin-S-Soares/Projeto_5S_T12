@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebOdontologista.Models.AssociativeTime;
-using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.Interfaces;
+using WebOdontologista.Models.Exceptions;
+using WebOdontologista.Models.AssociativeTimePrototype;
 
 namespace WebOdontologista.Models
 {
@@ -19,8 +19,8 @@ namespace WebOdontologista.Models
         private readonly Dictionary<Dentist, IAssociativeTimePrototype> _prototypeDictionary =
             new Dictionary<Dentist, IAssociativeTimePrototype>();
 
-        private readonly HashSet<Dentist> _loadedDentists =
-            new HashSet<Dentist>();
+        private readonly Dictionary<Dentist, HashSet<DateTime>> _loadedDentists =
+            new Dictionary<Dentist, HashSet<DateTime>>();
 
         public AppointmentBook(IAppointmentService appointmentService, IDentistService dentistService, ICurrentTimeZoneService currentTimeZoneService)
         {
@@ -129,13 +129,13 @@ namespace WebOdontologista.Models
         private async Task<Dentist> Setup(Appointment appointment)
         {
             Dentist dentist = await AddDentist(appointment);
-            await AddAppointmentsByDentist(dentist);
+            await AddAppointmentsByDentist(dentist, appointment.Date);
             return dentist;
         }
         private async Task<Dentist> AddDentist(Appointment appointment)
         {
             Dentist dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
-            if(dentist != null)
+            if (dentist != null)
             {
                 if (!_dentists.ContainsKey(dentist))
                 {
@@ -159,17 +159,11 @@ namespace WebOdontologista.Models
             }
             return dentist;
         }
-        private async Task AddAppointmentsByDentist(Dentist dentist)
+        private async Task AddAppointmentsByDentist(Dentist dentist, DateTime date)
         {
-            if (!_loadedDentists.Contains(dentist))
+            if (!_loadedDentists.ContainsKey(dentist) || !_loadedDentists[dentist].Contains(date))
             {
-                DateTime today = new DateTime(
-                    _currentTimeZoneService.CurrentTime().Year,
-                    _currentTimeZoneService.CurrentTime().Month,
-                    _currentTimeZoneService.CurrentTime().Day);
-
-
-                List<Appointment> result = await _appointmentService.FindAllAsync(obj => obj.DentistId == dentist.Id);
+                List<Appointment> result = await _appointmentService.FindAllAsync(obj => obj.DentistId == dentist.Id && obj.Date == date);
                 try
                 {
                     foreach (Appointment obj in result)
@@ -190,7 +184,15 @@ namespace WebOdontologista.Models
                 {
                     throw new DomainException("Erro ao carregar os dados!");
                 }
-                _loadedDentists.Add(dentist);
+                if (!_loadedDentists.ContainsKey(dentist))
+                {
+                    _loadedDentists.Add(dentist, new HashSet<DateTime>());
+                }
+                if (!_loadedDentists[dentist].Contains(date))
+                {
+                    _loadedDentists[dentist].Add(date);
+                }
+
             }
         }
         private void RemovePastTime(List<TimeSpan> list, Appointment appointment)

@@ -21,8 +21,8 @@ namespace WebOdontologista.Controllers
         private readonly AppointmentService _appointmentService;
         private readonly DentistService _dentistService;
         private readonly AppointmentBook _book;
-        private DateTime _currentTime;
-        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService, CurrentTimeZoneService currentTimeZoneService)
+        private readonly DateTime _currentTime;
+        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService, BrazilianTimeZoneService currentTimeZoneService)
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;
