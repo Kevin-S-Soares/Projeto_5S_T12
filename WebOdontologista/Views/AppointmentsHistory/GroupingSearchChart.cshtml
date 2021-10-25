@@ -1,0 +1,57 @@
+﻿@model IEnumerable<IGrouping<Dentist, Appointment>>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.min.js"></script>
+
+<script>
+    var model = @Html.Raw(Json.Serialize(Model));
+</script>
+@{
+    int iteration = 0;
+}
+@foreach (var appointmentGroup in Model)
+{
+
+    string name = "chart" + iteration;
+    <div class="panel panel-info">
+        <div class="panel-body">
+            <div class="col-md-9" style="height:400px;" id="@name">
+                <script>
+                    createGroupingChart("@Html.Raw(name)", "@Html.Raw(appointmentGroup.Key.Name)", @iteration);
+                </script>
+            </div>
+
+            <div id="options_@name" class="col-md-3">
+                <br>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <center><h3 class="panel-title"><strong>Visualização</strong></h3></center>
+                    </div>
+                    <div class="panel-body">
+                        <center>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li id="pieChart_@name" role="presentation" class="active"><a onclick="charts['@name'].updateChart(new PieChart(), 'pieChart_@name');">Gráfico de setores</a></li>
+                                <li id="barChart_@name" role="presentation"><a onclick="charts['@name'].updateChart(new BarChart(), 'barChart_@name');">Gráfico de barras</a></li>
+                            </ul>
+                        </center>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <center><h3 class="panel-title"><strong>Dados</strong></h3></center>
+                    </div>
+                    <div class="panel-body">
+                        <center>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li role="presentation" id="durationInMinutes_@name" class="active"><a onclick="charts['@name'].updateData(parsedModel['@name']['durationInMinutes'], 'Duração em minutos', 'durationInMinutes_@name');">Duração em minutos</a></li>
+                                <li role="presentation" id="appointmentType_@name" class=""><a onclick="charts['@name'].updateData(parsedModel['@name']['appointmentType'], 'Tipo de consulta', 'appointmentType_@name');">Tipo de consulta</a></li>
+                                <li role="presentation" id="patient_@name" class=""><a onclick="charts['@name'].updateData(parsedModel['@name']['patient'], 'Paciente', 'patient_@name');">Paciente</a></li>
+                            </ul>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    iteration++;
+}

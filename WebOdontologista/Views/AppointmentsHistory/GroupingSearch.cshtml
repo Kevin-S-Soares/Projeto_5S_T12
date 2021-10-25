@@ -5,9 +5,22 @@
     DateTime minDate = DateTime.Parse(ViewData["minDate"] as string);
     DateTime maxDate = DateTime.Parse(ViewData["maxDate"] as string);
 }
-
+<environment include="Development">
+    <script src="~/js/Chart.js" asp-append-version="true"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/js/Chart.min.js" asp-append-version="true"></script>
+</environment>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        toList();
+    });
+</script>
 <h2>@ViewData["Title"]</h2>
-
+<ul class="nav nav-tabs nav-justified">
+    <li role="presentation" class="active" id="list" onclick="toList()"><a><strong>Lista</strong></a></li>
+    <li role="presentation" id="chart" onclick="toChart()"><a><strong>Gráfico</strong></a></li>
+</ul>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <form class="navbar-form navbar-left" role="search">
@@ -25,51 +38,16 @@
         </form>
     </div>
 </nav>
+<div id="listView">
+    <partial name="GroupingSearchList" />
+</div>
+<div id="chartView">
+    <partial name="GroupingSearchChart" />
+</div>
 
-@foreach (var appointmentGroup in Model)
-{
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h3 class="panel-title" style="color:black">Odontologista: @appointmentGroup.Key.Name - Número de consultas: @appointmentGroup.Count()</h3>
-        </div>
-        <div class="panel-body">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr class="info">
-                        <th>
-                            Data
-                        </th>
-                        <th>
-                            Duração
-                        </th>
-                        <th>
-                            Tipo de consulta
-                        </th>
-                        <th>
-                            Paciente
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in appointmentGroup)
-                    {
-                        <tr>
-                            <td>
-                                @item.DateAndTime().ToString("dd/MM/yy HH:mm")
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.DurationInMinutes)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.AppointmentType)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Patient)
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-}
+
+
+
+
+
+

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.Exceptions;
@@ -36,7 +35,6 @@ namespace WebOdontologista.Models.AssociativeTimePrototype
             _appointmentsPerHour = 4;
             _hourDividedByAppointmentsPerHour = 60 / _appointmentsPerHour;
             _totalBits = (int) (endingTime.Subtract(startingTime).TotalMinutes / _hourDividedByAppointmentsPerHour);
-            Debug.WriteLine("_TotalBits = {0}", _totalBits);
             ulong mask = Mask(NumberOfBits(durationLunchInMinutes));
             mask <<= InitialBitPosition(lunchTime);
             _availability |= mask;

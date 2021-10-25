@@ -11,7 +11,7 @@ namespace WebOdontologista.Models
         [Key]
         public int Id { get; set; }
 
-        [Display(Name = "Duração")]
+        [Display(Name = "Duração em minutos")]
         public int DurationInMinutes { get; set; }
 
         [DataType(DataType.Text)]
