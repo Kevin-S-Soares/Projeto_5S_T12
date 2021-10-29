@@ -182,6 +182,12 @@ namespace WebOdontologista.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = "Ids são distintos!" });
             }
+            if (!ModelState.IsValid)
+            {
+                AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+                viewModel.Appointment = appointment;
+                return View(viewModel);
+            }
             try
             {
                 Appointment oldAppointment = Appointment.Deserialize(TempData["appointment"] as string);

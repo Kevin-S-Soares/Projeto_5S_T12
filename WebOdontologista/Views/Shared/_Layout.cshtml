@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistema - @ViewData["Title"]</title>
+    <title>@ViewData["Title"]</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -32,8 +32,8 @@
                 <partial name="_LoginPartial" />
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Appointments" asp-action="Index">Consultas</a></li>
-                    <li><a asp-area="" asp-controller="AppointmentsHistory" asp-action="Index">Histórico</a></li>
                     <li><a asp-area="" asp-controller="Dentists" asp-action="Index">Odontologistas</a></li>
+                    <li><a asp-area="" asp-controller="AppointmentsHistory" asp-action="Index">Histórico</a></li>
                 </ul>
             </div>
         </div>

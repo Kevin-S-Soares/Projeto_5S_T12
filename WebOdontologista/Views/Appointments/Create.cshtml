@@ -4,7 +4,7 @@
 }
 
 <h2>@ViewData["Title"]</h2>
-<h4 id="error"></h4>
+<h4 id="error" class="text-danger"></h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -29,7 +29,7 @@ Por exemplo: O paciente João e o telefone (11) 1234-5678."></span>
                     </div>
                 </div>
                 <label>Dados da consulta <span class="glyphicon glyphicon-question-sign text-info" title="Aqui será inserido os dados da consulta sendo cadastrada.
-A partir do odontologista, a duração da consulta e o dia informado, o sistema buscará uma horário disponível no dia informado (se houver horário disponível)."></span>
+A partir do odontologista, a duração da consulta e o dia informado, o sistema buscará um horário disponível no dia informado (se houver horário disponível)."></span>
                 </label>
                 <div class="panel panel-info" >
                     <div class="panel-body">
@@ -68,6 +68,7 @@ A partir do odontologista, a duração da consulta e o dia informado, o sistema 
 
                 <div class="form-group">
                     <input type="submit" id="Appointment_Confirm" value="Nova consulta" class="btn btn-primary" disabled />
+                    <a asp-action="Index" class="btn btn-default">Voltar ao índice</a>
                 </div>
 
             </fieldset>
