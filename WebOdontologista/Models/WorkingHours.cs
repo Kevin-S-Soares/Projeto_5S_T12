@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+/*
+ * Será implementada uma funcionalidade em uma versão futura.
+ * Por enquanto esta classe nada faz.
+ */
 namespace WebOdontologista.Models
 {
     public class WorkingHours

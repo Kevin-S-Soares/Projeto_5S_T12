@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31605.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebOdontologista", "WebOdontologista\WebOdontologista.csproj", "{1E17D6A2-51F9-49AA-8754-FC57F533AFE5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestModels", "TestModels\TestModels.csproj", "{ED3C5B22-D13B-4DD6-8B11-0E1B97B0B97D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject", "TestModels\TestProject.csproj", "{ED3C5B22-D13B-4DD6-8B11-0E1B97B0B97D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1E17D6A2-51F9-49AA-8754-FC57F533AFE5} = {1E17D6A2-51F9-49AA-8754-FC57F533AFE5}
 	EndProjectSection

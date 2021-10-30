@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.Exceptions;
 
-namespace WebOdontologista.Models.Interfaces.Implementations.AssociativeTimePrototype
+namespace WebOdontologista.Models.CollectionTimePrototype
 {
-    public class DictionaryTime : IAssociativeTimePrototype
+    /*
+    * Será implementada uma funcionalidade em uma versão futura.
+    * Por enquanto esta classe nada faz.
+    */
+    public class HashSetTimePrototype : ICollectionTimePrototype
     {
         public void Set(Dentist dentist)
         {
             throw new NotImplementedException();
         }
-        public IAssociativeTimePrototype Clone()
+        public ICollectionTimePrototype Clone()
         {
             throw new NotImplementedException();
         }

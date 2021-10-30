@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.Exceptions;
-using WebOdontologista.Models.AssociativeTimePrototype;
+using WebOdontologista.Models.CollectionTimePrototype;
 
 namespace WebOdontologista.Models
 {
@@ -13,11 +13,11 @@ namespace WebOdontologista.Models
         private readonly IDentistService _dentistService;
         private readonly ICurrentTimeZoneService _currentTimeZoneService;
 
-        private readonly Dictionary<Dentist, Dictionary<DateTime, IAssociativeTimePrototype>> _dentists =
-            new Dictionary<Dentist, Dictionary<DateTime, IAssociativeTimePrototype>>();
+        private readonly Dictionary<Dentist, Dictionary<DateTime, ICollectionTimePrototype>> _dentists =
+            new Dictionary<Dentist, Dictionary<DateTime, ICollectionTimePrototype>>();
 
-        private readonly Dictionary<Dentist, IAssociativeTimePrototype> _prototypeDictionary =
-            new Dictionary<Dentist, IAssociativeTimePrototype>();
+        private readonly Dictionary<Dentist, ICollectionTimePrototype> _prototypeDictionary =
+            new Dictionary<Dentist, ICollectionTimePrototype>();
 
         private readonly Dictionary<Dentist, HashSet<DateTime>> _loadedDentists =
             new Dictionary<Dentist, HashSet<DateTime>>();
@@ -41,7 +41,7 @@ namespace WebOdontologista.Models
             }
             else
             {
-                IAssociativeTimePrototype clone = _prototypeDictionary[dentist].Clone();
+                ICollectionTimePrototype clone = _prototypeDictionary[dentist].Clone();
                 clone.MakeAppointment(appointment);
                 _dentists[dentist].Add(appointment.Date, clone);
             }
@@ -105,7 +105,7 @@ namespace WebOdontologista.Models
             }
             else
             {
-                IAssociativeTimePrototype clone = _prototypeDictionary[newDentist].Clone();
+                ICollectionTimePrototype clone = _prototypeDictionary[newDentist].Clone();
                 clone.MakeAppointment(newAppointment);
                 _dentists[newDentist].Add(newAppointment.Date, clone);
             }
@@ -139,11 +139,11 @@ namespace WebOdontologista.Models
             {
                 if (!_dentists.ContainsKey(dentist))
                 {
-                    _dentists.Add(dentist, new Dictionary<DateTime, IAssociativeTimePrototype>());
-                    IAssociativeTimePrototype prototype;
+                    _dentists.Add(dentist, new Dictionary<DateTime, ICollectionTimePrototype>());
+                    ICollectionTimePrototype prototype;
                     if (dentist.AppointmentsPerDay() <= 64)
                     {
-                        prototype = new BitMaskAssociativeTime();
+                        prototype = new BitMaskTimePrototype();
                     }
                     else
                     {
@@ -174,7 +174,7 @@ namespace WebOdontologista.Models
                         }
                         else
                         {
-                            IAssociativeTimePrototype clone = _prototypeDictionary[dentist].Clone();
+                            ICollectionTimePrototype clone = _prototypeDictionary[dentist].Clone();
                             clone.MakeAppointment(obj);
                             _dentists[dentist].Add(obj.Date, clone);
                         }

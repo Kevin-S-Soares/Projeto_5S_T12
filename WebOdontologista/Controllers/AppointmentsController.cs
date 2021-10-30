@@ -26,7 +26,7 @@ namespace WebOdontologista.Controllers
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;
-            _currentTime = currentTimeZoneService.CurrentTime(); // colocar nos services
+            _currentTime = currentTimeZoneService.CurrentTime();
             _book = new AppointmentBook(_appointmentService, _dentistService, currentTimeZoneService);
         }
         public async Task<IActionResult> Index(int? show)

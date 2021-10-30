@@ -35,3 +35,24 @@ body {
         display: none;
     }
 }
+
+.show-label {
+    margin-top: 6px;
+    padding-right: 15px;
+    text-align: right;
+}
+
+.chart-box {
+    height: 400px;
+}
+
+.glyphicon-standart-size {
+    font-size: 16px
+}
+
+.top-footer-item {
+    margin-top: -5px
+}
+.text-standart{
+    color:black;
+}

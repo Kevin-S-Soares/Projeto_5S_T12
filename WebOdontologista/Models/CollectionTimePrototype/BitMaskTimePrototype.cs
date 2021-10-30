@@ -4,9 +4,9 @@ using System.Text;
 using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.Exceptions;
 
-namespace WebOdontologista.Models.AssociativeTimePrototype
+namespace WebOdontologista.Models.CollectionTimePrototype
 {
-    public class BitMaskAssociativeTime : IAssociativeTimePrototype
+    public class BitMaskTimePrototype : ICollectionTimePrototype
     {
         /*
          * 0 = Disponível.
@@ -20,7 +20,7 @@ namespace WebOdontologista.Models.AssociativeTimePrototype
         private int _totalBits;
         private ulong _availability;
 
-        public BitMaskAssociativeTime() { }
+        public BitMaskTimePrototype() { }
         public void Set(Dentist dentist)
         {
             /*
@@ -40,9 +40,9 @@ namespace WebOdontologista.Models.AssociativeTimePrototype
             _availability |= mask;
 
         }
-        public IAssociativeTimePrototype Clone()
+        public ICollectionTimePrototype Clone()
         {
-            BitMaskAssociativeTime result = new BitMaskAssociativeTime()
+            BitMaskTimePrototype result = new BitMaskTimePrototype()
             {
                 _hourOffSet = this._hourOffSet,
                 _minuteOffSet = this._minuteOffSet,
@@ -133,6 +133,11 @@ namespace WebOdontologista.Models.AssociativeTimePrototype
         private ulong Mask(int numberOfBits)
         {
             return (1UL << numberOfBits) - 1UL;
+            /*  
+             * seja numberOfBits = 4.
+             * (1 << 4) = 16 = 0001 0000b.
+             * 16 - 1 = 15 = 0000 1111b.
+             */
         }
     }
 }

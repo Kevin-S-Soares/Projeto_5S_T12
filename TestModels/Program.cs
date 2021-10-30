@@ -1,8 +1,12 @@
 ﻿using System;
 using WebOdontologista.Models;
 
+/*
+ * Será testado modelos e controladores.
+ * Estou estudando sobre o assunto.
+ */ 
 
-namespace TestModels
+namespace TestProject
 {
     class Program
     {

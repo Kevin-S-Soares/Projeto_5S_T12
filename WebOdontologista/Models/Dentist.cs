@@ -42,7 +42,7 @@ namespace WebOdontologista.Models
         }
         public int AppointmentsPerDay()
         {
-            return 32; // Insira lógica aqui de quantas consultas por dia o odontologista possuí
+            return 36; // Será delegado para outra classe a quantidade de consultas por dia
         }
     }
 }

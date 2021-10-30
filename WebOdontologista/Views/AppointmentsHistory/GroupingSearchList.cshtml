@@ -4,22 +4,22 @@
     {
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title" style="color:black">Odontologista: @appointmentGroup.Key.Name - Número de consultas: @appointmentGroup.Count()</h3>
+                <h3 class="panel-title"><strong class="text-standart">Odontologista: @appointmentGroup.Key.Name - Número de consultas: @appointmentGroup.Count()</strong></h3>
             </div>
             <div class="panel-body">
-                <table class="table table-striped table-hover">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr class="info">
-                            <th>
+                            <th class="text-center">
                                 Data
                             </th>
-                            <th>
-                                Duração
+                            <th class="text-center">
+                                Duração em minutos
                             </th>
-                            <th>
+                            <th class="text-center">
                                 Tipo de consulta
                             </th>
-                            <th>
+                            <th class="text-center">
                                 Paciente
                             </th>
                         </tr>
@@ -28,16 +28,16 @@
                         @foreach (var item in appointmentGroup)
                         {
                             <tr>
-                                <td>
+                                <td class="text-center">
                                     @item.DateAndTime().ToString("dd/MM/yy HH:mm")
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @Html.DisplayFor(modelItem => item.DurationInMinutes)
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @Html.DisplayFor(modelItem => item.AppointmentType)
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @Html.DisplayFor(modelItem => item.Patient)
                                 </td>
                             </tr>
