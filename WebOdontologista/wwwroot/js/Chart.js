@@ -189,3 +189,10 @@ function createGroupingChart(name, title, iteration) {
     charts[name] = new ChartDirector(element, title, parsedModel[name]['durationInMinutes']);
     charts[name].draw();
 }
+// --------------------------------------------------------------------------------------------------------------------
+
+document.getElementById('main-container').style.opacity = '0';
+document.addEventListener("DOMContentLoaded", function () {
+    toList();
+    document.getElementById('main-container').style.opacity = '1';
+});

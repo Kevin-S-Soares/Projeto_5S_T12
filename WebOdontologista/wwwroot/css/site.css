@@ -3,6 +3,8 @@ for details on configuring this project to bundle and minify static web assets. 
 body {
     padding-top: 50px;
     padding-bottom: 20px;
+    overflow-y: scroll;
+    overflow-x: auto;
 }
 
 /* Wrapping element */
@@ -55,4 +57,10 @@ body {
 }
 .text-standart{
     color:black;
+}
+.nav-text{
+    color:white
+}
+.nav-text:hover{
+    color:dimgrey
 }
