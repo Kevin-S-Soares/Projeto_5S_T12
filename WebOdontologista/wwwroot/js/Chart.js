@@ -98,7 +98,7 @@ class PieChart extends Chart {
     }
 }
 // --------------------------------------------------------------------------------------------------------------------
-class ChartDirector {
+class ChartDirector { // parecido com padrão mediator
     constructor(element, title, model) {
         this.element = element;
         this.title = title;

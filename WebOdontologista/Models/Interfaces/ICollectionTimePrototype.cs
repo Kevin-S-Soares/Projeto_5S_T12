@@ -12,8 +12,7 @@ namespace WebOdontologista.Models.Interfaces
         ICollectionTimePrototype Clone();
         void MakeAppointment(Appointment appointment);
         void CancelAppointment(Appointment appointment);
-        List<TimeSpan> AvailableTime(Appointment appointment);
-        List<TimeSpan> EmptyList(Appointment appointment);
+        List<TimeSpan> GetAvailableTimes(Appointment appointment);
 
     }
 }

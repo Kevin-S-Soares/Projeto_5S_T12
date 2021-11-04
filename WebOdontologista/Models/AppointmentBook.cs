@@ -116,11 +116,11 @@ namespace WebOdontologista.Models
             List<TimeSpan> result;
             if (_dentists.ContainsKey(dentist) && _dentists[dentist].ContainsKey(appointment.Date))
             {
-                result = _dentists[dentist][appointment.Date].AvailableTime(appointment);
+                result = _dentists[dentist][appointment.Date].GetAvailableTimes(appointment);
             }
             else
             {
-                result = _prototypeDictionary[dentist].EmptyList(appointment);
+                result = _prototypeDictionary[dentist].GetAvailableTimes(appointment);
             }
             RemovePastTime(result, appointment);
             return result;

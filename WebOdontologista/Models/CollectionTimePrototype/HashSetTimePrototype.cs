@@ -27,14 +27,9 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         {
             throw new NotImplementedException();
         }
-        public List<TimeSpan> AvailableTime(Appointment appointment)
+        public List<TimeSpan> GetAvailableTimes(Appointment appointment)
         {
             throw new NotImplementedException();
         }
-        public List<TimeSpan> EmptyList(Appointment appointment)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }
