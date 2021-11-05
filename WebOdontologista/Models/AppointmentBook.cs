@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.CollectionTimePrototype;
+using System.Diagnostics;
 
 namespace WebOdontologista.Models
 {
@@ -147,9 +148,10 @@ namespace WebOdontologista.Models
                     }
                     else
                     {
-                        prototype = null;
+                        prototype = new HashSetTimePrototype();
                     }
-                    prototype.Set(dentist);
+                    prototype.InstantiateMembers(dentist);
+                    prototype.SetSchedule(dentist);
                     _prototypeDictionary.Add(dentist, prototype);
                 }
             }
@@ -197,28 +199,22 @@ namespace WebOdontologista.Models
         }
         private void RemovePastTime(List<TimeSpan> list, Appointment appointment)
         {
-            DateTime today = new DateTime(
-                _currentTimeZoneService.CurrentTime().Year,
-                _currentTimeZoneService.CurrentTime().Month,
-                _currentTimeZoneService.CurrentTime().Day
-                                        );
-
+            DateTime today = GetTodayDate();
             if (appointment.Date == today)
             {
                 TimeSpan timeNow = _currentTimeZoneService.CurrentTime().TimeOfDay;
-                for (int i = 0; i < list.Count; i++)
+                while (list[0] < timeNow)
                 {
-                    if (list[i] < timeNow)
-                    {
-                        list.Remove(list[0]);
-                        i--;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    list.RemoveAt(0);
                 }
             }
+        }
+        private DateTime GetTodayDate()
+        {
+            return new DateTime(
+                _currentTimeZoneService.CurrentTime().Year,
+                _currentTimeZoneService.CurrentTime().Month,
+                _currentTimeZoneService.CurrentTime().Day);
         }
     }
 }

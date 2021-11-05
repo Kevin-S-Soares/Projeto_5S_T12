@@ -21,15 +21,11 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         private ulong _availability;
 
         public BitMaskTimePrototype() { }
-        public void Set(Dentist dentist)
+        public void InstantiateMembers(Dentist dentist)
         {
-            /*
-             * Insira lógica aqui de como os atributos serão instanciados.
-            */
             TimeSpan startingTime = new TimeSpan(9, 0, 0);
             TimeSpan endingTime = new TimeSpan(18, 0, 0);
-            TimeSpan lunchTime = new TimeSpan(12, 0, 0);
-            int durationLunchInMinutes = 60;
+
             int minutesInAnHour = 60;
 
             _hourOffSet = startingTime.Hours;
@@ -37,9 +33,12 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             _appointmentsPerHour = 4;
             _minutesInAnHourDividedByAppointmentsPerHour = minutesInAnHour / _appointmentsPerHour;
             _totalAmountOfBits = (int)endingTime.Subtract(startingTime).TotalMinutes / _minutesInAnHourDividedByAppointmentsPerHour;
-
-            ulong mask = GetPosiotionedMask(durationLunchInMinutes, lunchTime);
-            _availability |= mask;
+        }
+        public void SetSchedule(Dentist dentist)
+        {
+            int lunchDurationInMinutes = 60;
+            TimeSpan lunchTime = new TimeSpan(12, 0, 0);
+            SetLunchTime(lunchDurationInMinutes, lunchTime);
         }
         public ICollectionTimePrototype Clone()
         {
@@ -74,9 +73,9 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         public List<TimeSpan> GetAvailableTimes(Appointment appointment)
         {
             List<TimeSpan> result = new List<TimeSpan>();
-            int amountOfBits = GetAmountOfBits(appointment.DurationInMinutes);
-            ulong mask = GetMask(amountOfBits);
-            int length = _totalAmountOfBits - amountOfBits;
+            int amountOfBitsInAMask = GetAmountOfBits(appointment.DurationInMinutes);
+            ulong mask = GetMask(amountOfBitsInAMask);
+            int length = _totalAmountOfBits - amountOfBitsInAMask;
             for (int i = 0; i <= length; i++)
             {
                 if ((mask & _availability) == 0)
@@ -98,22 +97,26 @@ namespace WebOdontologista.Models.CollectionTimePrototype
                 if ((1UL << i & _availability) == 0)
                 {
                     text += "Disponível";
-                    sb.AppendLine(text);
                 }
                 else
                 {
                     text += "Indisponível";
-                    sb.AppendLine(text);
                 }
+                sb.AppendLine(text);
             }
             return sb.ToString();
+        }
+        private void SetLunchTime(int durationInMinutes, TimeSpan lunchTime)
+        {
+            ulong mask = GetPosiotionedMask(durationInMinutes, lunchTime);
+            _availability |= mask;
         }
         private ulong GetPosiotionedMask(int durationInMinutes, TimeSpan time)
         {
             int amountOfBits = GetAmountOfBits(durationInMinutes);
             ulong mask = GetMask(amountOfBits);
             int bitPosition = GetBitPosition(time);
-            mask <<= bitPosition; // posiciona a mascara no lugar correto.
+            mask <<= bitPosition; // posiciona a máscara no lugar correto.
             return mask;
         }
         private int GetBitPosition(TimeSpan time)

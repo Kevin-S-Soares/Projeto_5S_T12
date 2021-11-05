@@ -7,8 +7,8 @@ namespace WebOdontologista.Models.Interfaces
 {
     public interface ICollectionTimePrototype
     {
-
-        void Set(Dentist dentist);
+        void InstantiateMembers(Dentist dentist);
+        void SetSchedule(Dentist dentist);
         ICollectionTimePrototype Clone();
         void MakeAppointment(Appointment appointment);
         void CancelAppointment(Appointment appointment);
