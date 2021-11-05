@@ -1,5 +1,3 @@
-using System;
-
 namespace WebOdontologista.Models
 {
     public class ErrorViewModel

@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Linq;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System;
@@ -42,7 +40,7 @@ namespace WebOdontologista.Models
         }
         public int AppointmentsPerDay()
         {
-            return 36; // Será delegado para outra classe a quantidade de consultas por dia
+            return 36;
         }
     }
 }

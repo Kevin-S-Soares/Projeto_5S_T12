@@ -87,25 +87,6 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             }
             return result;
         }
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < _totalAmountOfBits; i++)
-            {
-                TimeSpan time = new TimeSpan(_hourOffSet, _minutesInAnHourDividedByAppointmentsPerHour * i + _minuteOffSet, 0); ;
-                string text = time.ToString("HH:mm") + " - ";
-                if ((1UL << i & _availability) == 0)
-                {
-                    text += "Disponível";
-                }
-                else
-                {
-                    text += "Indisponível";
-                }
-                sb.AppendLine(text);
-            }
-            return sb.ToString();
-        }
         private void SetLunchTime(int durationInMinutes, TimeSpan lunchTime)
         {
             ulong mask = GetPosiotionedMask(durationInMinutes, lunchTime);
@@ -116,7 +97,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             int amountOfBits = GetAmountOfBits(durationInMinutes);
             ulong mask = GetMask(amountOfBits);
             int bitPosition = GetBitPosition(time);
-            mask <<= bitPosition; // posiciona a máscara no lugar correto.
+            mask <<= bitPosition;
             return mask;
         }
         private int GetBitPosition(TimeSpan time)
@@ -130,11 +111,6 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         private ulong GetMask(int amountOfBits)
         {
             return (1UL << amountOfBits) - 1UL;
-            /*  
-             * seja amountOfBits = 4.
-             * (1 << 4) = 16 = 0001 0000b.
-             * 16 - 1 = 15 = 0000 1111b.
-             */
         }
     }
 }

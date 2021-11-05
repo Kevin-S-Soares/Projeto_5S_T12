@@ -58,27 +58,7 @@ namespace WebOdontologista.Models
         }
         public static Appointment Deserialize(string value)
         {
-
             return JsonConvert.DeserializeObject<Appointment>(value);
-        }
-        public override string ToString()
-        {
-            return "Id: " +
-                Id +
-                "\nPatient: " +
-                Patient +
-                "\nTelephoneNumber: " +
-                TelephoneNumber +
-                "\nDurationInMinutes: " +
-                DurationInMinutes +
-                "\nAppointmentType: " +
-                AppointmentType +
-                "\nDate: " +
-                Date +
-                "\nTime: " +
-                Time +
-                "\nDentistId: " +
-                DentistId;
         }
         public override bool Equals(object obj)
         {
