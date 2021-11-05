@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebOdontologista.Models.Interfaces
 {
-    public interface ICurrentTimeZoneService
+    public interface ITimeZoneService
     {
         DateTime CurrentTime();
     }

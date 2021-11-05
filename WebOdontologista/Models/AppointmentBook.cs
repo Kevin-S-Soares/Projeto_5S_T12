@@ -11,7 +11,7 @@ namespace WebOdontologista.Models
     {
         private readonly IAppointmentService _appointmentService;
         private readonly IDentistService _dentistService;
-        private readonly ICurrentTimeZoneService _currentTimeZoneService;
+        private readonly ITimeZoneService _timeZoneService;
 
         private readonly Dictionary<Dentist, Dictionary<DateTime, ICollectionTimePrototype>> _booking =
             new Dictionary<Dentist, Dictionary<DateTime, ICollectionTimePrototype>>();
@@ -19,11 +19,11 @@ namespace WebOdontologista.Models
         private readonly Dictionary<Dentist, ICollectionTimePrototype> _prototypeDictionary =
             new Dictionary<Dentist, ICollectionTimePrototype>();
 
-        public AppointmentBook(IAppointmentService appointmentService, IDentistService dentistService, ICurrentTimeZoneService currentTimeZoneService)
+        public AppointmentBook(IAppointmentService appointmentService, IDentistService dentistService, ITimeZoneService timeZoneService)
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;
-            _currentTimeZoneService = currentTimeZoneService;
+            _timeZoneService = timeZoneService;
         }
         public async Task AddAppointment(Appointment appointment)
         {
@@ -76,9 +76,9 @@ namespace WebOdontologista.Models
         private DateTime GetTodayDateOnly()
         {
             return new DateTime(
-                _currentTimeZoneService.CurrentTime().Year,
-                _currentTimeZoneService.CurrentTime().Month,
-                _currentTimeZoneService.CurrentTime().Day
+                _timeZoneService.CurrentTime().Year,
+                _timeZoneService.CurrentTime().Month,
+                _timeZoneService.CurrentTime().Day
                 );
         }
         public async Task LoadAppointmentDependecies(Appointment appointment)
@@ -126,7 +126,6 @@ namespace WebOdontologista.Models
                 MakeAppointments(list);
             }
         }
-
         private void ClonePrototypeInADate(Appointment appointment)
         {
             ICollectionTimePrototype clone = _prototypeDictionary[appointment.Dentist].Clone();
@@ -156,8 +155,8 @@ namespace WebOdontologista.Models
         }
         private void RemovePastTimes(List<TimeSpan> list)
         {
-            TimeSpan timeOfTheDay = _currentTimeZoneService.CurrentTime().TimeOfDay;
-            while(list[0] < timeOfTheDay)
+            TimeSpan timeOfTheDay = _timeZoneService.CurrentTime().TimeOfDay;
+            while(list.Count > 0 && list[0] < timeOfTheDay)
             {
                 list.RemoveAt(0);
             }

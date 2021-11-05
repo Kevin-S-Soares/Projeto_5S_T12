@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WebOdontologista.Models;
+using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Services;
 
 namespace WebOdontologista.Controllers
@@ -15,12 +16,11 @@ namespace WebOdontologista.Controllers
     {
         private readonly AppointmentService _appointmentService;
         private DateTime _currentTime;
-        public AppointmentsHistoryController(AppointmentService appointmentService, BrazilianTimeZoneService currentTimeZoneService)
+        public AppointmentsHistoryController(AppointmentService appointmentService, ITimeZoneService currentTimeZoneService)
         {
             _appointmentService = appointmentService;
             _currentTime = currentTimeZoneService.CurrentTime();
         }
-
         public IActionResult Index()
         {
             return View();

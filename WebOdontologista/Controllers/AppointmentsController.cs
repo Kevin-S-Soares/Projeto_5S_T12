@@ -12,6 +12,7 @@ using WebOdontologista.Services;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Linq.Expressions;
+using WebOdontologista.Models.Interfaces;
 
 namespace WebOdontologista.Controllers
 {
@@ -22,7 +23,7 @@ namespace WebOdontologista.Controllers
         private readonly DentistService _dentistService;
         private readonly AppointmentBook _book;
         private readonly DateTime _currentTime;
-        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService, BrazilianTimeZoneService currentTimeZoneService)
+        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService, ITimeZoneService currentTimeZoneService)
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;

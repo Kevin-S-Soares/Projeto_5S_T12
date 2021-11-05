@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using WebOdontologista.Services;
 using WebOdontologista.Data;
+using WebOdontologista.Models.Interfaces;
 
 namespace WebOdontologista
 {
@@ -32,7 +33,7 @@ namespace WebOdontologista
 
             services.AddScoped<AppointmentService>();
             services.AddScoped<DentistService>();
-            services.AddScoped<BrazilianTimeZoneService>();
+            services.AddScoped<ITimeZoneService, BrazilianTimeZoneService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
