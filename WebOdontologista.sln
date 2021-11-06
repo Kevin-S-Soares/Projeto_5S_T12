@@ -5,10 +5,7 @@ VisualStudioVersion = 16.0.31605.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebOdontologista", "WebOdontologista\WebOdontologista.csproj", "{1E17D6A2-51F9-49AA-8754-FC57F533AFE5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject", "TestModels\TestProject.csproj", "{ED3C5B22-D13B-4DD6-8B11-0E1B97B0B97D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{1E17D6A2-51F9-49AA-8754-FC57F533AFE5} = {1E17D6A2-51F9-49AA-8754-FC57F533AFE5}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Models", "UnitTests.Models\UnitTests.Models.csproj", "{87522B50-E7BC-4090-9320-18AE87A7E2BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,10 +17,10 @@ Global
 		{1E17D6A2-51F9-49AA-8754-FC57F533AFE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E17D6A2-51F9-49AA-8754-FC57F533AFE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E17D6A2-51F9-49AA-8754-FC57F533AFE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED3C5B22-D13B-4DD6-8B11-0E1B97B0B97D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED3C5B22-D13B-4DD6-8B11-0E1B97B0B97D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED3C5B22-D13B-4DD6-8B11-0E1B97B0B97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED3C5B22-D13B-4DD6-8B11-0E1B97B0B97D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87522B50-E7BC-4090-9320-18AE87A7E2BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87522B50-E7BC-4090-9320-18AE87A7E2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87522B50-E7BC-4090-9320-18AE87A7E2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87522B50-E7BC-4090-9320-18AE87A7E2BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
