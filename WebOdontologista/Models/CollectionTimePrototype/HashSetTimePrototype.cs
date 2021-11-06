@@ -11,10 +11,11 @@ namespace WebOdontologista.Models.CollectionTimePrototype
     */
     public class HashSetTimePrototype : ICollectionTimePrototype
     {
-        public void InstantiateMembers(Dentist dentist)
+        public HashSetTimePrototype(Dentist dentist)
         {
             throw new NotImplementedException();
         }
+        private HashSetTimePrototype() { }
         public void SetSchedule(Dentist dentist)
         {
             throw new NotImplementedException();

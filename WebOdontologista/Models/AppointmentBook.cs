@@ -59,8 +59,8 @@ namespace WebOdontologista.Models
         public async Task<List<TimeSpan>> FindAvailableTime(Appointment appointment)
         {
             await LoadAppointmentDependecies(appointment);
-            List<TimeSpan> result = GetListOfTimesFromPrototypeOrClone(appointment);
-            if(appointment.Date == GetTodayDateOnly())
+            List<TimeSpan> result = _booking[appointment.Dentist][appointment.Date].GetAvailableTimes(appointment);
+            if (appointment.Date == GetTodayDateOnly())
             {
                 RemovePastTimes(result);
             }
@@ -81,12 +81,12 @@ namespace WebOdontologista.Models
                 _timeZoneService.CurrentTime().Day
                 );
         }
-        public async Task LoadAppointmentDependecies(Appointment appointment)
+        private async Task LoadAppointmentDependecies(Appointment appointment)
         {
             await SetupDentist(appointment);
             await SetupAppointments(appointment);
         }
-        public async Task SetupDentist(Appointment appointment)
+        private async Task SetupDentist(Appointment appointment)
         {
             if (appointment.Dentist == null)
             {
@@ -95,38 +95,41 @@ namespace WebOdontologista.Models
             if (!_booking.ContainsKey(appointment.Dentist))
             {
                 AddDentist(appointment.Dentist);
-                AddDentistPrototype(appointment.Dentist);
+                AssociateDentistToPrototype(appointment.Dentist);
+                SetDentistPrototype(appointment.Dentist);
             }
         }
         private void AddDentist(Dentist dentist)
         {
             _booking.Add(dentist, new Dictionary<DateTime, ICollectionTimePrototype>());
         }
-        private void AddDentistPrototype(Dentist dentist)
+        private void AssociateDentistToPrototype(Dentist dentist)
         {
-            ICollectionTimePrototype prototype;
-            if (dentist.AppointmentsPerDay() <= 64)
-            {
-                prototype = new BitMaskTimePrototype();
-            }
-            else
-            {
-                prototype = new HashSetTimePrototype();
-            }
-            prototype.InstantiateMembers(dentist);
-            prototype.SetSchedule(dentist);
+            ICollectionTimePrototype prototype = CollectionTimePrototypeFabric(dentist);
             _prototypeDictionary.Add(dentist, prototype);
+        }
+        private ICollectionTimePrototype CollectionTimePrototypeFabric(Dentist dentist)
+        {
+            if(dentist.AppointmentsPerDay() <= 64)
+            {
+                return new BitMaskTimePrototype(dentist);
+            }
+            return new HashSetTimePrototype(dentist);
+        }
+        private void SetDentistPrototype(Dentist dentist)
+        {
+            _prototypeDictionary[dentist].SetSchedule(dentist);
         }
         private async Task SetupAppointments(Appointment appointment)
         {
             if (!_booking[appointment.Dentist].ContainsKey(appointment.Date))
             {
                 var list = await _appointmentService.FindAllAsync(obj => obj.DentistId == appointment.DentistId && obj.Date == appointment.Date);
-                ClonePrototypeInADate(appointment);
+                AssociateDateToClone(appointment);
                 MakeAppointments(list);
             }
         }
-        private void ClonePrototypeInADate(Appointment appointment)
+        private void AssociateDateToClone(Appointment appointment)
         {
             ICollectionTimePrototype clone = _prototypeDictionary[appointment.Dentist].Clone();
             _booking[appointment.Dentist].Add(appointment.Date, clone);
@@ -144,14 +147,6 @@ namespace WebOdontologista.Models
             {
                 throw new DomainException("Erro ao carregar os dados!");
             }
-        }
-        private List<TimeSpan> GetListOfTimesFromPrototypeOrClone(Appointment appointment)
-        {
-            if (_booking.ContainsKey(appointment.Dentist) && _booking[appointment.Dentist].ContainsKey(appointment.Date))
-            {
-                return _booking[appointment.Dentist][appointment.Date].GetAvailableTimes(appointment);
-            }
-            return _prototypeDictionary[appointment.Dentist].GetAvailableTimes(appointment);
         }
         private void RemovePastTimes(List<TimeSpan> list)
         {

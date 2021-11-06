@@ -20,8 +20,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         private int _totalAmountOfBits;
         private ulong _availability;
 
-        public BitMaskTimePrototype() { }
-        public void InstantiateMembers(Dentist dentist)
+        public BitMaskTimePrototype(Dentist dentist)
         {
             TimeSpan startingTime = new TimeSpan(9, 0, 0);
             TimeSpan endingTime = new TimeSpan(18, 0, 0);
@@ -34,6 +33,8 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             _minutesInAnHourDividedByAppointmentsPerHour = minutesInAnHour / _appointmentsPerHour;
             _totalAmountOfBits = (int)endingTime.Subtract(startingTime).TotalMinutes / _minutesInAnHourDividedByAppointmentsPerHour;
         }
+        private BitMaskTimePrototype() { }
+
         public void SetSchedule(Dentist dentist)
         {
             int lunchDurationInMinutes = 60;
