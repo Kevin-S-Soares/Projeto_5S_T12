@@ -105,7 +105,7 @@ class ChartDirector { // parecido com padrão mediator
         this.activeChartOption = 'pieChart_' + element.id;
         this.activeDataOption = 'durationInMinutes_' + element.id;
         this.chart = new PieChart();
-        this.seriesName = "Dura\u00e7\u00e3o em minutos";
+        this.seriesName = "Dura\u00e7\u00e3o em minutos"; // cuidado ao minificar!
         this.data = model;
         this.currentDrawChart = echarts.init(this.element);
     }
