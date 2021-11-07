@@ -88,9 +88,9 @@ namespace UnitTests.Models
             {
                 Assert.AreEqual("Cancelamento de consulta proíbido!", ae.Message);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Assert.Fail(string.Format("exception :{0}\nmessage:{1}", e.GetType(), e.Message));
+                Assert.Fail();
             }
         }
         [TestMethod]

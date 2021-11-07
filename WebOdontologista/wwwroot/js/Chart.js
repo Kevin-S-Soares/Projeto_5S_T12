@@ -125,8 +125,13 @@ class ChartDirector { // parecido com padrão mediator
         this.draw();
     }
     draw() {
-        this.chart.set(this.title, this.data, this.seriesName,);
+        this.chart.set(this.title, this.data, this.seriesName);
         this.currentDrawChart.setOption(this.chart.getOptions());
+    }
+    undraw() {
+        var fakeoptions = this.chart.getOptions();
+        fakeoptions["series"][0]["data"] = [];
+        this.currentDrawChart.setOption(fakeoptions);
     }
 }
 // --------------------------------------------------------------------------------------------------------------------
@@ -158,12 +163,18 @@ function toList() {
     document.getElementById("chart").className = "";
     document.getElementById("listView").style.display = "block";
     document.getElementById("chartView").style.display = "none";
+    for (var i in charts) {
+        charts[i].undraw();
+    }
 }
 function toChart() {
     document.getElementById("list").className = "";
     document.getElementById("chart").className = "active";
     document.getElementById("listView").style.display = "none";
     document.getElementById("chartView").style.display = "block";
+    for (var i in charts) {
+        charts[i].draw();
+    }
 }
 // --------------------------------------------------------------------------------------------------------------------
 var charts = {};
@@ -177,7 +188,6 @@ function createSimpleChart(name, title) {
     parsedModel[name]['dentist'] = parseTableRawData(model, 'dentist', 'name');
     parsedModel[name]['patient'] = parseRawData(model, 'patient');
     charts[name] = new ChartDirector(element, title, parsedModel[name]['durationInMinutes']);
-    charts[name].draw();
 }
 
 function createGroupingChart(name, title, iteration) {
@@ -187,7 +197,6 @@ function createGroupingChart(name, title, iteration) {
     parsedModel[name]['appointmentType'] = parseRawData(model[iteration], 'appointmentType');
     parsedModel[name]['patient'] = parseRawData(model[iteration], 'patient');
     charts[name] = new ChartDirector(element, title, parsedModel[name]['durationInMinutes']);
-    charts[name].draw();
 }
 // --------------------------------------------------------------------------------------------------------------------
 
