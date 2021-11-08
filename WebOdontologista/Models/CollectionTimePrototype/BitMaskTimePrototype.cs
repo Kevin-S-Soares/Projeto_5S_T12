@@ -55,25 +55,22 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         }
         public void MakeAppointment(Appointment appointment)
         {
+            AppointmentIsNotNull(appointment);
             ulong mask = GetPosiotionedMask(appointment.DurationInMinutes, appointment.Time);
-            if ((_availability & mask) > 0UL)
-            {
-                throw new DomainException("Não foi possivel adicionar a consulta!");
-            }
+            CanMakeAppointment(mask);
             _availability |= mask;
         }
         public void CancelAppointment(Appointment appointment)
         {
+            AppointmentIsNotNull(appointment);
             ulong mask = GetPosiotionedMask(appointment.DurationInMinutes, appointment.Time);
-            if ((_availability & mask) != mask)
-            {
-                throw new DomainException("Cancelamento de consulta proíbido!");
-            }
+            CanCancelAppointment(mask);
             _availability ^= mask;
         }
         public List<TimeSpan> GetAvailableTimes(Appointment appointment)
         {
-            List<TimeSpan> result = new List<TimeSpan>();
+            AppointmentIsNotNull(appointment);
+            List<TimeSpan> result = new List<TimeSpan>(_totalAmountOfBits);
             int amountOfBitsInAMask = GetAmountOfBits(appointment.DurationInMinutes);
             ulong mask = GetMask(amountOfBitsInAMask);
             int length = _totalAmountOfBits - amountOfBitsInAMask;
@@ -88,6 +85,27 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             }
             return result;
         }
+        private void AppointmentIsNotNull(Appointment appointment)
+        {
+            if(appointment == null)
+            {
+                throw new DomainException("Consulta não fornecida!");
+            }
+        }
+        public void CanMakeAppointment(ulong mask)
+        {
+            if ((_availability & mask) > 0UL)
+            {
+                throw new DomainException("Não foi possivel adicionar a consulta!");
+            }
+        }
+        private void CanCancelAppointment(ulong mask)
+        {
+            if ((_availability & mask) != mask)
+            {
+                throw new DomainException("Cancelamento de consulta proíbido!");
+            }
+        }
         private void SetLunchTime(int durationInMinutes, TimeSpan lunchTime)
         {
             ulong mask = GetPosiotionedMask(durationInMinutes, lunchTime);
@@ -98,8 +116,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             int amountOfBits = GetAmountOfBits(durationInMinutes);
             ulong mask = GetMask(amountOfBits);
             int bitPosition = GetBitPosition(time);
-            mask <<= bitPosition;
-            return mask;
+            return ToPositionMask(bitPosition, amountOfBits, mask);
         }
         private int GetBitPosition(TimeSpan time)
         {
@@ -109,9 +126,23 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         {
             return durationInMinutes / _minutesInAnHourDividedByAppointmentsPerHour;
         }
+
         private ulong GetMask(int amountOfBits)
         {
             return (1UL << amountOfBits) - 1UL;
+        }
+        private ulong ToPositionMask(int bitPosition, int amountOfBits, ulong mask)
+        {
+            MaskIsNotOutOfRange(bitPosition, amountOfBits);
+            mask <<= bitPosition;
+            return mask;
+        }
+        private void MaskIsNotOutOfRange(int bitPosition, int amountOfBits)
+        {
+            if (bitPosition < 0 || bitPosition + amountOfBits > _totalAmountOfBits)
+            {
+                throw new DomainException("Consulta fora dos limites!");
+            }
         }
     }
 }
