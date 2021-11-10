@@ -29,6 +29,7 @@ namespace WebOdontologista.Models
         public string Email { get; set; }
 
         public Dentist() { }
+
         public override bool Equals(object obj)
         {
             return obj is Dentist dentist &&

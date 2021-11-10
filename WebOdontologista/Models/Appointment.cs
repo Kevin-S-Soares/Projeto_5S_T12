@@ -47,7 +47,14 @@ namespace WebOdontologista.Models
         [Display(Name = "Odontologista")]
         public int DentistId { get; set; }
         public Dentist Dentist { get; set; }
+
         public Appointment() { }
+
+        public static Appointment Deserialize(string value)
+        {
+            return JsonConvert.DeserializeObject<Appointment>(value);
+        }
+
         public DateTime DateAndTime()
         {
             return Date + Time;
@@ -55,10 +62,6 @@ namespace WebOdontologista.Models
         public string Serialize()
         {
             return JsonConvert.SerializeObject(this);
-        }
-        public static Appointment Deserialize(string value)
-        {
-            return JsonConvert.DeserializeObject<Appointment>(value);
         }
         public override bool Equals(object obj)
         {

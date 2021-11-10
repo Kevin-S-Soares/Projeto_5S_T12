@@ -27,7 +27,7 @@ namespace WebOdontologista.Models
         }
         public async Task AddAppointment(Appointment appointment)
         {
-            IsValidDate(appointment.Date);
+            IsValidDate(appointment.DateAndTime());
             await LoadAppointmentDependecies(appointment);
             _booking[appointment.Dentist][appointment.Date].MakeAppointment(appointment);
         }
@@ -44,7 +44,7 @@ namespace WebOdontologista.Models
         }
         public async Task EditingAppointment(int id)
         {
-           await RemoveAppointment(id);
+            await RemoveAppointment(id);
         }
         public async Task EditingAppointment(Appointment appointment)
         {
@@ -52,7 +52,7 @@ namespace WebOdontologista.Models
         }
         public async Task EditAppointment(Appointment oldAppointment, Appointment newAppointment)
         {
-            IsValidDate(newAppointment.Date);
+            IsValidDate(newAppointment.DateAndTime());
             await RemoveAppointment(oldAppointment);
             await AddAppointment(newAppointment);
         }
@@ -68,7 +68,7 @@ namespace WebOdontologista.Models
         }
         private void IsValidDate(DateTime date)
         {
-            if (date < GetTodayDateOnly())
+            if (date < GetTodayDateOnly() || date.TimeOfDay < GetTodayTimeOnly())
             {
                 throw new DomainException("Data inválida!");
             }
@@ -81,6 +81,13 @@ namespace WebOdontologista.Models
                 _timeZoneService.CurrentTime().Day
                 );
         }
+        private TimeSpan GetTodayTimeOnly()
+        {
+            return new TimeSpan(
+                _timeZoneService.CurrentTime().Hour,
+                _timeZoneService.CurrentTime().Minute,
+                0);
+        }
         private async Task LoadAppointmentDependecies(Appointment appointment)
         {
             await SetupDentist(appointment);
@@ -88,15 +95,27 @@ namespace WebOdontologista.Models
         }
         private async Task SetupDentist(Appointment appointment)
         {
-            if (appointment.Dentist == null)
-            {
-                appointment.Dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
-            }
+            await AddDentistToAppointmentIfNull(appointment);
+            DentistIsNotNull(appointment.Dentist);
             if (!_booking.ContainsKey(appointment.Dentist))
             {
                 AddDentist(appointment.Dentist);
                 AssociateDentistToPrototype(appointment.Dentist);
                 SetDentistPrototype(appointment.Dentist);
+            }
+        }
+        private async Task AddDentistToAppointmentIfNull(Appointment appointment)
+        {
+            if (appointment.Dentist == null)
+            {
+                appointment.Dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
+            }
+        }
+        private void DentistIsNotNull(Dentist dentist)
+        {
+            if (dentist == null)
+            {
+                throw new DomainException("Dentista inexistente!");
             }
         }
         private void AddDentist(Dentist dentist)
@@ -110,7 +129,7 @@ namespace WebOdontologista.Models
         }
         private ICollectionTimePrototype CollectionTimePrototypeFabric(Dentist dentist)
         {
-            if(dentist.AppointmentsPerDay() <= 64)
+            if (dentist.AppointmentsPerDay() <= 64)
             {
                 return new BitMaskTimePrototype(dentist);
             }
@@ -124,7 +143,9 @@ namespace WebOdontologista.Models
         {
             if (!_booking[appointment.Dentist].ContainsKey(appointment.Date))
             {
-                var list = await _appointmentService.FindAllAsync(obj => obj.DentistId == appointment.DentistId && obj.Date == appointment.Date);
+                List<Appointment> list = await _appointmentService.FindAllAsync(
+                    obj => obj.DentistId == appointment.DentistId
+                    && obj.Date == appointment.Date);
                 AssociateDateToClone(appointment);
                 MakeAppointments(list);
             }
@@ -136,22 +157,15 @@ namespace WebOdontologista.Models
         }
         private void MakeAppointments(List<Appointment> list)
         {
-            try
+            foreach (Appointment obj in list)
             {
-                foreach (Appointment obj in list)
-                {
-                    _booking[obj.Dentist][obj.Date].MakeAppointment(obj);
-                }
-            }
-            catch (DomainException)
-            {
-                throw new DomainException("Erro ao carregar os dados!");
+                _booking[obj.Dentist][obj.Date].MakeAppointment(obj);
             }
         }
         private void RemovePastTimes(List<TimeSpan> list)
         {
             TimeSpan timeOfTheDay = _timeZoneService.CurrentTime().TimeOfDay;
-            while(list.Count > 0 && list[0] < timeOfTheDay)
+            while (list.Count > 0 && list[0] < timeOfTheDay)
             {
                 list.RemoveAt(0);
             }

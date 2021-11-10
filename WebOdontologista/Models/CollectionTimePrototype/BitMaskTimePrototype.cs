@@ -18,6 +18,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         private int _appointmentsPerHour;
         private int _minutesInAnHourDividedByAppointmentsPerHour;
         private int _totalAmountOfBits;
+
         private ulong _availability;
 
         public BitMaskTimePrototype(Dentist dentist)
@@ -70,20 +71,10 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         public List<TimeSpan> GetAvailableTimes(Appointment appointment)
         {
             AppointmentIsNotNull(appointment);
-            List<TimeSpan> result = new List<TimeSpan>(_totalAmountOfBits);
             int amountOfBitsInAMask = GetAmountOfBits(appointment.DurationInMinutes);
-            ulong mask = GetMask(amountOfBitsInAMask);
             int length = _totalAmountOfBits - amountOfBitsInAMask;
-            for (int i = 0; i <= length; i++)
-            {
-                if ((mask & _availability) == 0)
-                {
-                    TimeSpan time = new TimeSpan(_hourOffSet, _minutesInAnHourDividedByAppointmentsPerHour * i + _minuteOffSet, 0);
-                    result.Add(time);
-                }
-                mask <<= 1;
-            }
-            return result;
+            ulong mask = GetMask(amountOfBitsInAMask);
+            return ListOfTimes(mask, length);
         }
         private void AppointmentIsNotNull(Appointment appointment)
         {
@@ -92,7 +83,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
                 throw new DomainException("Consulta não fornecida!");
             }
         }
-        public void CanMakeAppointment(ulong mask)
+        private void CanMakeAppointment(ulong mask)
         {
             if ((_availability & mask) > 0UL)
             {
@@ -116,7 +107,8 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             int amountOfBits = GetAmountOfBits(durationInMinutes);
             ulong mask = GetMask(amountOfBits);
             int bitPosition = GetBitPosition(time);
-            return ToPositionMask(bitPosition, amountOfBits, mask);
+            MaskIsNotOutOfRange(bitPosition, amountOfBits);
+            return mask <<= bitPosition;
         }
         private int GetBitPosition(TimeSpan time)
         {
@@ -126,16 +118,9 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         {
             return durationInMinutes / _minutesInAnHourDividedByAppointmentsPerHour;
         }
-
         private ulong GetMask(int amountOfBits)
         {
             return (1UL << amountOfBits) - 1UL;
-        }
-        private ulong ToPositionMask(int bitPosition, int amountOfBits, ulong mask)
-        {
-            MaskIsNotOutOfRange(bitPosition, amountOfBits);
-            mask <<= bitPosition;
-            return mask;
         }
         private void MaskIsNotOutOfRange(int bitPosition, int amountOfBits)
         {
@@ -143,6 +128,24 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             {
                 throw new DomainException("Consulta fora dos limites!");
             }
+        }
+        private List<TimeSpan> ListOfTimes(ulong mask, int length)
+        {
+            List<TimeSpan> result = new List<TimeSpan>(length);
+            for (int i = 0; i <= length; i++)
+            {
+                if ((mask & _availability) == 0)
+                {
+                    TimeSpan time = new TimeSpan(
+                        _hourOffSet, 
+                        _minutesInAnHourDividedByAppointmentsPerHour * i + _minuteOffSet, 
+                        0);
+
+                    result.Add(time);
+                }
+                mask <<= 1;
+            }
+            return result;
         }
     }
 }
