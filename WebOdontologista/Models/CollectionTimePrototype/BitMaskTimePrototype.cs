@@ -78,7 +78,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         }
         private void AppointmentIsNotNull(Appointment appointment)
         {
-            if(appointment == null)
+            if(appointment is null)
             {
                 throw new DomainException("Consulta não fornecida!");
             }

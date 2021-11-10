@@ -12,15 +12,6 @@ namespace UnitTests.Models
     [TestClass]
     public class AppointmentBook_Tests
     {
-        /*
-         * TODO
-         * Everything is right
-         * If Dentist Doest Exist
-         * Expected Result:
-         * Before 9:00
-         * After 15:00
-         * After 18:00
-         */
 
         private AppointmentServiceDependecy _appointmentService = new AppointmentServiceDependecy();
         private IDentistService _dentistService = new DentistServiceDependecy();
@@ -49,7 +40,7 @@ namespace UnitTests.Models
                 };
                 await Model.AddAppointment(toSucceed);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 Assert.Fail();
             }
@@ -123,7 +114,21 @@ namespace UnitTests.Models
         }
 
         [TestMethod]
-        public async Task RemoveAppointment_CancellingAppointmentIntParam_Succeed()
+        public async Task AddAppointment_AddingNullAppointment_DomainException()
+        {
+            try
+            {
+                await Model.AddAppointment(null);
+                Assert.Fail();
+            }
+            catch (DomainException e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task RemoveAppointment_Int_RemovingAppointment_Succeed()
         {
             try
             {
@@ -136,7 +141,21 @@ namespace UnitTests.Models
         }
 
         [TestMethod]
-        public async Task RemoveAppointment_CancellingAppointmentAppointmentParam_Succeed()
+        public async Task RemoveAppointment_Int_RemovingNonExistentAppointment_DomainException()
+        {
+            try
+            {
+                await Model.RemoveAppointment(-1);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task RemoveAppointment_Appointment_RemovingAppointment_Succeed()
         {
             Appointment toRemove = new Appointment()
             {
@@ -158,7 +177,43 @@ namespace UnitTests.Models
         }
 
         [TestMethod]
-        public async Task EditingAppointment_CancellingAppointmentIntParam_Succeed()
+        public async Task RemoveAppointment_Appointment_RemovingAppointmentWithNonExistentDentist_DomainException()
+        {
+            Appointment toRemove = new Appointment()
+            {
+                Id = 4,
+                Date = _timeZoneService.GetTodayOnly(),
+                DentistId = -1,
+                DurationInMinutes = 15,
+                Time = new TimeSpan(9, 45, 0)
+            };
+            try
+            {
+                await Model.RemoveAppointment(toRemove);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Dentista inexistente!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task RemoveAppointment_Appointment_RemovingNullAppointment_DomainException()
+        {
+            try
+            {
+                await Model.RemoveAppointment(null);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task EditingAppointment_Int_EditingAppointment_Succeed()
         {
             try
             {
@@ -171,7 +226,21 @@ namespace UnitTests.Models
         }
 
         [TestMethod]
-        public async Task EditingAppointment_CancellingAppointmentAppointmentParam_Succeed()
+        public async Task EditingAppointment_Int_EditingNonExistentAppointment_DomainException()
+        {
+            try
+            {
+                await Model.EditingAppointment(-1);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task EditingAppointment_Appointment_EditingAppointment_Succeed()
         {
             Appointment toRemove = new Appointment()
             {
@@ -189,6 +258,185 @@ namespace UnitTests.Models
             catch (Exception)
             {
                 Assert.Fail();
+            }
+        }
+
+        [TestMethod]
+        public async Task EditingAppointment_Appointment_EditingAppointmentWithNonExistingDentist_DomainException()
+        {
+            Appointment toRemove = new Appointment()
+            {
+                Id = 4,
+                Date = _timeZoneService.GetTodayOnly(),
+                DentistId = -1,
+                DurationInMinutes = 15,
+                Time = new TimeSpan(9, 45, 0)
+            };
+            try
+            {
+                await Model.EditingAppointment(toRemove);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Dentista inexistente!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task EditingAppointment_Appointment_EditingNullAppointment_DomainException()
+        {
+            try
+            {
+                await Model.EditingAppointment(null);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task EditAppointment_EditingAppointments_Succeed()
+        {
+            Appointment oldAppointment = await _appointmentService.FindByIdAsync(18);
+            Appointment newAppointment = new Appointment()
+            {
+                Id = 0,
+                DentistId = 2,
+                Date = _timeZoneService.GetTodayOnly(),
+                Time = new TimeSpan(9, 0, 0),
+                DurationInMinutes = 60
+            };
+            try
+            {
+                await Model.EditAppointment(oldAppointment, newAppointment);
+            }
+            catch (Exception)
+            {
+                Assert.Fail();
+            }
+        }
+
+        [TestMethod]
+        public async Task EditAppointment_AppointmentWithNonExistingDentistAndCorrectAppointment_DomainException()
+        {
+            Appointment oldAppointment = new Appointment()
+            {
+                Id = 0,
+                DentistId = -1,
+                Date = _timeZoneService.GetTodayOnly(),
+                Time = new TimeSpan(9, 0, 0),
+                DurationInMinutes = 60
+            };
+            Appointment newAppointment = new Appointment()
+            {
+                Id = 0,
+                DentistId = 2,
+                Date = _timeZoneService.GetTodayOnly(),
+                Time = new TimeSpan(9, 0, 0),
+                DurationInMinutes = 60
+            };
+            try
+            {
+                await Model.EditAppointment(oldAppointment, newAppointment);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Dentista inexistente!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task EditAppointment_CorrectAppointmentAndAppointmentWithNonExistingDentist_DomainException()
+        {
+            Appointment oldAppointment = await _appointmentService.FindByIdAsync(18);
+            Appointment newAppointment = new Appointment()
+            {
+                Id = 0,
+                DentistId = -1,
+                Date = _timeZoneService.GetTodayOnly(),
+                Time = new TimeSpan(9, 0, 0),
+                DurationInMinutes = 60
+            };
+            try
+            {
+                await Model.EditAppointment(oldAppointment, newAppointment);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Dentista inexistente!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task EditAppointment_NullAppointmentAndCorrectAppointment_DomainException()
+        {
+            Appointment oldAppointment = null;
+            Appointment newAppointment = await _appointmentService.FindByIdAsync(18);
+            try
+            {
+                await Model.EditAppointment(oldAppointment, newAppointment);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task EditAppointment_CorrectAppointmentAndNullAppointment_DomainException()
+        {
+            Appointment oldAppointment = await _appointmentService.FindByIdAsync(18);
+            Appointment newAppointment = null;
+            try
+            {
+                await Model.EditAppointment(oldAppointment, newAppointment);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task FindAvailableTime_AppointmentWithNonExistingDentist_DomainException()
+        {
+            Appointment appointment = new Appointment()
+            {
+                Id = 0,
+                DentistId = -1,
+                Date = _timeZoneService.GetTodayOnly(),
+                Time = new TimeSpan(9, 0, 0),
+                DurationInMinutes = 60
+            };
+            try
+            {
+                await Model.FindAvailableTime(appointment);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Dentista inexistente!", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public async Task FindAvailableTime_NullAppointment_DomainException()
+        {
+            try
+            {
+                await Model.FindAvailableTime(null);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
             }
         }
 

@@ -27,6 +27,7 @@ namespace WebOdontologista.Models
         }
         public async Task AddAppointment(Appointment appointment)
         {
+            AppointmentIsNotNull(appointment);
             IsValidDate(appointment.DateAndTime());
             await LoadAppointmentDependecies(appointment);
             _booking[appointment.Dentist][appointment.Date].MakeAppointment(appointment);
@@ -34,11 +35,13 @@ namespace WebOdontologista.Models
         public async Task RemoveAppointment(int id)
         {
             Appointment appointment = await _appointmentService.FindByIdAsync(id);
+            AppointmentIsNotNull(appointment);
             await LoadAppointmentDependecies(appointment);
             _booking[appointment.Dentist][appointment.Date].CancelAppointment(appointment);
         }
         public async Task RemoveAppointment(Appointment appointment)
         {
+            AppointmentIsNotNull(appointment);
             await LoadAppointmentDependecies(appointment);
             _booking[appointment.Dentist][appointment.Date].CancelAppointment(appointment);
         }
@@ -52,12 +55,15 @@ namespace WebOdontologista.Models
         }
         public async Task EditAppointment(Appointment oldAppointment, Appointment newAppointment)
         {
+            AppointmentIsNotNull(newAppointment);
+            AppointmentIsNotNull(oldAppointment);
             IsValidDate(newAppointment.DateAndTime());
             await RemoveAppointment(oldAppointment);
             await AddAppointment(newAppointment);
         }
         public async Task<List<TimeSpan>> FindAvailableTime(Appointment appointment)
         {
+            AppointmentIsNotNull(appointment);
             await LoadAppointmentDependecies(appointment);
             List<TimeSpan> result = _booking[appointment.Dentist][appointment.Date].GetAvailableTimes(appointment);
             if (appointment.Date == GetTodayDateOnly())
@@ -88,6 +94,13 @@ namespace WebOdontologista.Models
                 _timeZoneService.CurrentTime().Minute,
                 0);
         }
+        private void AppointmentIsNotNull(Appointment appointment)
+        {
+            if (appointment is null)
+            {
+                throw new DomainException("Consulta não fornecida!");
+            }
+        }
         private async Task LoadAppointmentDependecies(Appointment appointment)
         {
             await SetupDentist(appointment);
@@ -106,14 +119,14 @@ namespace WebOdontologista.Models
         }
         private async Task AddDentistToAppointmentIfNull(Appointment appointment)
         {
-            if (appointment.Dentist == null)
+            if (appointment.Dentist is null)
             {
                 appointment.Dentist = await _dentistService.FindByIdAsync(appointment.DentistId);
             }
         }
         private void DentistIsNotNull(Dentist dentist)
         {
-            if (dentist == null)
+            if (dentist is null)
             {
                 throw new DomainException("Dentista inexistente!");
             }
