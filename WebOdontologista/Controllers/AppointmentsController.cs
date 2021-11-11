@@ -1,18 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebOdontologista.Models;
 using WebOdontologista.Models.Exceptions;
+using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.ViewModels;
 using WebOdontologista.Services;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System.Linq.Expressions;
-using WebOdontologista.Models.Interfaces;
 
 namespace WebOdontologista.Controllers
 {
@@ -20,14 +19,17 @@ namespace WebOdontologista.Controllers
     public class AppointmentsController : Controller
     {
         private readonly AppointmentService _appointmentService;
-        private readonly DentistService _dentistService;
+        private readonly IDentistService _dentistService;
+        private readonly ITimeZoneService _currentTime;
+
         private readonly AppointmentBook _book;
-        private readonly DateTime _currentTime;
-        public AppointmentsController(AppointmentService appointmentService, DentistService dentistService, ITimeZoneService currentTimeZoneService)
+
+        public AppointmentsController(AppointmentService appointmentService,
+            IDentistService dentistService, ITimeZoneService currentTimeZoneService)
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;
-            _currentTime = currentTimeZoneService.CurrentTime();
+            _currentTime = currentTimeZoneService;
             _book = new AppointmentBook(_appointmentService, _dentistService, currentTimeZoneService);
         }
         public async Task<IActionResult> Index(int? show)
@@ -38,15 +40,15 @@ namespace WebOdontologista.Controllers
                 Secure = true,
                 HttpOnly = true,
                 SameSite = SameSiteMode.None,
-                Expires = _currentTime.AddDays(30)
+                Expires = _currentTime.GetDate().AddDays(30)
             };
-            DateTime sameDay = new DateTime(_currentTime.Year, _currentTime.Month, _currentTime.Day);
+            DateTime sameDay = new DateTime(_currentTime.GetDate().Year, _currentTime.GetDate().Month, _currentTime.GetDate().Day);
             Expression<Func<Appointment, bool>>[] predicate = new Expression<Func<Appointment, bool>>[4]
             {
-                    obj => obj.DateAndTime() >= _currentTime && obj.Date == sameDay,
-                    obj => obj.DateAndTime() >= _currentTime && obj.Date <= sameDay.AddDays(7),
-                    obj => obj.DateAndTime() >= _currentTime && obj.Date <= sameDay.AddDays(30),
-                    obj => obj.DateAndTime() >= _currentTime
+                    obj => obj.DateAndTime() >= _currentTime.GetDate() && obj.Date == sameDay,
+                    obj => obj.DateAndTime() >= _currentTime.GetDate() && obj.Date <= sameDay.AddDays(7),
+                    obj => obj.DateAndTime() >= _currentTime.GetDate() && obj.Date <= sameDay.AddDays(30),
+                    obj => obj.DateAndTime() >= _currentTime.GetDate()
             };
             IndexAppointmentFormViewModel viewModel = new IndexAppointmentFormViewModel();
             if (show.HasValue)
@@ -68,7 +70,7 @@ namespace WebOdontologista.Controllers
                 if (Request.Cookies.ContainsKey("Show"))
                 {
                     int value = int.Parse(Request.Cookies["Show"]);
-                    if(value < 0 || value > 3)
+                    if (value < 0 || value > 3)
                     {
                         value = 3;
                     }
@@ -77,7 +79,7 @@ namespace WebOdontologista.Controllers
                 }
                 else
                 {
-                    viewModel.Appointments = await _appointmentService.FindAllAsync(obj => obj.DateAndTime() > _currentTime);
+                    viewModel.Appointments = await _appointmentService.FindAllAsync(obj => obj.DateAndTime() > _currentTime.GetDate());
                     viewModel.Show = 3;
                 }
                 result = View(viewModel);
@@ -240,7 +242,7 @@ namespace WebOdontologista.Controllers
                     List<TimeSpan> list = await _book.FindAvailableTime(appointment);
                     result = JsonConvert.SerializeObject(list);
                 }
-                catch(DomainException)
+                catch (DomainException)
                 {
                     result = "[]";
                 }

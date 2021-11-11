@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebOdontologista.Data;
 using WebOdontologista.Models;
-using WebOdontologista.Models.ViewModels;
-using Microsoft.EntityFrameworkCore;
-using WebOdontologista.Services.Exceptions;
-using System.Linq.Expressions;
 using WebOdontologista.Models.Interfaces;
+using WebOdontologista.Models.ViewModels;
+using WebOdontologista.Services.Exceptions;
 
 namespace WebOdontologista.Services
 {

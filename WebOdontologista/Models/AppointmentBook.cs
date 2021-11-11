@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebOdontologista.Models.Interfaces;
-using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.CollectionTimePrototype;
+using WebOdontologista.Models.Exceptions;
+using WebOdontologista.Models.Interfaces;
 
 namespace WebOdontologista.Models
 {
@@ -19,7 +19,8 @@ namespace WebOdontologista.Models
         private readonly Dictionary<Dentist, ICollectionTimePrototype> _prototypeDictionary =
             new Dictionary<Dentist, ICollectionTimePrototype>();
 
-        public AppointmentBook(IAppointmentService appointmentService, IDentistService dentistService, ITimeZoneService timeZoneService)
+        public AppointmentBook(IAppointmentService appointmentService,
+            IDentistService dentistService, ITimeZoneService timeZoneService)
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;
@@ -66,7 +67,7 @@ namespace WebOdontologista.Models
             AppointmentIsNotNull(appointment);
             await LoadAppointmentDependecies(appointment);
             List<TimeSpan> result = _booking[appointment.Dentist][appointment.Date].GetAvailableTimes(appointment);
-            if (appointment.Date == GetTodayDateOnly())
+            if (appointment.Date == _timeZoneService.GetDateOnly())
             {
                 RemovePastTimes(result);
             }
@@ -74,7 +75,7 @@ namespace WebOdontologista.Models
         }
         private void IsValidDate(DateTime date)
         {
-            if (date < _timeZoneService.CurrentTime())
+            if (date < _timeZoneService.GetDate())
             {
                 throw new DomainException("Data inválida!");
             }
@@ -160,17 +161,9 @@ namespace WebOdontologista.Models
                 _booking[obj.Dentist][obj.Date].MakeAppointment(obj);
             }
         }
-        private DateTime GetTodayDateOnly()
-        {
-            return new DateTime(
-                _timeZoneService.CurrentTime().Year,
-                _timeZoneService.CurrentTime().Month,
-                _timeZoneService.CurrentTime().Day
-                );
-        }
         private void RemovePastTimes(List<TimeSpan> list)
         {
-            TimeSpan timeOfTheDay = _timeZoneService.CurrentTime().TimeOfDay;
+            TimeSpan timeOfTheDay = _timeZoneService.GetDate().TimeOfDay;
             while (list.Count > 0 && list[0] < timeOfTheDay)
             {
                 list.RemoveAt(0);

@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using WebOdontologista.Services;
 using WebOdontologista.Data;
 using WebOdontologista.Models.Interfaces;
+using WebOdontologista.Services;
 
 namespace WebOdontologista
 {
@@ -32,7 +32,7 @@ namespace WebOdontologista
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<AppointmentService>();
-            services.AddScoped<DentistService>();
+            services.AddScoped<IDentistService, DentistService>();
             services.AddScoped<ITimeZoneService, BrazilianTimeZoneService>();
         }
 

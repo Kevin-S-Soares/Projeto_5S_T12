@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WebOdontologista.Models;
 using WebOdontologista.Models.Interfaces;
 
-namespace UnitTests.Models.AppointmentBookDependecies
+namespace UnitTests.Models.ServicesDependecies
 {
     public class AppointmentServiceDependecy : IAppointmentService
     {

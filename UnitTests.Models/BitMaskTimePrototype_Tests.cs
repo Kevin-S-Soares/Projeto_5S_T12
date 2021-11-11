@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnitTests.Models.AppointmentBookDependecies;
+using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Models;
 using WebOdontologista.Models.CollectionTimePrototype;
 
@@ -12,8 +12,8 @@ namespace UnitTests.Models
     public class BitMaskTimePrototype_Tests
     {
         public BitMaskTimePrototype Model { get; set; }
-        private AppointmentServiceDependecy _appointmentService = new AppointmentServiceDependecy();
-        private TimeZoneServiceDependecy _timeZoneService = new TimeZoneServiceDependecy();
+        private readonly AppointmentServiceDependecy _appointmentService = new AppointmentServiceDependecy();
+        private readonly TimeZoneServiceDependecy _timeZoneService = new TimeZoneServiceDependecy();
 
         [TestInitialize]
         public void Initialize()
@@ -232,7 +232,7 @@ namespace UnitTests.Models
         public List<TimeSpan> FifteenMinutesAppointmentDuration()
         {
             var result = new List<TimeSpan>();
-            for(int i = 0; i < 12; i++)
+            for (int i = 0; i < 12; i++)
             {
                 result.Add(new TimeSpan(9, i * 15, 0));
             }

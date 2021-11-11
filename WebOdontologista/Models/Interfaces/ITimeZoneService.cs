@@ -4,6 +4,8 @@ namespace WebOdontologista.Models.Interfaces
 {
     public interface ITimeZoneService
     {
-        DateTime CurrentTime();
+        DateTime GetDate();
+        DateTime GetDateOnly();
+        TimeSpan GetTimeOnly();
     }
 }

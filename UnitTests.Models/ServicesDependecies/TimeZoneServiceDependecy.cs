@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using WebOdontologista.Models.Interfaces;
 
-namespace UnitTests.Models.AppointmentBookDependecies
+namespace UnitTests.Models.ServicesDependecies
 {
     public class TimeZoneServiceDependecy : ITimeZoneService
     {
@@ -13,9 +11,26 @@ namespace UnitTests.Models.AppointmentBookDependecies
                 DateTime.Now.Day,
                 8, 0, 0);
 
-        public DateTime CurrentTime()
+        public DateTime GetDate()
         {
             return _date;
+        }
+        public DateTime GetDateOnly()
+        {
+            DateTime result = new DateTime(
+                GetDate().Year,
+                GetDate().Month,
+                GetDate().Day
+                );
+            return result;
+        }
+        public TimeSpan GetTimeOnly()
+        {
+            TimeSpan result = new TimeSpan(
+                GetDate().Hour,
+                GetDate().Minute,
+                0);
+            return result;
         }
         public DateTime ChangeToBrazilianTime()
         {

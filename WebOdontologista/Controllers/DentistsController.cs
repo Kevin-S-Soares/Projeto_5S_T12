@@ -1,19 +1,19 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using WebOdontologista.Models;
-using WebOdontologista.Services;
+using WebOdontologista.Models.Interfaces;
 
 namespace WebOdontologista.Controllers
 {
     [Authorize]
     public class DentistsController : Controller
     {
-        private readonly DentistService _dentistService;
+        private readonly IDentistService _dentistService;
 
-        public DentistsController(DentistService dentistService)
+        public DentistsController(IDentistService dentistService)
         {
             _dentistService = dentistService;
         }
@@ -24,7 +24,7 @@ namespace WebOdontologista.Controllers
         [HttpGet]
         public IActionResult Create(int? returnAppointment)
         {
-            if(returnAppointment.HasValue)
+            if (returnAppointment.HasValue)
             {
                 ViewData["ReturnAppointment"] = 1;
             }
@@ -62,7 +62,7 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _dentistService.RemoveAsync(id);
+            await _dentistService.RemoveByIdAsync(id);
             return RedirectToAction(nameof(Index));
         }
         public async Task<IActionResult> Edit(int? id)
@@ -97,7 +97,7 @@ namespace WebOdontologista.Controllers
             }
             catch (ApplicationException e)
             {
-                return RedirectToAction(nameof(Error), new { message = e.Message});
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
         }
         public IActionResult Error(string message)

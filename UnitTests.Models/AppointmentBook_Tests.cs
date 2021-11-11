@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnitTests.Models.AppointmentBookDependecies;
+using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Models;
 using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.Interfaces;
@@ -13,9 +13,9 @@ namespace UnitTests.Models
     public class AppointmentBook_Tests
     {
 
-        private AppointmentServiceDependecy _appointmentService = new AppointmentServiceDependecy();
-        private IDentistService _dentistService = new DentistServiceDependecy();
-        TimeZoneServiceDependecy _timeZoneService = new TimeZoneServiceDependecy();
+        private readonly AppointmentServiceDependecy _appointmentService = new AppointmentServiceDependecy();
+        private readonly IDentistService _dentistService = new DentistServiceDependecy();
+        private readonly TimeZoneServiceDependecy _timeZoneService = new TimeZoneServiceDependecy();
 
         AppointmentBook Model;
 

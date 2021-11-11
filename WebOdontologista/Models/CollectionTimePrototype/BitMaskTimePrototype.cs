@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.Exceptions;
+using WebOdontologista.Models.Interfaces;
 
 namespace WebOdontologista.Models.CollectionTimePrototype
 {
@@ -78,7 +77,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
         }
         private void AppointmentIsNotNull(Appointment appointment)
         {
-            if(appointment is null)
+            if (appointment is null)
             {
                 throw new DomainException("Consulta não fornecida!");
             }
@@ -137,8 +136,8 @@ namespace WebOdontologista.Models.CollectionTimePrototype
                 if ((mask & _availability) == 0)
                 {
                     TimeSpan time = new TimeSpan(
-                        _hourOffSet, 
-                        _minutesInAnHourDividedByAppointmentsPerHour * i + _minuteOffSet, 
+                        _hourOffSet,
+                        _minutesInAnHourDividedByAppointmentsPerHour * i + _minuteOffSet,
                         0);
 
                     result.Add(time);

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,10 +16,6 @@ namespace WebOdontologista.Services
         {
             _context = context;
         }
-        public List<Dentist> FindAll()
-        {
-            return _context.Dentist.OrderBy(obj => obj.Name).ToList();
-        }
         public async Task<List<Dentist>> FindAllAsync()
         {
             return await _context.Dentist.OrderBy(obj => obj.Name).ToListAsync();
@@ -28,13 +23,13 @@ namespace WebOdontologista.Services
         public async Task InsertAsync(Dentist dentist)
         {
             _context.Add(dentist);
-           await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
         public async Task<Dentist> FindByIdAsync(int id)
         {
             return await _context.Dentist.FirstOrDefaultAsync(obj => obj.Id == id);
         }
-        public async Task RemoveAsync(int id)
+        public async Task RemoveByIdAsync(int id)
         {
             Dentist dentist = await _context.Dentist.FindAsync(id);
             _context.Dentist.Remove(dentist);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebOdontologista.Models.Interfaces;
-using WebOdontologista.Models.Exceptions;
 
 namespace WebOdontologista.Models.CollectionTimePrototype
 {

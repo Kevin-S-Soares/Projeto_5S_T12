@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using WebOdontologista.Models;
 using WebOdontologista.Models.Interfaces;
 
-namespace UnitTests.Models.AppointmentBookDependecies
+namespace UnitTests.Models.ServicesDependecies
 {
     public class DentistServiceDependecy : IDentistService
     {
-        private List<Dentist> _list = new List<Dentist>();
+        private readonly List<Dentist> _list = new List<Dentist>();
         public DentistServiceDependecy()
         {
             GenerateDentists();
@@ -22,6 +22,26 @@ namespace UnitTests.Models.AppointmentBookDependecies
         {
             return _list;
         }
+        public Task<List<Dentist>> FindAllAsync()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task InsertAsync(Dentist dentist)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task RemoveByIdAsync(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task UpdateAsync(Dentist dentist)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private void GenerateDentists()
         {
             _list.AddRange(new Dentist[]
