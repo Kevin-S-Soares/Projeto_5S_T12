@@ -74,7 +74,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
             int amountOfBitsInAMask = GetAmountOfBits(appointment.DurationInMinutes);
             int length = _totalAmountOfBits - amountOfBitsInAMask;
             ulong mask = GetMask(amountOfBitsInAMask);
-            return ListOfTimes(mask, length);
+            return GetListOfTimes(mask, length);
         }
         private void AppointmentIsNotNull(Appointment appointment)
         {
@@ -129,7 +129,7 @@ namespace WebOdontologista.Models.CollectionTimePrototype
                 throw new DomainException("Consulta fora dos limites!");
             }
         }
-        private List<TimeSpan> ListOfTimes(ulong mask, int length)
+        private List<TimeSpan> GetListOfTimes(ulong mask, int length)
         {
             List<TimeSpan> result = new List<TimeSpan>(length);
             for (int i = 0; i <= length; i++)

@@ -28,6 +28,7 @@ namespace UnitTests.Models
         [TestMethod]
         public async Task AddAppointment_AddingAppointment_Succeed()
         {
+            _timeZoneService.ChangeToNineteen();
             try
             {
                 Appointment toSucceed = new Appointment()
@@ -40,9 +41,9 @@ namespace UnitTests.Models
                 };
                 await Model.AddAppointment(toSucceed);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Assert.Fail();
+                Assert.Fail(e.Message);
             }
         }
 

@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31605.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebOdontologista", "WebOdontologista\WebOdontologista.csproj", "{1E17D6A2-51F9-49AA-8754-FC57F533AFE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Models", "UnitTests.Models\UnitTests.Models.csproj", "{87522B50-E7BC-4090-9320-18AE87A7E2BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Models", "UnitTests.Models\UnitTests.Models.csproj", "{87522B50-E7BC-4090-9320-18AE87A7E2BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Controllers", "UnitTests.Controllers\UnitTests.Controllers.csproj", "{08234AD1-7088-4E15-9FFD-D57919B7BF70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{87522B50-E7BC-4090-9320-18AE87A7E2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87522B50-E7BC-4090-9320-18AE87A7E2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87522B50-E7BC-4090-9320-18AE87A7E2BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08234AD1-7088-4E15-9FFD-D57919B7BF70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08234AD1-7088-4E15-9FFD-D57919B7BF70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08234AD1-7088-4E15-9FFD-D57919B7BF70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08234AD1-7088-4E15-9FFD-D57919B7BF70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

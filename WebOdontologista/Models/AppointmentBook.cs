@@ -74,25 +74,10 @@ namespace WebOdontologista.Models
         }
         private void IsValidDate(DateTime date)
         {
-            if (date < GetTodayDateOnly() || date.TimeOfDay < GetTodayTimeOnly())
+            if (date < _timeZoneService.CurrentTime())
             {
                 throw new DomainException("Data inválida!");
             }
-        }
-        private DateTime GetTodayDateOnly()
-        {
-            return new DateTime(
-                _timeZoneService.CurrentTime().Year,
-                _timeZoneService.CurrentTime().Month,
-                _timeZoneService.CurrentTime().Day
-                );
-        }
-        private TimeSpan GetTodayTimeOnly()
-        {
-            return new TimeSpan(
-                _timeZoneService.CurrentTime().Hour,
-                _timeZoneService.CurrentTime().Minute,
-                0);
         }
         private void AppointmentIsNotNull(Appointment appointment)
         {
@@ -174,6 +159,14 @@ namespace WebOdontologista.Models
             {
                 _booking[obj.Dentist][obj.Date].MakeAppointment(obj);
             }
+        }
+        private DateTime GetTodayDateOnly()
+        {
+            return new DateTime(
+                _timeZoneService.CurrentTime().Year,
+                _timeZoneService.CurrentTime().Month,
+                _timeZoneService.CurrentTime().Day
+                );
         }
         private void RemovePastTimes(List<TimeSpan> list)
         {
