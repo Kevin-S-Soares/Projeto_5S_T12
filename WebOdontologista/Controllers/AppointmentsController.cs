@@ -92,7 +92,7 @@ namespace WebOdontologista.Controllers
             {
                 TempData.Remove("appointment");
             }
-            AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+            AppointmentFormViewModel viewModel = await AppointmentFormViewModel.CreateFormViewModel(_dentistService);
             if (viewModel.Dentists.Count == 0)
             {
                 return Redirect("/Dentists/Create?returnAppointment=1");
@@ -105,7 +105,7 @@ namespace WebOdontologista.Controllers
         {
             if (!ModelState.IsValid)
             {
-                AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+                AppointmentFormViewModel viewModel = await AppointmentFormViewModel.CreateFormViewModel(_dentistService);
                 viewModel.Appointment = appointment;
                 return View(viewModel);
             }
@@ -162,7 +162,7 @@ namespace WebOdontologista.Controllers
             {
                 return RedirectToAction(nameof(Error), new { Message = "Consulta inexistente!" });
             }
-            AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+            AppointmentFormViewModel viewModel = await AppointmentFormViewModel.CreateFormViewModel(_dentistService);
             viewModel.Appointment = appointment;
             try
             {
@@ -187,7 +187,7 @@ namespace WebOdontologista.Controllers
             }
             if (!ModelState.IsValid)
             {
-                AppointmentFormViewModel viewModel = await _appointmentService.ViewModel();
+                AppointmentFormViewModel viewModel = await AppointmentFormViewModel.CreateFormViewModel(_dentistService);
                 viewModel.Appointment = appointment;
                 return View(viewModel);
             }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using WebOdontologista.Data;
 using WebOdontologista.Models;
 using WebOdontologista.Models.Interfaces;
-using WebOdontologista.Models.ViewModels;
 using WebOdontologista.Services.Exceptions;
 
 namespace WebOdontologista.Services
@@ -15,12 +14,12 @@ namespace WebOdontologista.Services
     public class AppointmentService : IAppointmentService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DentistService _dentistService;
-        public AppointmentService(ApplicationDbContext context, DentistService dentistService)
+
+        public AppointmentService(ApplicationDbContext context)
         {
             _context = context;
-            _dentistService = dentistService;
         }
+
         public async Task<List<Appointment>> FindAllAsync(Expression<Func<Appointment, bool>> expression)
         {
             List<Appointment> result = await
@@ -30,12 +29,6 @@ namespace WebOdontologista.Services
             .OrderBy(obj => obj.DateAndTime())
             .ToListAsync();
             return result;
-        }
-        public async Task<AppointmentFormViewModel> ViewModel()
-        {
-            List<Dentist> dentists = await _dentistService.FindAllAsync();
-            AppointmentFormViewModel viewModel = new AppointmentFormViewModel() { Dentists = dentists };
-            return viewModel;
         }
         public async Task InsertAsync(Appointment appointment)
         {

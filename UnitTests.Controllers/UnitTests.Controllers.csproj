@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\UnitTests.Models\UnitTests.Models.csproj" />
     <ProjectReference Include="..\WebOdontologista\WebOdontologista.csproj" />
   </ItemGroup>
 
