@@ -13,6 +13,7 @@ namespace UnitTests.Models.ServicesDependecies
         private readonly List<Appointment> _list = new List<Appointment>();
         private readonly List<Dentist> _dentists = new DentistServiceDependecy().FindAllDentists();
         private readonly TimeZoneServiceDependecy _timeZoneService = new TimeZoneServiceDependecy();
+
         public AppointmentServiceDependecy()
         {
             GenerateAppointments();
@@ -27,10 +28,36 @@ namespace UnitTests.Models.ServicesDependecies
                 .OrderBy(obj => obj.DateAndTime())
                 .ToList();
         }
+
+        public Task<List<Appointment>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<IGrouping<Dentist, Appointment>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Appointment> FindByIdAsync(int id)
         {
             await Task.Delay(0);
             return _list.FirstOrDefault(obj => obj.Id == id);
+        }
+
+        public Task InsertAsync(Appointment appointment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(Appointment appointment)
+        {
+            throw new NotImplementedException();
         }
 
         private void GenerateAppointments()

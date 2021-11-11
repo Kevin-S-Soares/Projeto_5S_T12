@@ -7,19 +7,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebOdontologista.Models;
 using WebOdontologista.Models.Interfaces;
-using WebOdontologista.Services;
 
 namespace WebOdontologista.Controllers
 {
     [Authorize]
     public class AppointmentsHistoryController : Controller
     {
-        private readonly AppointmentService _appointmentService;
-        private readonly DateTime _currentTime;
-        public AppointmentsHistoryController(AppointmentService appointmentService, ITimeZoneService currentTimeZoneService)
+        private readonly IAppointmentService _appointmentService;
+        private readonly ITimeZoneService _timeZoneService;
+        public AppointmentsHistoryController(IAppointmentService appointmentService,
+            ITimeZoneService currentTimeZoneService)
         {
             _appointmentService = appointmentService;
-            _currentTime = currentTimeZoneService.GetDate();
+            _timeZoneService = currentTimeZoneService;
         }
         public IActionResult Index()
         {
@@ -29,11 +29,11 @@ namespace WebOdontologista.Controllers
         {
             if (!minDate.HasValue)
             {
-                minDate = new DateTime(_currentTime.Year, 1, 1);
+                minDate = new DateTime(_timeZoneService.GetDate().Year, 1, 1);
             }
             if (!maxDate.HasValue)
             {
-                maxDate = new DateTime(_currentTime.Year, 12, 31);
+                maxDate = new DateTime(_timeZoneService.GetDate().Year, 12, 31);
             }
             ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
             ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");
@@ -44,11 +44,11 @@ namespace WebOdontologista.Controllers
         {
             if (!minDate.HasValue)
             {
-                minDate = new DateTime(_currentTime.Year, 1, 1);
+                minDate = new DateTime(_timeZoneService.GetDate().Year, 1, 1);
             }
             if (!maxDate.HasValue)
             {
-                maxDate = new DateTime(_currentTime.Year, 12, 31);
+                maxDate = new DateTime(_timeZoneService.GetDate().Year, 12, 31);
             }
             ViewData["minDate"] = minDate.Value.ToString("yyyy-MM-dd");
             ViewData["maxDate"] = maxDate.Value.ToString("yyyy-MM-dd");

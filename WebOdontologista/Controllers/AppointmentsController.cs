@@ -11,26 +11,25 @@ using WebOdontologista.Models;
 using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.Interfaces;
 using WebOdontologista.Models.ViewModels;
-using WebOdontologista.Services;
 
 namespace WebOdontologista.Controllers
 {
     [Authorize]
     public class AppointmentsController : Controller
     {
-        private readonly AppointmentService _appointmentService;
+        private readonly IAppointmentService _appointmentService;
         private readonly IDentistService _dentistService;
-        private readonly ITimeZoneService _currentTime;
+        private readonly ITimeZoneService _timeZoneService;
 
         private readonly AppointmentBook _book;
 
-        public AppointmentsController(AppointmentService appointmentService,
+        public AppointmentsController(IAppointmentService appointmentService,
             IDentistService dentistService, ITimeZoneService currentTimeZoneService)
         {
             _appointmentService = appointmentService;
             _dentistService = dentistService;
-            _currentTime = currentTimeZoneService;
-            _book = new AppointmentBook(_appointmentService, _dentistService, currentTimeZoneService);
+            _timeZoneService = currentTimeZoneService;
+            _book = new AppointmentBook(_appointmentService, _dentistService, _timeZoneService);
         }
         public async Task<IActionResult> Index(int? show)
         {
@@ -40,15 +39,15 @@ namespace WebOdontologista.Controllers
                 Secure = true,
                 HttpOnly = true,
                 SameSite = SameSiteMode.None,
-                Expires = _currentTime.GetDate().AddDays(30)
+                Expires = _timeZoneService.GetDate().AddDays(30)
             };
-            DateTime sameDay = new DateTime(_currentTime.GetDate().Year, _currentTime.GetDate().Month, _currentTime.GetDate().Day);
+            DateTime sameDay = new DateTime(_timeZoneService.GetDate().Year, _timeZoneService.GetDate().Month, _timeZoneService.GetDate().Day);
             Expression<Func<Appointment, bool>>[] predicate = new Expression<Func<Appointment, bool>>[4]
             {
-                    obj => obj.DateAndTime() >= _currentTime.GetDate() && obj.Date == sameDay,
-                    obj => obj.DateAndTime() >= _currentTime.GetDate() && obj.Date <= sameDay.AddDays(7),
-                    obj => obj.DateAndTime() >= _currentTime.GetDate() && obj.Date <= sameDay.AddDays(30),
-                    obj => obj.DateAndTime() >= _currentTime.GetDate()
+                    obj => obj.DateAndTime() >= _timeZoneService.GetDate() && obj.Date == sameDay,
+                    obj => obj.DateAndTime() >= _timeZoneService.GetDate() && obj.Date <= sameDay.AddDays(7),
+                    obj => obj.DateAndTime() >= _timeZoneService.GetDate() && obj.Date <= sameDay.AddDays(30),
+                    obj => obj.DateAndTime() >= _timeZoneService.GetDate()
             };
             IndexAppointmentFormViewModel viewModel = new IndexAppointmentFormViewModel();
             if (show.HasValue)
@@ -79,7 +78,7 @@ namespace WebOdontologista.Controllers
                 }
                 else
                 {
-                    viewModel.Appointments = await _appointmentService.FindAllAsync(obj => obj.DateAndTime() > _currentTime.GetDate());
+                    viewModel.Appointments = await _appointmentService.FindAllAsync(obj => obj.DateAndTime() > _timeZoneService.GetDate());
                     viewModel.Show = 3;
                 }
                 result = View(viewModel);
@@ -148,7 +147,7 @@ namespace WebOdontologista.Controllers
             {
                 return RedirectToAction(nameof(Error), new { message = e.Message });
             }
-            await _appointmentService.RemoveAsync(id);
+            await _appointmentService.RemoveByIdAsync(id);
             return RedirectToAction(nameof(Index));
         }
         public async Task<IActionResult> Edit(int? id)

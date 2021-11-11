@@ -31,7 +31,7 @@ namespace WebOdontologista
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<AppointmentService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IDentistService, DentistService>();
             services.AddScoped<ITimeZoneService, BrazilianTimeZoneService>();
         }

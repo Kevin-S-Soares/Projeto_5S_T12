@@ -42,7 +42,7 @@ namespace WebOdontologista.Services
                 .FirstOrDefaultAsync(obj => obj.Id == id);
             return appointment;
         }
-        public async Task RemoveAsync(int id)
+        public async Task RemoveByIdAsync(int id)
         {
             Appointment appointment = await _context.Appointment.FindAsync(id);
             _context.Appointment.Remove(appointment);
@@ -82,7 +82,8 @@ namespace WebOdontologista.Services
         }
         public async Task<List<IGrouping<Dentist, Appointment>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
         {
-            var result = from obj in _context.Appointment select obj;
+            //var result = from obj in _context.Appointment select obj;
+            var result = _context.Appointment.AsQueryable();
             if (minDate.HasValue)
             {
                 result = result.Where(obj => obj.Date >= minDate.Value);

@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<IGrouping<Dentist, Appointment>>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.min.js"></script>
+<script type="text/javascript" src="~/lib/echarts/dist/echarts.min.js"></script>
 
 <script>
     var model = @Html.Raw(Json.Serialize(Model));
