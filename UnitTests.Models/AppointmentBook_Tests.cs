@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Models;
-using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.Interfaces;
 
 namespace UnitTests.Models
@@ -31,20 +30,24 @@ namespace UnitTests.Models
             _timeZoneService.ChangeToNineteen();
             try
             {
-                Appointment toSucceed = new Appointment()
-                {
-                    Id = 0,
-                    Date = _timeZoneService.GetTomorrowOnly(),
-                    DentistId = 1,
-                    DurationInMinutes = 60,
-                    Time = new TimeSpan(10, 0, 0)
-                };
-                await Model.AddAppointment(toSucceed);
+                Appointment appointment = GetSuccessfulAppointment();
+                await Model.AddAppointment(appointment);
             }
             catch (Exception e)
             {
                 Assert.Fail(e.Message);
             }
+        }
+        private Appointment GetSuccessfulAppointment()
+        {
+            return new Appointment()
+            {
+                Id = 0,
+                Date = _timeZoneService.GetTomorrowOnly(),
+                DentistId = 1,
+                DurationInMinutes = 60,
+                Time = new TimeSpan(10, 0, 0)
+            };
         }
 
         [TestMethod]
@@ -52,21 +55,25 @@ namespace UnitTests.Models
         {
             try
             {
-                Appointment toTriggerException = new Appointment()
-                {
-                    Id = 0,
-                    Date = _timeZoneService.GetTomorrowOnly(),
-                    DentistId = -1,
-                    DurationInMinutes = 60,
-                    Time = new TimeSpan(10, 0, 0)
-                };
-                await Model.AddAppointment(toTriggerException);
+                Appointment appointment = GetAppointmentWithNonExistentDentist();
+                await Model.AddAppointment(appointment);
                 Assert.Fail();
             }
-            catch (DomainException e)
+            catch (Exception e)
             {
                 Assert.AreEqual("Dentista inexistente!", e.Message);
             }
+        }
+        private Appointment GetAppointmentWithNonExistentDentist()
+        {
+            return new Appointment()
+            {
+                Id = 0,
+                Date = _timeZoneService.GetTomorrowOnly(),
+                DentistId = -1,
+                DurationInMinutes = 60,
+                Time = new TimeSpan(10, 0, 0)
+            };
         }
 
         [TestMethod]
@@ -74,21 +81,25 @@ namespace UnitTests.Models
         {
             try
             {
-                Appointment toTriggerException = new Appointment()
-                {
-                    Id = 0,
-                    Date = _timeZoneService.GetYesterdayOnly(),
-                    DentistId = 1,
-                    DurationInMinutes = 60,
-                    Time = new TimeSpan(10, 0, 0)
-                };
-                await Model.AddAppointment(toTriggerException);
+                Appointment appointment = GetAppointmentOfAPasteDate();
+                await Model.AddAppointment(appointment);
                 Assert.Fail();
             }
-            catch (DomainException e)
+            catch (Exception e)
             {
                 Assert.AreEqual("Data inválida!", e.Message);
             }
+        }
+        private Appointment GetAppointmentOfAPasteDate()
+        {
+            return new Appointment()
+            {
+                Id = 0,
+                Date = _timeZoneService.GetYesterdayOnly(),
+                DentistId = 1,
+                DurationInMinutes = 60,
+                Time = new TimeSpan(10, 0, 0)
+            };
         }
 
         [TestMethod]
@@ -97,21 +108,25 @@ namespace UnitTests.Models
             _timeZoneService.ChangeToFifteen();
             try
             {
-                Appointment toTriggerException = new Appointment()
-                {
-                    Id = 0,
-                    Date = _timeZoneService.GetTodayOnly(),
-                    DentistId = 1,
-                    DurationInMinutes = 60,
-                    Time = new TimeSpan(14, 45, 0)
-                };
-                await Model.AddAppointment(toTriggerException);
+                Appointment appointment = GetAppointmentOfAPasteTime();
+                await Model.AddAppointment(appointment);
                 Assert.Fail();
             }
-            catch (DomainException e)
+            catch (Exception e)
             {
                 Assert.AreEqual("Data inválida!", e.Message);
             }
+        }
+        private Appointment GetAppointmentOfAPasteTime()
+        {
+            return new Appointment()
+            {
+                Id = 0,
+                Date = _timeZoneService.GetTodayOnly(),
+                DentistId = 1,
+                DurationInMinutes = 60,
+                Time = new TimeSpan(14, 45, 0)
+            };
         }
 
         [TestMethod]
@@ -122,7 +137,7 @@ namespace UnitTests.Models
                 await Model.AddAppointment(null);
                 Assert.Fail();
             }
-            catch (DomainException e)
+            catch (Exception e)
             {
                 Assert.AreEqual("Consulta não fornecida!", e.Message);
             }
@@ -158,39 +173,28 @@ namespace UnitTests.Models
         [TestMethod]
         public async Task RemoveAppointment_Appointment_RemovingAppointment_Succeed()
         {
-            Appointment toRemove = new Appointment()
-            {
-                Id = 4,
-                Date = _timeZoneService.GetTodayOnly(),
-                DentistId = 1,
-                Dentist = await _dentistService.FindByIdAsync(1),
-                DurationInMinutes = 15,
-                Time = new TimeSpan(9, 45, 0)
-            };
+            Appointment appointment = await GetExistingAppointment();
             try
             {
-                await Model.RemoveAppointment(toRemove);
+                await Model.RemoveAppointment(appointment);
             }
             catch (Exception)
             {
                 Assert.Fail();
             }
         }
+        private async Task<Appointment> GetExistingAppointment()
+        {
+            return await _appointmentService.FindByIdAsync(1);
+        }
 
         [TestMethod]
         public async Task RemoveAppointment_Appointment_RemovingAppointmentWithNonExistentDentist_DomainException()
         {
-            Appointment toRemove = new Appointment()
-            {
-                Id = 4,
-                Date = _timeZoneService.GetTodayOnly(),
-                DentistId = -1,
-                DurationInMinutes = 15,
-                Time = new TimeSpan(9, 45, 0)
-            };
+            Appointment appointment = GetAppointmentWithNonExistentDentist();
             try
             {
-                await Model.RemoveAppointment(toRemove);
+                await Model.RemoveAppointment(appointment);
                 Assert.Fail();
             }
             catch (Exception e)
@@ -243,18 +247,10 @@ namespace UnitTests.Models
         [TestMethod]
         public async Task EditingAppointment_Appointment_EditingAppointment_Succeed()
         {
-            Appointment toRemove = new Appointment()
-            {
-                Id = 4,
-                Date = _timeZoneService.GetTodayOnly(),
-                DentistId = 1,
-                Dentist = await _dentistService.FindByIdAsync(1),
-                DurationInMinutes = 15,
-                Time = new TimeSpan(9, 45, 0)
-            };
+            Appointment appointment = await GetExistingAppointment();
             try
             {
-                await Model.EditingAppointment(toRemove);
+                await Model.EditingAppointment(appointment);
             }
             catch (Exception)
             {
@@ -265,14 +261,7 @@ namespace UnitTests.Models
         [TestMethod]
         public async Task EditingAppointment_Appointment_EditingAppointmentWithNonExistingDentist_DomainException()
         {
-            Appointment toRemove = new Appointment()
-            {
-                Id = 4,
-                Date = _timeZoneService.GetTodayOnly(),
-                DentistId = -1,
-                DurationInMinutes = 15,
-                Time = new TimeSpan(9, 45, 0)
-            };
+            Appointment toRemove = GetAppointmentWithNonExistentDentist();
             try
             {
                 await Model.EditingAppointment(toRemove);
@@ -302,14 +291,7 @@ namespace UnitTests.Models
         public async Task EditAppointment_EditingAppointments_Succeed()
         {
             Appointment oldAppointment = await _appointmentService.FindByIdAsync(18);
-            Appointment newAppointment = new Appointment()
-            {
-                Id = 0,
-                DentistId = 2,
-                Date = _timeZoneService.GetTodayOnly(),
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 60
-            };
+            Appointment newAppointment = GetSuccessfulAppointment();
             try
             {
                 await Model.EditAppointment(oldAppointment, newAppointment);
@@ -323,22 +305,8 @@ namespace UnitTests.Models
         [TestMethod]
         public async Task EditAppointment_AppointmentWithNonExistingDentistAndCorrectAppointment_DomainException()
         {
-            Appointment oldAppointment = new Appointment()
-            {
-                Id = 0,
-                DentistId = -1,
-                Date = _timeZoneService.GetTodayOnly(),
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 60
-            };
-            Appointment newAppointment = new Appointment()
-            {
-                Id = 0,
-                DentistId = 2,
-                Date = _timeZoneService.GetTodayOnly(),
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 60
-            };
+            Appointment oldAppointment = GetAppointmentWithNonExistentDentist();
+            Appointment newAppointment = GetSuccessfulAppointment();
             try
             {
                 await Model.EditAppointment(oldAppointment, newAppointment);
@@ -354,14 +322,7 @@ namespace UnitTests.Models
         public async Task EditAppointment_CorrectAppointmentAndAppointmentWithNonExistingDentist_DomainException()
         {
             Appointment oldAppointment = await _appointmentService.FindByIdAsync(18);
-            Appointment newAppointment = new Appointment()
-            {
-                Id = 0,
-                DentistId = -1,
-                Date = _timeZoneService.GetTodayOnly(),
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 60
-            };
+            Appointment newAppointment = GetAppointmentWithNonExistentDentist();
             try
             {
                 await Model.EditAppointment(oldAppointment, newAppointment);
@@ -408,14 +369,7 @@ namespace UnitTests.Models
         [TestMethod]
         public async Task FindAvailableTime_AppointmentWithNonExistingDentist_DomainException()
         {
-            Appointment appointment = new Appointment()
-            {
-                Id = 0,
-                DentistId = -1,
-                Date = _timeZoneService.GetTodayOnly(),
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 60
-            };
+            Appointment appointment = GetAppointmentWithNonExistentDentist();
             try
             {
                 await Model.FindAvailableTime(appointment);
@@ -444,26 +398,14 @@ namespace UnitTests.Models
         [TestMethod]
         public async Task FindAvailableTime_FindingAvailableTimeBeforeNine_IdenticalList()
         {
-            List<TimeSpan> correctList = BeforeNine();
-            Appointment appointment = new Appointment()
-            {
-                Id = 255,
-                Date = _timeZoneService.GetTodayOnly(),
-                DentistId = 3,
-                Dentist = await _dentistService.FindByIdAsync(3),
-                DurationInMinutes = 15,
-                Time = new TimeSpan(9, 0, 0)
-            };
+            List<TimeSpan> correctList = GetListOfTimes_BeforeNine();
+            Appointment appointment = await GetAppointmentAtNine();
             List<TimeSpan> beingTested = await Model.FindAvailableTime(appointment);
             CollectionAssert.AreEqual(correctList, beingTested);
         }
-
-        [TestMethod]
-        public async Task FindAvailableTime_FindingAvailableTimeAfterFifteen_IdenticalList()
+        private async Task<Appointment> GetAppointmentAtNine()
         {
-            _timeZoneService.ChangeToFifteen();
-            List<TimeSpan> correctList = AfterFifteen();
-            Appointment appointment = new Appointment()
+            return new Appointment()
             {
                 Id = 255,
                 Date = _timeZoneService.GetTodayOnly(),
@@ -472,29 +414,8 @@ namespace UnitTests.Models
                 DurationInMinutes = 15,
                 Time = new TimeSpan(9, 0, 0)
             };
-            List<TimeSpan> beingTested = await Model.FindAvailableTime(appointment);
-            CollectionAssert.AreEqual(correctList, beingTested);
         }
-
-        [TestMethod]
-        public async Task FindAvailableTime_FindingAvailableTimeAfterNineteen_IdenticalList()
-        {
-            _timeZoneService.ChangeToNineteen();
-            List<TimeSpan> correctList = AfterNineteen();
-            Appointment appointment = new Appointment()
-            {
-                Id = 255,
-                Date = _timeZoneService.GetTodayOnly(),
-                DentistId = 3,
-                Dentist = await _dentistService.FindByIdAsync(3),
-                DurationInMinutes = 15,
-                Time = new TimeSpan(9, 0, 0)
-            };
-            List<TimeSpan> beingTested = await Model.FindAvailableTime(appointment);
-            CollectionAssert.AreEqual(correctList, beingTested);
-        }
-
-        private List<TimeSpan> BeforeNine()
+        private List<TimeSpan> GetListOfTimes_BeforeNine()
         {
             var result = new List<TimeSpan>();
             for (int i = 0; i < 12; i++)
@@ -507,7 +428,17 @@ namespace UnitTests.Models
             }
             return result;
         }
-        private List<TimeSpan> AfterFifteen()
+
+        [TestMethod]
+        public async Task FindAvailableTime_FindingAvailableTimeAfterFifteen_IdenticalList()
+        {
+            _timeZoneService.ChangeToFifteen();
+            List<TimeSpan> correctList = GetListOfTimes_AfterFifteen();
+            Appointment appointment = await GetAppointmentAtNine();
+            List<TimeSpan> beingTested = await Model.FindAvailableTime(appointment);
+            CollectionAssert.AreEqual(correctList, beingTested);
+        }
+        private List<TimeSpan> GetListOfTimes_AfterFifteen()
         {
             var result = new List<TimeSpan>();
             for (int i = 24; i < 36; i++)
@@ -516,7 +447,17 @@ namespace UnitTests.Models
             }
             return result;
         }
-        private List<TimeSpan> AfterNineteen()
+
+        [TestMethod]
+        public async Task FindAvailableTime_FindingAvailableTimeAfterNineteen_IdenticalList()
+        {
+            _timeZoneService.ChangeToNineteen();
+            List<TimeSpan> correctList = GetListOfTimes_AfterNineteen();
+            Appointment appointment = await GetAppointmentAtNine();
+            List<TimeSpan> beingTested = await Model.FindAvailableTime(appointment);
+            CollectionAssert.AreEqual(correctList, beingTested);
+        }
+        private List<TimeSpan> GetListOfTimes_AfterNineteen()
         {
             return new List<TimeSpan>();
         }

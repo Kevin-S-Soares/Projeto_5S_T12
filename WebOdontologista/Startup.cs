@@ -14,10 +14,12 @@ namespace WebOdontologista
     public class Startup
     {
         public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
@@ -29,11 +31,14 @@ namespace WebOdontologista
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IDentistService, DentistService>();
             services.AddScoped<ITimeZoneService, BrazilianTimeZoneService>();
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

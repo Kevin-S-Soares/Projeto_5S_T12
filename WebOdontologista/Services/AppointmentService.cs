@@ -27,6 +27,7 @@ namespace WebOdontologista.Services
             .Include(obj => obj.Dentist)
             .Where(expression)
             .OrderBy(obj => obj.DateAndTime())
+            .ThenBy(obj => obj.Dentist.Name)
             .ToListAsync();
             return result;
         }
@@ -82,8 +83,7 @@ namespace WebOdontologista.Services
         }
         public async Task<List<IGrouping<Dentist, Appointment>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
         {
-            //var result = from obj in _context.Appointment select obj;
-            var result = _context.Appointment.AsQueryable();
+            var result = from obj in _context.Appointment select obj;
             if (minDate.HasValue)
             {
                 result = result.Where(obj => obj.Date >= minDate.Value);

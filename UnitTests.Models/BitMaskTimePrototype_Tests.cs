@@ -37,6 +37,10 @@ namespace UnitTests.Models
                 Assert.Fail();
             }
         }
+        private async Task<List<Appointment>> AppointmentsToSucceed()
+        {
+            return await _appointmentService.FindAllAsync(obj => obj.Date == _timeZoneService.GetTodayOnly());
+        }
 
         [TestMethod]
         public async Task MakeAppointment_AddingAppointmentsColliding_DomainException()
@@ -54,14 +58,24 @@ namespace UnitTests.Models
                 Assert.AreEqual("Não foi possivel adicionar a consulta!", e.Message);
             }
         }
+        private async Task<List<Appointment>> CollidingAppointments()
+        {
+            var list = await AppointmentsToSucceed();
+            list.Add(new Appointment()
+            {
+                DurationInMinutes = 15,
+                Time = new TimeSpan(9, 15, 0)
+            });
+            return list;
+        }
 
         [TestMethod]
         public void MakeAppointment_AddingAppointmentBeforeExpectedTime_DomainException()
         {
             try
             {
-                Appointment toFail = new Appointment() { Time = new TimeSpan(8, 45, 0), DurationInMinutes = 30 };
-                Model.MakeAppointment(toFail);
+                Appointment beforeExpectedTime = GetAppointmentBeforeExpectedTime();
+                Model.MakeAppointment(beforeExpectedTime);
                 Assert.Fail();
             }
             catch (Exception e)
@@ -69,20 +83,28 @@ namespace UnitTests.Models
                 Assert.AreEqual("Consulta fora dos limites!", e.Message);
             }
         }
+        private Appointment GetAppointmentBeforeExpectedTime()
+        {
+            return new Appointment() { Time = new TimeSpan(8, 45, 0), DurationInMinutes = 30 };
+        }
 
         [TestMethod]
         public void MakeAppointment_AddingAppointmentAfterExpectedTime_DomainException()
         {
             try
             {
-                Appointment toFail = new Appointment() { Time = new TimeSpan(17, 15, 0), DurationInMinutes = 60 };
-                Model.MakeAppointment(toFail);
+                Appointment afterExpectedTime = GetAppointmentAfterExpectedTime();
+                Model.MakeAppointment(afterExpectedTime);
                 Assert.Fail();
             }
             catch (Exception e)
             {
                 Assert.AreEqual("Consulta fora dos limites!", e.Message);
             }
+        }
+        private Appointment GetAppointmentAfterExpectedTime()
+        {
+            return new Appointment() { Time = new TimeSpan(17, 15, 0), DurationInMinutes = 60 };
         }
 
         [TestMethod]
@@ -116,23 +138,30 @@ namespace UnitTests.Models
                 Assert.Fail();
             }
         }
+        private void SetAppointments(List<Appointment> list)
+        {
+            foreach (Appointment obj in list)
+            {
+                Model.MakeAppointment(obj);
+            }
+        }
 
         [TestMethod]
         public void CancelAppointment_CancellingNonExistentAppointment_DomainException()
         {
             try
             {
-                Appointment toFail = new Appointment()
-                {
-                    DurationInMinutes = 15,
-                    Time = new TimeSpan(16, 0, 0),
-                };
-                Model.CancelAppointment(toFail);
+                Appointment nonExistentAppointment = GetNonExistentAppointment();
+                Model.CancelAppointment(nonExistentAppointment);
             }
             catch (Exception ae)
             {
                 Assert.AreEqual("Cancelamento de consulta proíbido!", ae.Message);
             }
+        }
+        private Appointment GetNonExistentAppointment()
+        {
+            return new Appointment() { DurationInMinutes = 15, Time = new TimeSpan(16, 0, 0) };
         }
 
         [TestMethod]
@@ -152,84 +181,16 @@ namespace UnitTests.Models
         [TestMethod]
         public void GetAvailableTimes_FifteenMinutesAppointmentDuration_IdenticalList()
         {
-            Appointment appointment = new Appointment()
-            {
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 15,
-            };
+            Appointment appointment = GetFifteenMinutesAppointment();
             List<TimeSpan> beingTested = Model.GetAvailableTimes(appointment);
-            List<TimeSpan> correctList = FifteenMinutesAppointmentDuration();
+            List<TimeSpan> correctList = GetListOfAppointments_FifteenMinutesDuration();
             CollectionAssert.AreEqual(beingTested, correctList);
         }
-
-        [TestMethod]
-        public void GetAvailableTimes_ThirtyMinutesAppointmentDuration_IdenticalList()
+        private Appointment GetFifteenMinutesAppointment()
         {
-            Appointment appointment = new Appointment()
-            {
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 30,
-            };
-            List<TimeSpan> beingTested = Model.GetAvailableTimes(appointment);
-            List<TimeSpan> correctList = ThirtyMinutesAppointmentDuration();
-            CollectionAssert.AreEqual(beingTested, correctList);
+            return new Appointment() { Time = new TimeSpan(9, 0, 0), DurationInMinutes = 15 };
         }
-
-        [TestMethod]
-        public void GetAvailableTimes_FourtyFiveMinutesAppointmentDuration_IdenticalList()
-        {
-            Appointment appointment = new Appointment()
-            {
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 45,
-            };
-            List<TimeSpan> beingTested = Model.GetAvailableTimes(appointment);
-            List<TimeSpan> correctList = FourtyFiveMinutesAppointmentDuration();
-            CollectionAssert.AreEqual(beingTested, correctList);
-        }
-
-        [TestMethod]
-        public void GetAvailableTimes_SixtyMinutesAppointmentDuration_IdenticalList()
-        {
-            Appointment appointment = new Appointment()
-            {
-                Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 60,
-            };
-            List<TimeSpan> beingTested = Model.GetAvailableTimes(appointment);
-            List<TimeSpan> correctList = SixtyMinutesAppointmentDuration();
-            CollectionAssert.AreEqual(beingTested, correctList);
-        }
-
-        [TestMethod]
-        public void GetAvailableTimes_NullAppointment_DomainException()
-        {
-            try
-            {
-                Model.GetAvailableTimes(null);
-                Assert.Fail();
-            }
-            catch (Exception e)
-            {
-                Assert.AreEqual("Consulta não fornecida!", e.Message);
-            }
-        }
-
-        private async Task<List<Appointment>> CollidingAppointments()
-        {
-            var list = await AppointmentsToSucceed();
-            list.Add(new Appointment()
-            {
-                DurationInMinutes = 15,
-                Time = new TimeSpan(9, 15, 0)
-            });
-            return list;
-        }
-        private async Task<List<Appointment>> AppointmentsToSucceed()
-        {
-            return await _appointmentService.FindAllAsync(obj => obj.Date == _timeZoneService.GetTodayOnly());
-        }
-        public List<TimeSpan> FifteenMinutesAppointmentDuration()
+        public List<TimeSpan> GetListOfAppointments_FifteenMinutesDuration()
         {
             var result = new List<TimeSpan>();
             for (int i = 0; i < 12; i++)
@@ -243,32 +204,77 @@ namespace UnitTests.Models
             return result;
         }
 
-        private List<TimeSpan> ThirtyMinutesAppointmentDuration()
+        [TestMethod]
+        public void GetAvailableTimes_ThirtyMinutesAppointmentDuration_IdenticalList()
         {
-            var result = FifteenMinutesAppointmentDuration();
+            Appointment appointment = GetThirtyMinutesAppointment();
+            List<TimeSpan> beingTested = Model.GetAvailableTimes(appointment);
+            List<TimeSpan> correctList = GetListOfAppointments_ThirtyMinutesDuration();
+            CollectionAssert.AreEqual(beingTested, correctList);
+        }
+        private Appointment GetThirtyMinutesAppointment()
+        {
+            return new Appointment() { Time = new TimeSpan(9, 0, 0), DurationInMinutes = 30 };
+        }
+        private List<TimeSpan> GetListOfAppointments_ThirtyMinutesDuration()
+        {
+            var result = GetListOfAppointments_FifteenMinutesDuration();
             result.Remove(new TimeSpan(11, 45, 0));
             result.Remove(new TimeSpan(17, 45, 0));
             return result;
         }
-        private List<TimeSpan> FourtyFiveMinutesAppointmentDuration()
+
+        [TestMethod]
+        public void GetAvailableTimes_FourtyFiveMinutesAppointmentDuration_IdenticalList()
         {
-            var result = ThirtyMinutesAppointmentDuration();
+            Appointment appointment = GetFourtyFiveMinutesAppointment();
+            List<TimeSpan> beingTested = Model.GetAvailableTimes(appointment);
+            List<TimeSpan> correctList = GetListOfAppointments_FourtyFiveMinutesDuration();
+            CollectionAssert.AreEqual(beingTested, correctList);
+        }
+        private Appointment GetFourtyFiveMinutesAppointment()
+        {
+            return new Appointment() { Time = new TimeSpan(9, 0, 0), DurationInMinutes = 45 };
+        }
+        private List<TimeSpan> GetListOfAppointments_FourtyFiveMinutesDuration()
+        {
+            var result = GetListOfAppointments_ThirtyMinutesDuration();
             result.Remove(new TimeSpan(11, 30, 0));
             result.Remove(new TimeSpan(17, 30, 0));
             return result;
         }
-        private List<TimeSpan> SixtyMinutesAppointmentDuration()
+
+        [TestMethod]
+        public void GetAvailableTimes_SixtyMinutesAppointmentDuration_IdenticalList()
         {
-            var result = FourtyFiveMinutesAppointmentDuration();
+            Appointment appointment = GetSixtyMinutesAppointment();
+            List<TimeSpan> beingTested = Model.GetAvailableTimes(appointment);
+            List<TimeSpan> correctList = GetListOfAppointments_SixtyMinutesDuration();
+            CollectionAssert.AreEqual(beingTested, correctList);
+        }
+        private Appointment GetSixtyMinutesAppointment()
+        {
+            return new Appointment() { Time = new TimeSpan(9, 0, 0), DurationInMinutes = 60 };
+        }
+        private List<TimeSpan> GetListOfAppointments_SixtyMinutesDuration()
+        {
+            var result = GetListOfAppointments_FourtyFiveMinutesDuration();
             result.Remove(new TimeSpan(11, 15, 0));
             result.Remove(new TimeSpan(17, 15, 0));
             return result;
         }
-        private void SetAppointments(List<Appointment> list)
+
+        [TestMethod]
+        public void GetAvailableTimes_NullAppointment_DomainException()
         {
-            foreach (Appointment obj in list)
+            try
             {
-                Model.MakeAppointment(obj);
+                Model.GetAvailableTimes(null);
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Consulta não fornecida!", e.Message);
             }
         }
     }
