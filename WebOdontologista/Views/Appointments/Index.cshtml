@@ -27,65 +27,66 @@
 
 @if (Model.Appointments.Count() != 0)
 {
-
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr class="info">
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.Appointment.Date) e horário
-                </th>
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.Appointment.DurationInMinutes)
-                </th>
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.Appointment.Dentist.Name)
-                </th>
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.Appointment.AppointmentType)
-                </th>
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.Appointment.Patient)
-                </th>
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.Appointment.TelephoneNumber)
-                </th>
-                <th colspan="2" class="text-center">
-                    Ação
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Appointments)
-            {
-                <tr>
-                    <td class="text-center">
-                        @item.DateAndTime().ToString("dd/MM/yy HH:mm")
-                    </td>
-                    <td class="text-center">
-                        @Html.DisplayFor(modelItem => item.DurationInMinutes)
-                    </td>
-                    <td class="text-center">
-                        @Html.DisplayFor(modelItem => item.Dentist.Name)
-                    </td>
-                    <td class="text-center">
-                        @Html.DisplayFor(modelItem => item.AppointmentType)
-                    </td>
-                    <td class="text-center">
-                        @Html.DisplayFor(modelItem => item.Patient)
-                    </td>
-                    <td class="text-center">
-                        @Html.DisplayFor(modelItem => item.TelephoneNumber)
-                    </td>
-                    <td class="text-center">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Reagendar</a>
-                    </td>
-                    <td class="text-center">
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Cancelar</a>
-                    </td>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr class="info">
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Appointment.Date) e horário
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Appointment.DurationInMinutes)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Appointment.Dentist.Name)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Appointment.AppointmentType)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Appointment.Patient)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Appointment.TelephoneNumber)
+                    </th>
+                    <th colspan="2" class="text-center">
+                        Ação
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Appointments)
+                {
+                    <tr>
+                        <td class="text-center">
+                            @item.DateAndTime().ToString("dd/MM/yy HH:mm")
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.DurationInMinutes)
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.Dentist.Name)
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.AppointmentType)
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.Patient)
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.TelephoneNumber)
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Reagendar</a>
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Cancelar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
@@ -105,6 +106,8 @@ else
             break;
     }
 }
+
+
 
 <environment include="Development">
     <script src="~/js/reload.js" asp-append-version="true"></script>

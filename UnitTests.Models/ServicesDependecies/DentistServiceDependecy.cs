@@ -22,31 +22,37 @@ namespace UnitTests.Models.ServicesDependecies
         {
             return _list;
         }
-        public Task<List<Dentist>> FindAllAsync()
+        public async Task<List<Dentist>> FindAllAsync()
         {
-            throw new System.NotImplementedException();
+            await Task.Delay(0);
+            return _list;
         }
 
-        public Task InsertAsync(Dentist dentist)
+        public async Task InsertAsync(Dentist dentist)
         {
-            throw new System.NotImplementedException();
+            await Task.Delay(0);
+            _list.Add(dentist);
         }
 
-        public Task RemoveByIdAsync(int id)
+        public async Task RemoveByIdAsync(int id)
         {
-            throw new System.NotImplementedException();
+            await Task.Delay(0);
+            _list.RemoveAll(obj => obj.Id == id);
         }
 
-        public Task UpdateAsync(Dentist dentist)
+        public async Task UpdateAsync(Dentist dentist)
         {
-            throw new System.NotImplementedException();
+            await Task.Delay(0);
+            Dentist editing = _list.FirstOrDefault(obj => obj.Id == dentist.Id);
+            editing.Name = dentist.Name;
+            editing.Email = dentist.Email;
+            editing.TelephoneNumber = dentist.TelephoneNumber;
         }
 
         private void GenerateDentists()
         {
             _list.AddRange(new Dentist[]
             {
-                // TODO preencher com dentistas
                 new Dentist()
                 {
                     Id = 1,

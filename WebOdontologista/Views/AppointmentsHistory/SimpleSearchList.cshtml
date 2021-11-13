@@ -6,49 +6,51 @@
             <h3 class="panel-title"><strong class="text-standart">Número de consultas: @Model.Count()</strong></h3>
         </div>
         <div class="panel-body">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr class="info">
-                        <th class="text-center">
-                            @Html.DisplayNameFor(model => model.Date)
-                        </th>
-                        <th class="text-center">
-                            @Html.DisplayNameFor(model => model.DurationInMinutes)
-                        </th>
-                        <th class="text-center">
-                            @Html.DisplayNameFor(model => model.AppointmentType)
-                        </th>
-                        <th class="text-center">
-                            @Html.DisplayNameFor(model => model.Dentist.Name)
-                        </th>
-                        <th class="text-center">
-                            @Html.DisplayNameFor(model => model.Patient)
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td class="text-center">
-                                @item.DateAndTime().ToString("dd/MM/yy HH:mm")
-                            </td>
-                            <td class="text-center">
-                                @Html.DisplayFor(modelItem => item.DurationInMinutes)
-                            </td>
-                            <td class="text-center">
-                                @Html.DisplayFor(modelItem => item.AppointmentType)
-                            </td>
-                            <td class="text-center">
-                                @Html.DisplayFor(modelItem => item.Dentist.Name)
-                            </td>
-                            <td class="text-center">
-                                @Html.DisplayFor(modelItem => item.Patient)
-                            </td>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr class="info">
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.Date)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.DurationInMinutes)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.AppointmentType)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.Dentist.Name)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.Patient)
+                            </th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    @item.DateAndTime().ToString("dd/MM/yy HH:mm")
+                                </td>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.DurationInMinutes)
+                                </td>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.AppointmentType)
+                                </td>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.Dentist.Name)
+                                </td>
+                                <td class="text-center">
+                                    @Html.DisplayFor(modelItem => item.Patient)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 }

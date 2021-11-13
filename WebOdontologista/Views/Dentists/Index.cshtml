@@ -8,52 +8,57 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Novo Odontologista</a>
 </p>
+
 @if (Model.Count() != 0)
 {
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr class="info">
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.Email)
-                </th>
-                <th class="text-center">
-                    @Html.DisplayNameFor(model => model.TelephoneNumber)
-                </th>
-                <th colspan="2" class="text-center">
-                    Ação
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td class="text-center">
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td class="text-center">
-                        @Html.DisplayFor(modelItem => item.Email)
-                    </td>
-                    <td class="text-center">
-                        @Html.DisplayFor(modelItem => item.TelephoneNumber)
-                    </td>
-                    <td class="text-center">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar</a>
-                    </td>
-                    <td class="text-center">
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Excluir</a>
-                    </td>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr class="info">
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.Email)
+                    </th>
+                    <th class="text-center">
+                        @Html.DisplayNameFor(model => model.TelephoneNumber)
+                    </th>
+                    <th colspan="2" class="text-center">
+                        Ação
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.TelephoneNumber)
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Editar</a>
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
     <h2>Não há odontologistas cadastrados!</h2>
 }
+
+
 
 
