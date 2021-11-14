@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using WebOdontologista.Models;
+using WebOdontologista.Models.Exceptions;
 using WebOdontologista.Models.Interfaces;
 
 namespace WebOdontologista.Controllers
@@ -26,10 +27,10 @@ namespace WebOdontologista.Controllers
         [HttpGet]
         public IActionResult Create(int? returnAppointment)
         {
-            ReturnToCreateAppointment(returnAppointment);
+            CreateViewData(returnAppointment);
             return View();
         }
-        private void ReturnToCreateAppointment(int? returnAppointment)
+        private void CreateViewData(int? returnAppointment)
         {
             if (returnAppointment.HasValue)
             {
@@ -41,12 +42,18 @@ namespace WebOdontologista.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Dentist dentist, int? returnAppointment)
         {
-            if (!ModelState.IsValid)
+            IActionResult result;
+            try
             {
-                return View(dentist);
+                ModelIsValid();
+                await _dentistService.InsertAsync(dentist);
+                result = RedirectToIndexOrCreateAppointment(returnAppointment);
             }
-            await _dentistService.InsertAsync(dentist);
-            return RedirectToIndexOrCreateAppointment(returnAppointment);
+            catch(DomainException)
+            {
+                result = View(dentist);
+            }
+            return result;
         }
         private IActionResult RedirectToIndexOrCreateAppointment(int? returnAppointment)
         {
@@ -57,68 +64,81 @@ namespace WebOdontologista.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            IActionResult result;
+            try
             {
-                return RedirectToAction(nameof(Error), new { message = "Id não provido!" });
+                IntIsNotNull(id);
+                Dentist dentist = await _dentistService.FindByIdAsync(id.Value);
+                DentistIsNotNull(dentist);
+                result = View(dentist);
             }
-            Dentist dentist = await _dentistService.FindByIdAsync(id.Value);
-            if (dentist == null)
+            catch(DomainException e)
             {
-                return RedirectToAction(nameof(Error), new { message = "Id não encontrado!" });
+                result = RedirectToAction(nameof(Error), new { message = e.Message});
             }
-            return View(dentist);
+            return result;
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteById(int? id)
         {
-            if (id == null)
+            IActionResult result;
+            try
             {
-                return RedirectToAction(nameof(Error), new { message = "Id não provido!" });
+                IntIsNotNull(id);
+                Dentist dentist = await _dentistService.FindByIdAsync(id.Value);
+                DentistIsNotNull(dentist);
+                await _dentistService.RemoveByIdAsync(dentist.Id);
+                result = RedirectToAction(nameof(Index));
             }
-            Dentist dentist = await _dentistService.FindByIdAsync(id.Value);
-            if (dentist == null)
+            catch (DomainException e)
             {
-                return RedirectToAction(nameof(Error), new { message = "Id não encontrado!" });
+                result = RedirectToAction(nameof(Error), new { message = e.Message });
             }
-            await _dentistService.RemoveByIdAsync(id.Value);
-            return RedirectToAction(nameof(Index));
+            return result;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            IActionResult result;
+            try
             {
-                return RedirectToAction(nameof(Error), new { message = "Id não provido!" });
+                IntIsNotNull(id);
+                Dentist dentist = await _dentistService.FindByIdAsync(id.Value);
+                DentistIsNotNull(dentist);
+                result = View(dentist);
             }
-            Dentist dentist = await _dentistService.FindByIdAsync(id.Value);
-            if (dentist == null)
+            catch(DomainException e)
             {
-                return RedirectToAction(nameof(Error), new { message = "Id não encontrado!" });
+                result = RedirectToAction(nameof(Error), new { message = e.Message });
             }
-            return View(dentist);
+            return result;
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Dentist dentist)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(dentist);
-            }
+            IActionResult result;
             try
             {
+                ModelIsValid();
                 await _dentistService.UpdateAsync(dentist);
-                return RedirectToAction(nameof(Index));
+                result = RedirectToAction(nameof(Index));
             }
-            catch (ApplicationException e)
+            catch(DomainException)
             {
-                return RedirectToAction(nameof(Error), new { message = e.Message });
+                result = View(dentist);
             }
+            return result;
         }
+
+        [HttpGet]
         public IActionResult Error(string message)
         {
             ErrorViewModel error = new ErrorViewModel
@@ -127,6 +147,28 @@ namespace WebOdontologista.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             };
             return View(error);
+        }
+
+        private void ModelIsValid()
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new DomainException("Modelo inválido!");
+            }
+        }
+        private void IntIsNotNull(int? id)
+        {
+            if (!id.HasValue)
+            {
+                throw new DomainException("Id não provido!");
+            }
+        }
+        private void DentistIsNotNull(Dentist dentist)
+        {
+            if (dentist is null)
+            {
+                throw new DomainException("Id não encontrado!");
+            }
         }
     }
 }
