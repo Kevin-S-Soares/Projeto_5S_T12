@@ -29,7 +29,7 @@
             @Html.DisplayFor(model => model.TelephoneNumber)
         </dd>
     </dl>
-    <form asp-action="Delete">
+    <form asp-action="DeleteById">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Excluir" class="btn btn-danger" />
         <a asp-action="Index" class="btn btn-default">Voltar ao índice</a>

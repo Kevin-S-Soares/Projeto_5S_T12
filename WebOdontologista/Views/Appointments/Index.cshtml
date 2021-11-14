@@ -10,19 +10,21 @@
     <div class="col-sm-9">
         <a asp-action="Create" class="btn btn-primary">Nova Consulta</a>
     </div>
-    <div class="col-sm-1 show-label">
-        <label class="control-label" for="Show">Exibir:</label>
+    <div class="col-sm-1">
+        <label class="control-label show-label" for="Show">Exibir:</label>
     </div>
-    <form class="col-sm-2">
-        <div class="form-group">
-            <select id="show" asp-for="Show" class="form-control" onchange="reload()">
-                <option value="0">Apenas hoje</option>
-                <option value="1">Apenas semana</option>
-                <option value="2">Apenas mês</option>
-                <option value="3">Tudo</option>
-            </select>
-        </div>
-    </form>
+    <div class="col-sm-2">
+        <form>
+            <div class="form-group">
+                <select id="show" asp-for="Show" class="form-control" onchange="reload()">
+                    <option value="0">Apenas hoje</option>
+                    <option value="1">Apenas semana</option>
+                    <option value="2">Apenas mês</option>
+                    <option value="3">Tudo</option>
+                </select>
+            </div>
+        </form>
+    </div>
 </div>
 
 @if (Model.Appointments.Count() != 0)
