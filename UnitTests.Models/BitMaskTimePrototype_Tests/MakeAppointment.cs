@@ -30,7 +30,7 @@ namespace UnitTests.Models.BitMaskTimePrototype_Tests
                 Model.MakeAppointment(obj);
             }
         }
-        public async Task<List<Appointment>> AppointmentsToSucceed()
+        private async Task<List<Appointment>> AppointmentsToSucceed()
         {
             return await _appointmentService.FindAllAsync(obj => obj.Date == _timeZoneService.GetTodayOnly());
         }
