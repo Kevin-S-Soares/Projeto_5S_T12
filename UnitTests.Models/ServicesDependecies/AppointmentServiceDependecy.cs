@@ -29,14 +29,34 @@ namespace UnitTests.Models.ServicesDependecies
                 .ToList();
         }
 
-        public Task<List<Appointment>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
+        public async Task<List<Appointment>> FindByDateAsync(DateTime? minDate, DateTime? maxDate)
         {
-            throw new NotImplementedException();
+            var result = from obj in _list select obj;
+            if (minDate.HasValue)
+            {
+                result = result.Where(obj => obj.Date >= minDate.Value);
+            }
+            if (maxDate.HasValue)
+            {
+                result = result.Where(obj => obj.Date <= maxDate.Value);
+            }
+            await Task.Delay(0);
+            return result.OrderBy(obj => obj.Date).ToList();
         }
 
-        public Task<List<IGrouping<Dentist, Appointment>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
+        public async Task<List<IGrouping<Dentist, Appointment>>> FindByDateGroupingAsync(DateTime? minDate, DateTime? maxDate)
         {
-            throw new NotImplementedException();
+            var result = from obj in _list select obj;
+            if (minDate.HasValue)
+            {
+                result = result.Where(obj => obj.Date >= minDate.Value);
+            }
+            if (maxDate.HasValue)
+            {
+                result = result.Where(obj => obj.Date <= maxDate.Value);
+            }
+            await Task.Delay(0);
+            return result.OrderBy(obj => obj.Date).GroupBy(obj => obj.Dentist).ToList();
         }
 
         public async Task<Appointment> FindByIdAsync(int id)

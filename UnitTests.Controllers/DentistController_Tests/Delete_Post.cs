@@ -50,7 +50,7 @@ namespace UnitTests.Controllers.DentistController_Tests
         [TestMethod]
         public async Task NonExistingId_CorrectRedirect()
         {
-            RedirectToActionResult result = (RedirectToActionResult) await Controller_Test.DeleteById(-1);
+            RedirectToActionResult result = (RedirectToActionResult)await Controller_Test.DeleteById(-1);
             Assert.AreEqual("Error", result.ActionName);
         }
 

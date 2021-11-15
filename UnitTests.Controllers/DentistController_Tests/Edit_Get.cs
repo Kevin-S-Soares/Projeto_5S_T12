@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Controllers;
@@ -34,7 +31,7 @@ namespace UnitTests.Controllers.DentistController_Tests
         public async Task ExistingDentist_ModelAreEqual()
         {
             Dentist dentist = await _dentistService.FindByIdAsync(1);
-            ViewResult result = (ViewResult) await Controller_Test.Edit(1);
+            ViewResult result = (ViewResult)await Controller_Test.Edit(1);
             Assert.AreEqual(dentist, result.Model);
         }
 

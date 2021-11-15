@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using WebOdontologista.Models;
@@ -49,7 +48,7 @@ namespace WebOdontologista.Controllers
                 await _dentistService.InsertAsync(dentist);
                 result = RedirectToIndexOrCreateAppointment(returnAppointment);
             }
-            catch(DomainException)
+            catch (DomainException)
             {
                 result = View(dentist);
             }
@@ -75,9 +74,9 @@ namespace WebOdontologista.Controllers
                 DentistIsNotNull(dentist);
                 result = View(dentist);
             }
-            catch(DomainException e)
+            catch (DomainException e)
             {
-                result = RedirectToAction(nameof(Error), new { message = e.Message});
+                result = RedirectToAction(nameof(Error), new { message = e.Message });
             }
             return result;
         }
@@ -113,7 +112,7 @@ namespace WebOdontologista.Controllers
                 DentistIsNotNull(dentist);
                 result = View(dentist);
             }
-            catch(DomainException e)
+            catch (DomainException e)
             {
                 result = RedirectToAction(nameof(Error), new { message = e.Message });
             }
@@ -131,7 +130,7 @@ namespace WebOdontologista.Controllers
                 await _dentistService.UpdateAsync(dentist);
                 result = RedirectToAction(nameof(Index));
             }
-            catch(DomainException)
+            catch (DomainException)
             {
                 result = View(dentist);
             }
@@ -139,7 +138,7 @@ namespace WebOdontologista.Controllers
         }
 
         [HttpGet]
-        public IActionResult Error(string message)
+        private IActionResult Error(string message)
         {
             ErrorViewModel error = new ErrorViewModel
             {

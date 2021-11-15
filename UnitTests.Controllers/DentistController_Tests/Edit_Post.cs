@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Controllers;
