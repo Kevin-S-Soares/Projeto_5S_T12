@@ -8,7 +8,7 @@ namespace UnitTests.Models.ServicesDependecies
 {
     public class DentistServiceDependecy : IDentistService
     {
-        private readonly List<Dentist> _list = new List<Dentist>();
+        private List<Dentist> _list = new List<Dentist>();
         public DentistServiceDependecy()
         {
             GenerateDentists();
@@ -47,6 +47,11 @@ namespace UnitTests.Models.ServicesDependecies
             editing.Name = dentist.Name;
             editing.Email = dentist.Email;
             editing.TelephoneNumber = dentist.TelephoneNumber;
+        }
+
+        public void DeleteAll()
+        {
+            _list = new List<Dentist>();
         }
 
         private void GenerateDentists()

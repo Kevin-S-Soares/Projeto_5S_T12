@@ -65,9 +65,10 @@ namespace UnitTests.Models.ServicesDependecies
             return _list.FirstOrDefault(obj => obj.Id == id);
         }
 
-        public Task InsertAsync(Appointment appointment)
+        public async Task InsertAsync(Appointment appointment)
         {
-            throw new NotImplementedException();
+            await Task.Delay(0);
+            _list.Add(appointment);
         }
 
         public Task RemoveByIdAsync(int id)
@@ -241,6 +242,33 @@ namespace UnitTests.Models.ServicesDependecies
                 {
                     Id = 18,
                     Date = _timeZoneService.GetTomorrowOnly(),
+                    DentistId = 2,
+                    Dentist = _dentists.First(obj => obj.Id == 2),
+                    DurationInMinutes = 60,
+                    Time = new TimeSpan(9, 0, 0)
+                },
+                new Appointment()
+                {
+                    Id = 19,
+                    Date = _timeZoneService.GetTomorrowOnly().AddDays(7),
+                    DentistId = 2,
+                    Dentist = _dentists.First(obj => obj.Id == 2),
+                    DurationInMinutes = 60,
+                    Time = new TimeSpan(9, 0, 0)
+                },
+                new Appointment()
+                {
+                    Id = 20,
+                    Date = _timeZoneService.GetTomorrowOnly().AddDays(30),
+                    DentistId = 2,
+                    Dentist = _dentists.First(obj => obj.Id == 2),
+                    DurationInMinutes = 60,
+                    Time = new TimeSpan(9, 0, 0)
+                },
+                new Appointment()
+                {
+                    Id = 20,
+                    Date = _timeZoneService.GetTomorrowOnly().AddDays(35),
                     DentistId = 2,
                     Dentist = _dentists.First(obj => obj.Id == 2),
                     DurationInMinutes = 60,

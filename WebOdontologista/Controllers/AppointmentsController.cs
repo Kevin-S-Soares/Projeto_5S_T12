@@ -42,7 +42,7 @@ namespace WebOdontologista.Controllers
                 Expires = _timeZoneService.GetDate().AddDays(30)
             };
             DateTime sameDay = new DateTime(_timeZoneService.GetDate().Year, _timeZoneService.GetDate().Month, _timeZoneService.GetDate().Day);
-            Expression<Func<Appointment, bool>>[] predicate = new Expression<Func<Appointment, bool>>[4]
+            Expression<Func<Appointment, bool>>[] expression = new Expression<Func<Appointment, bool>>[4]
             {
                     obj => obj.DateAndTime() >= _timeZoneService.GetDate() && obj.Date == sameDay,
                     obj => obj.DateAndTime() >= _timeZoneService.GetDate() && obj.Date <= sameDay.AddDays(7),
@@ -52,17 +52,15 @@ namespace WebOdontologista.Controllers
             IndexAppointmentFormViewModel viewModel = new IndexAppointmentFormViewModel();
             if (show.HasValue)
             {
-                viewModel.Appointments = await _appointmentService.FindAllAsync(predicate[show.Value]);
-                if (show.Value > -1 && show.Value < 4)
+                
+                if (show.Value < 0 || show.Value > 3)
                 {
-                    viewModel.Show = show.Value;
-                    Response.Cookies.Append("Show", show.Value.ToString(), cookieOptions);
-                    result = View(viewModel);
+                    show = 3;
                 }
-                else
-                {
-                    result = Redirect("?show=3");
-                }
+                viewModel.Appointments = await _appointmentService.FindAllAsync(expression[show.Value]);
+                viewModel.Show = show.Value;
+                Response.Cookies.Append("Show", show.Value.ToString(), cookieOptions);
+                result = View(viewModel);
             }
             else
             {
@@ -73,12 +71,12 @@ namespace WebOdontologista.Controllers
                     {
                         value = 3;
                     }
-                    viewModel.Appointments = await _appointmentService.FindAllAsync(predicate[value]);
+                    viewModel.Appointments = await _appointmentService.FindAllAsync(expression[value]);
                     viewModel.Show = value;
                 }
                 else
                 {
-                    viewModel.Appointments = await _appointmentService.FindAllAsync(obj => obj.DateAndTime() > _timeZoneService.GetDate());
+                    viewModel.Appointments = await _appointmentService.FindAllAsync(expression[3]);
                     viewModel.Show = 3;
                 }
                 result = View(viewModel);
