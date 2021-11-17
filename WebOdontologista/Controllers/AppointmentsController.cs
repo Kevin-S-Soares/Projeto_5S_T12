@@ -124,28 +124,38 @@ namespace WebOdontologista.Controllers
         {
             if (id == null)
             {
-                return RedirectToAction(nameof(Error), new { message = "Id não provido" });
+                return RedirectToAction(nameof(Error), new { message = "Id não provido!" });
             }
             Appointment appointment = await _appointmentService.FindByIdAsync(id.Value);
             if (appointment == null)
             {
-                return RedirectToAction(nameof(Error), new { message = "Id não encontrado" });
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado!" });
             }
             return View(appointment);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteById(int? id)
         {
+            if (id == null)
+            {
+                return RedirectToAction(nameof(Error), new { message = "Id não provido!" });
+            }
+            Appointment appointment = await _appointmentService.FindByIdAsync(id.Value);
+            if (appointment == null)
+            {
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado!" });
+            }
             try
             {
-                await _book.RemoveAppointment(id);
+                await _book.RemoveAppointment(id.Value);
             }
             catch (DomainException e)
             {
                 return RedirectToAction(nameof(Error), new { message = e.Message });
             }
-            await _appointmentService.RemoveByIdAsync(id);
+            await _appointmentService.RemoveByIdAsync(id.Value);
             return RedirectToAction(nameof(Index));
         }
         public async Task<IActionResult> Edit(int? id)
@@ -157,7 +167,7 @@ namespace WebOdontologista.Controllers
             Appointment appointment = await _appointmentService.FindByIdAsync(id.Value);
             if (appointment == null)
             {
-                return RedirectToAction(nameof(Error), new { Message = "Consulta inexistente!" });
+                return RedirectToAction(nameof(Error), new { Message = "Id não encontrado!" });
             }
             AppointmentFormViewModel viewModel = await AppointmentFormViewModel.CreateFormViewModel(_dentistService);
             viewModel.Appointment = appointment;

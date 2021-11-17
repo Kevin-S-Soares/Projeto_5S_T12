@@ -71,9 +71,10 @@ namespace UnitTests.Models.ServicesDependecies
             _list.Add(appointment);
         }
 
-        public Task RemoveByIdAsync(int id)
+        public async Task RemoveByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            await Task.Delay(0);
+            _list.RemoveAll(obj => obj.Id == id);
         }
 
         public Task UpdateAsync(Appointment appointment)
