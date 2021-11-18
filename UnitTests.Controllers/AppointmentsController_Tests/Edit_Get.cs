@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UnitTests.Controllers.AppointmentsController_Tests.HttpSetupClasses;
 using UnitTests.Models.ServicesDependecies;
@@ -47,8 +45,8 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         [TestMethod]
         public async Task Succeed_CorrectModel()
         {
-            ViewResult result = (ViewResult) await Controller_Test.Edit(1);
-            AppointmentFormViewModel viewModel = (AppointmentFormViewModel) result.Model;
+            ViewResult result = (ViewResult)await Controller_Test.Edit(1);
+            AppointmentFormViewModel viewModel = (AppointmentFormViewModel)result.Model;
             Assert.AreEqual(await _appointmentService.FindByIdAsync(1), viewModel.Appointment);
         }
 

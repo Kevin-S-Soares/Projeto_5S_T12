@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UnitTests.Controllers.AppointmentsController_Tests.HttpSetupClasses;
 using UnitTests.Models.ServicesDependecies;
@@ -28,7 +26,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         public void Initialize()
         {
             Controller_Test = new AppointmentsController(_appointmentService, _dentistService, _timeZoneService);
-            
+
         }
 
         [TestMethod]
@@ -43,7 +41,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         public async Task Successful_ReturningCorrectModel()
         {
             AddContext(true);
-            ViewResult result = (ViewResult) await Controller_Test.Create();
+            ViewResult result = (ViewResult)await Controller_Test.Create();
             Assert.IsTrue(result.Model is AppointmentFormViewModel);
         }
 
@@ -53,7 +51,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
             AddContext(true);
             ViewResult result = (ViewResult)await Controller_Test.Create();
             AppointmentFormViewModel viewModel = (AppointmentFormViewModel)result.Model;
-            
+
             List<Dentist> correctList = await _dentistService.FindAllAsync();
             List<Dentist> beingTested = (List<Dentist>)viewModel.Dentists;
 
@@ -75,7 +73,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         {
             AddContext(true);
             _dentistService.DeleteAll();
-            RedirectResult result = (RedirectResult) await Controller_Test.Create();
+            RedirectResult result = (RedirectResult)await Controller_Test.Create();
             Assert.AreEqual("/Dentists/Create?returnAppointment=1", result.Url);
         }
 
@@ -90,7 +88,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
 
         private void AddContext(bool toAddAppointment)
         {
-            Controller_Test.TempData = new TempDataDictionary(new UnitTest_HttpContext(null), 
+            Controller_Test.TempData = new TempDataDictionary(new UnitTest_HttpContext(null),
                 new UnitTest_TempDataProvider(toAddAppointment));
         }
     }

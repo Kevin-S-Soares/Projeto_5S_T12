@@ -77,9 +77,16 @@ namespace UnitTests.Models.ServicesDependecies
             _list.RemoveAll(obj => obj.Id == id);
         }
 
-        public Task UpdateAsync(Appointment appointment)
+        public async Task UpdateAsync(Appointment appointment)
         {
-            throw new NotImplementedException();
+            Appointment toUpdate = await FindByIdAsync(appointment.Id);
+            toUpdate.Patient = appointment.Patient;
+            toUpdate.DurationInMinutes = appointment.DurationInMinutes;
+            toUpdate.Date = appointment.Date;
+            toUpdate.Time = appointment.Time;
+            toUpdate.DentistId = appointment.DentistId;
+            toUpdate.Dentist = appointment.Dentist;
+            toUpdate.AppointmentType = appointment.AppointmentType;
         }
 
         private void GenerateAppointments()

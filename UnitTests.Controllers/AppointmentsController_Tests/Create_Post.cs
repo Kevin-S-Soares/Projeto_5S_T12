@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Controllers;
@@ -38,7 +37,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         [TestMethod]
         public async Task Successful_CorrectRedirect()
         {
-            RedirectToActionResult result = (RedirectToActionResult) await Controller_Test.Create(GetNewAppointment());
+            RedirectToActionResult result = (RedirectToActionResult)await Controller_Test.Create(GetNewAppointment());
             Assert.AreEqual("Index", result.ActionName);
         }
 
@@ -61,7 +60,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         public async Task IncorrectModel_CorrectModel()
         {
             Controller_Test.ModelState.AddModelError("error", "error");
-            ViewResult result = (ViewResult) await Controller_Test.Create(GetNewAppointment());
+            ViewResult result = (ViewResult)await Controller_Test.Create(GetNewAppointment());
             AppointmentFormViewModel viewModel = (AppointmentFormViewModel)result.Model;
             Assert.AreEqual(GetNewAppointment(), viewModel.Appointment);
         }
@@ -72,7 +71,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
             Controller_Test.ModelState.AddModelError("error", "error");
             ViewResult result = (ViewResult)await Controller_Test.Create(GetNewAppointment());
             AppointmentFormViewModel viewModel = (AppointmentFormViewModel)result.Model;
-            CollectionAssert.AreEqual(await _dentistService.FindAllAsync(), (List<Dentist>) viewModel.Dentists);
+            CollectionAssert.AreEqual(await _dentistService.FindAllAsync(), (List<Dentist>)viewModel.Dentists);
         }
 
 

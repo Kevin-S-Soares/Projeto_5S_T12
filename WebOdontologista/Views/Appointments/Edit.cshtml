@@ -10,7 +10,6 @@
     <div class="col-md-4">
         <form method="post" asp-action="Edit">
             <fieldset>
-                <input type="hidden" asp-for="Appointment.Id" />
                 <label>
                     Dados pessoais do paciente <span class="glyphicon glyphicon-question-sign text-info" title="Aqui será editado os dados pessoais do paciente já cadastrado em uma dada consulta."></span>
                 </label>
@@ -67,6 +66,7 @@ A partir do odontologista, a duração da consulta e o dia informado, o sistema 
                     </div>
                 </div>
                 <div class="form-group">
+                    <input type="hidden" asp-for="Appointment.Id" readonly />
                     <input type="submit" id="Appointment_Confirm" value="Reagendar Consulta" class="btn btn-warning" />
                     <a asp-action="Index" class="btn btn-default">Voltar ao índice</a>
                 </div>

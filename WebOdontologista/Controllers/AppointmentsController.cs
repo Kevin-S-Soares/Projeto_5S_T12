@@ -52,7 +52,7 @@ namespace WebOdontologista.Controllers
             IndexAppointmentFormViewModel viewModel = new IndexAppointmentFormViewModel();
             if (show.HasValue)
             {
-                
+
                 if (show.Value < 0 || show.Value > 3)
                 {
                     show = 3;
@@ -185,18 +185,19 @@ namespace WebOdontologista.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Appointment appointment)
+        public async Task<IActionResult> Edit(Appointment appointment)
         {
 
-            if (id != appointment.Id)
-            {
-                return RedirectToAction(nameof(Error), new { message = "Ids são distintos!" });
-            }
             if (!ModelState.IsValid)
             {
                 AppointmentFormViewModel viewModel = await AppointmentFormViewModel.CreateFormViewModel(_dentistService);
                 viewModel.Appointment = appointment;
                 return View(viewModel);
+            }
+            Appointment check = await _appointmentService.FindByIdAsync(appointment.Id);
+            if (check is null)
+            {
+                return RedirectToAction(nameof(Error), new { message = "Id não encontrado!" });
             }
             try
             {
@@ -210,7 +211,7 @@ namespace WebOdontologista.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Error(string message)
+        private IActionResult Error(string message)
         {
             ErrorViewModel error = new ErrorViewModel
             {

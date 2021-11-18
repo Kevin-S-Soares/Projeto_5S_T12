@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Controllers;
@@ -38,7 +35,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         public async Task Succeed_CorrectRedirect()
         {
             int? id = 1;
-            RedirectToActionResult result = (RedirectToActionResult) await Controller_Test.DeleteById(id);
+            RedirectToActionResult result = (RedirectToActionResult)await Controller_Test.DeleteById(id);
             Assert.AreEqual("Index", result.ActionName);
         }
 

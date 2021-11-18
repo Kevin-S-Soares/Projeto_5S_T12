@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Models;
 
@@ -23,11 +22,11 @@ namespace UnitTests.Controllers.AppointmentsController_Tests.HttpSetupClasses
         {
             return new Appointment()
             {
-                Id = 1023,
+                Id = 1,
+                Date = new TimeZoneServiceDependecy().GetTodayOnly(),
                 DentistId = 1,
+                DurationInMinutes = 15,
                 Time = new TimeSpan(9, 0, 0),
-                DurationInMinutes = 60,
-                Date = new TimeZoneServiceDependecy().GetTodayOnly()
             };
         }
 

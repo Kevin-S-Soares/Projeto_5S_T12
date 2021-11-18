@@ -28,38 +28,38 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
             Controller_Test = new AppointmentsController(_appointmentService, _dentistService, _timeZoneService);
         }
 
-		[TestMethod]
-		public async Task NullShow_IsView()
+        [TestMethod]
+        public async Task NullShow_IsView()
         {
             AddContext(null);
             IActionResult result = await Controller_Test.Index(null);
             Assert.IsTrue(result is ViewResult);
         }
 
-		[TestMethod]
-		public async Task NullShow_IdenticalList()
+        [TestMethod]
+        public async Task NullShow_IdenticalList()
         {
             AddContext(null);
-            ViewResult result = (ViewResult) await Controller_Test.Index(null);
+            ViewResult result = (ViewResult)await Controller_Test.Index(null);
             IndexAppointmentFormViewModel viewModel = (IndexAppointmentFormViewModel)result.Model;
 
             List<Appointment> correctList = await _appointmentService.FindAllAsync(obj => true);
-            List<Appointment> beingTested = (List<Appointment>) viewModel.Appointments;
+            List<Appointment> beingTested = (List<Appointment>)viewModel.Appointments;
 
             CollectionAssert.AreEqual(correctList, beingTested);
         }
 
 
-		[TestMethod]
-		public async Task LessThanExpectedShow_IsView()
+        [TestMethod]
+        public async Task LessThanExpectedShow_IsView()
         {
             AddContext(null);
             IActionResult result = await Controller_Test.Index(-1);
             Assert.IsTrue(result is ViewResult);
         }
 
-		[TestMethod]
-		public async Task LessThanExpectedShow_IdenticalList()
+        [TestMethod]
+        public async Task LessThanExpectedShow_IdenticalList()
         {
             AddContext(null);
             ViewResult result = (ViewResult)await Controller_Test.Index(-1);
@@ -71,8 +71,8 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
             CollectionAssert.AreEqual(correctList, beingTested);
         }
 
-		[TestMethod]
-		public async Task LessThanExpectedCookie_IdenticalList()
+        [TestMethod]
+        public async Task LessThanExpectedCookie_IdenticalList()
         {
             AddContext(-1);
             ViewResult result = (ViewResult)await Controller_Test.Index(null);
@@ -84,16 +84,16 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
             CollectionAssert.AreEqual(correctList, beingTested);
         }
 
-		[TestMethod]
-		public async Task MoreThanExpectedShow_IsView()
+        [TestMethod]
+        public async Task MoreThanExpectedShow_IsView()
         {
             AddContext(null);
             IActionResult result = await Controller_Test.Index(4);
             Assert.IsTrue(result is ViewResult);
         }
 
-		[TestMethod]
-		public async Task MoreThanExpectedShow_IdenticalList()
+        [TestMethod]
+        public async Task MoreThanExpectedShow_IdenticalList()
         {
             AddContext(null);
             ViewResult result = (ViewResult)await Controller_Test.Index(4);
@@ -134,8 +134,8 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
             ViewResult result = (ViewResult)await Controller_Test.Index(0);
             IndexAppointmentFormViewModel viewModel = (IndexAppointmentFormViewModel)result.Model;
 
-            List<Appointment> correctList = await _appointmentService.FindAllAsync(obj => 
-            obj.DateAndTime() >= _timeZoneService.GetDate() 
+            List<Appointment> correctList = await _appointmentService.FindAllAsync(obj =>
+            obj.DateAndTime() >= _timeZoneService.GetDate()
             && obj.Date == _timeZoneService.GetTodayOnly());
             List<Appointment> beingTested = (List<Appointment>)viewModel.Appointments;
 

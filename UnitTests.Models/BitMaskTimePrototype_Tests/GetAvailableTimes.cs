@@ -96,7 +96,7 @@ namespace UnitTests.Models.BitMaskTimePrototype_Tests
         {
             return new Appointment() { Time = new TimeSpan(9, 0, 0), DurationInMinutes = 60 };
         }
-        private List<TimeSpan> GetListOfAppointments_SixtyMinutesDuration()
+        public List<TimeSpan> GetListOfAppointments_SixtyMinutesDuration()
         {
             var result = GetListOfAppointments_FourtyFiveMinutesDuration();
             result.Remove(new TimeSpan(11, 15, 0));

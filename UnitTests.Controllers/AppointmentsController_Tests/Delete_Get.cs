@@ -1,14 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UnitTests.Models.ServicesDependecies;
 using WebOdontologista.Controllers;
-using WebOdontologista.Models;
 using WebOdontologista.Models.Interfaces;
-using WebOdontologista.Models.ViewModels;
 
 namespace UnitTests.Controllers.AppointmentsController_Tests
 {
@@ -39,7 +34,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         public async Task Succeed_CorrectModel()
         {
             int? id = 1;
-            ViewResult result = (ViewResult) await Controller_Test.Delete(id);
+            ViewResult result = (ViewResult)await Controller_Test.Delete(id);
             Assert.AreEqual(await _appointmentService.FindByIdAsync(1), result.Model);
         }
 
@@ -63,7 +58,7 @@ namespace UnitTests.Controllers.AppointmentsController_Tests
         public async Task NullId_CorrectModel()
         {
             int? id = null;
-            RedirectToActionResult result = (RedirectToActionResult) await Controller_Test.Delete(id);
+            RedirectToActionResult result = (RedirectToActionResult)await Controller_Test.Delete(id);
             Assert.AreEqual("Id não provido!", result.RouteValues["message"]);
         }
 
