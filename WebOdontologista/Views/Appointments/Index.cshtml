@@ -27,6 +27,13 @@
     </div>
 </div>
 
+<script>
+    var show = new URL(window.location.href).searchParams.get("show");
+    if (show < 0 || show > 3) {
+        document.getElementById("show").selectedIndex = 3;
+    }
+</script>
+
 @if (Model.Appointments.Count() != 0)
 {
     <div class="table-responsive">
@@ -108,8 +115,6 @@ else
             break;
     }
 }
-
-
 
 <environment include="Development">
     <script src="~/js/reload.js" asp-append-version="true"></script>
