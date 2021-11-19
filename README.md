@@ -1,4 +1,4 @@
-[Site](https://webodontologista.azurewebsites.net/)
+[Endereço do Sistema Web](https://webodontologista.azurewebsites.net/)
 
 Conta para visitantes:   
 email: guest@gmail.com   
